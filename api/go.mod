@@ -3,10 +3,13 @@ module github.com/TDiblik/project-template/api
 go 1.24.0
 
 require (
+	github.com/TDiblik/gofiber-swagger v0.1.4
 	github.com/gofiber/fiber/v3 v3.0.0-beta.5
+	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
+	golang.org/x/oauth2 v0.30.0
 )
 
 require (
@@ -16,7 +19,6 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -29,7 +31,6 @@ require (
 )
 
 require (
-	github.com/TDiblik/gofiber-swagger v0.1.4
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/gofiber/schema v1.6.0 // indirect

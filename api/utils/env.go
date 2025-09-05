@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/github"
 )
 
 type IEnvData struct {
@@ -16,6 +18,10 @@ type IEnvData struct {
 
 	AUTH_SECRET       string
 	AUTH_SECRET_BYTES []byte
+
+	OAUTH_GITHUB_CLIENT_ID     string
+	OAUTH_GITHUB_CLIENT_SECRET string
+	OAUTH_CONFIG_GITHUB        *oauth2.Config
 
 	// MAIL_CLIENT_AUTOMATION_HOST     string
 	// MAIL_CLIENT_AUTOMATION_PORT     int
@@ -53,9 +59,18 @@ func SetupENV(env_files ...string) {
 
 	EnvData.API_PORT = getEnvKeyOrPanic("API_PORT")
 	EnvData.DB_CONNECTION_STRING = getEnvKeyOrPanic("DB_CONNECTION_STRING")
-
 	EnvData.AUTH_SECRET = getEnvKeyOrPanic("AUTH_SECRET")
 	EnvData.AUTH_SECRET_BYTES = []byte(EnvData.AUTH_SECRET)
+
+	EnvData.OAUTH_GITHUB_CLIENT_ID = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_ID")
+	EnvData.OAUTH_GITHUB_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_SECRET")
+	EnvData.OAUTH_CONFIG_GITHUB = &oauth2.Config{
+		ClientID:     EnvData.OAUTH_GITHUB_CLIENT_ID,
+		ClientSecret: EnvData.OAUTH_GITHUB_CLIENT_SECRET,
+		Scopes:       []string{"user:email"},
+		Endpoint:     github.Endpoint,
+		RedirectURL:  "http://127.0.0.1:35232/api/v1/auth/oauth/github/return", // todo: somehow set this in the .env
+	}
 
 	// EnvData.MAIL_CLIENT_AUTOMATION_HOST = getEnvKeyOrPanic("MAIL_CLIENT_AUTOMATION_HOST")
 	// if port, err := strconv.ParseInt(getEnvKeyOrPanic("MAIL_CLIENT_AUTOMATION_PORT"), 10, 64); err != nil {

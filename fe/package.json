@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build": "tsc -b && NODE_ENV=production vite build --mode production",
+    "lint": "prettier . --write --config ./.prettierrc && eslint . --config ./eslint.config.js"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "daisyui": "^5.1.7",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

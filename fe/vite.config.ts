@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 // import {visualizer} from "rollup-plugin-visualizer";
 
 export default defineConfig(() => ({
   plugins: [
     react(),
+    tailwindcss(),
     // svgr({
     //   svgrOptions: {
     //     plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
@@ -20,7 +22,7 @@ export default defineConfig(() => ({
     // }),
   ],
   build: {
-    target: "modules",
+    target: "baseline-widely-available",
     modulePreload: {
       polyfill: true,
     },
