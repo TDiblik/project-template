@@ -1,0 +1,14 @@
+### API ###
+db-data
+tmp
+.DS_Store
+api/images
+api/public
+api/api
+api/api.exe
+api/dist/api
+db-data-prod
+mobile/android
+mobile/ios
+**/generated
+.env
