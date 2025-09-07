@@ -26,11 +26,21 @@ func SetupValidator() {
 	log.Println("Setting up validator: done")
 }
 
-func GetValidRequestBody(request_body interface{}, c fiber.Ctx) error {
+func GetValidRequestBody(request_body any, c fiber.Ctx) error {
 	if err := c.Bind().Body(request_body); err != nil {
 		return err
 	}
 	if err := Validator.Validate(request_body); err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetValidQuery(query any, c fiber.Ctx) error {
+	if err := c.Bind().Query(query); err != nil {
+		return err
+	}
+	if err := Validator.Validate(query); err != nil {
 		return err
 	}
 	return nil

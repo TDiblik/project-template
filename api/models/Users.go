@@ -1,0 +1,30 @@
+package models
+
+import (
+	"database/sql"
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type UsersModelDB struct {
+	Id            uuid.UUID     `db:"id"`
+	Email         string        `db:"email"`
+	EmailVerified bool          `db:"email_verified"`
+	PasswordHash  SQLNullString `db:"password_hash"`
+
+	FirstName SQLNullString `db:"first_name"`
+	LastName  SQLNullString `db:"last_name"`
+
+	Handle    SQLNullString `db:"handle"`
+	AvatarUrl SQLNullString `db:"avatar_url"`
+	Active    bool          `db:"active"`
+
+	GithubId     SQLNullString `db:"github_id"`
+	GithubHandle SQLNullString `db:"github_handle"`
+
+	LastLoginAt sql.NullTime `db:"last_login_at"`
+
+	CreatedAt time.Time `db:"created_at" json:"-"`
+	UpdatedAt time.Time `db:"updated_at" json:"-"`
+}

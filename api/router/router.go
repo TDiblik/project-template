@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/TDiblik/gofiber-swagger/gofiberswagger"
+	"github.com/TDiblik/project-template/api/constants"
 	"github.com/TDiblik/project-template/api/handlers"
 	"github.com/TDiblik/project-template/api/utils"
 	"github.com/gofiber/fiber/v3"
@@ -25,7 +26,12 @@ func SetupRoutes(app *fiber.App) {
 
 	api_oauth_github := api_oauth.Group("/github")
 	api_oauth_github.Get("/redirect", &gofiberswagger.RouteInfo{}, handlers.GithubRedirect)
-	api_oauth_github.Get("/return", &gofiberswagger.RouteInfo{}, handlers.GithubReturn)
+	api_oauth_github.Get("/return", &gofiberswagger.RouteInfo{
+		Parameters: gofiberswagger.NewParameters(
+			gofiberswagger.NewQueryParameter("state"),
+			gofiberswagger.NewQueryParameter("code"),
+		),
+	}, handlers.GithubReturn)
 
 	if utils.EnvData.Debug {
 		gofiberswagger.Register(app, gofiberswagger.Config{
@@ -40,7 +46,7 @@ func SetupRoutes(app *fiber.App) {
 						"x-user-token": {
 							Value: &gofiberswagger.SecurityScheme{
 								Type: "apiKey",
-								Name: utils.Constants.TokenHeaderName,
+								Name: constants.TOKEN_HEADER_NAME,
 								In:   "header",
 							},
 						},
