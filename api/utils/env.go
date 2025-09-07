@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
@@ -13,8 +14,12 @@ import (
 type IEnvData struct {
 	Debug bool
 
-	API_PORT             string
-	DB_CONNECTION_STRING string
+	API_PORT                  string
+	API_PROD_URL              string
+	FE_PROD_URL               string
+	DB_CONNECTION_STRING      string
+	DB_MIGRATIONS_PATH        string
+	DB_DEV_FORCE_MIGRATE_DOWN bool
 
 	AUTH_SECRET       string
 	AUTH_SECRET_BYTES []byte
@@ -54,11 +59,29 @@ func SetupENV(env_files ...string) {
 		EnvData.Debug = false
 		log.SetPrefix("[PROD] " + log.Prefix())
 	default:
-		log.Fatal("Error determening GO_ENV (", os.Getenv("GO_ENV"), ")")
+		log.Fatalln("Error determening GO_ENV (", os.Getenv("GO_ENV"), ")")
 	}
 
 	EnvData.API_PORT = getEnvKeyOrPanic("API_PORT")
 	EnvData.DB_CONNECTION_STRING = getEnvKeyOrPanic("DB_CONNECTION_STRING")
+	EnvData.DB_MIGRATIONS_PATH = getEnvKeyOrPanic("DB_MIGRATIONS_PATH")
+	if strings.ToLower(os.Getenv("DB_DEV_FORCE_MIGRATE_DOWN")) == "true" {
+		if !EnvData.Debug {
+			log.Fatalln("Cannot use DB_DEV_FORCE_MIGRATE_DOWN while in production mode!")
+		}
+		EnvData.DB_DEV_FORCE_MIGRATE_DOWN = true
+	} else {
+		EnvData.DB_DEV_FORCE_MIGRATE_DOWN = false
+	}
+	EnvData.API_PROD_URL = getEnvKeyOrPanic("API_PROD_URL")
+	if !strings.HasSuffix(EnvData.API_PROD_URL, "/") {
+		EnvData.API_PROD_URL += "/"
+	}
+	EnvData.FE_PROD_URL = getEnvKeyOrPanic("FE_PROD_URL")
+	if !strings.HasSuffix(EnvData.FE_PROD_URL, "/") {
+		EnvData.FE_PROD_URL += "/"
+	}
+
 	EnvData.AUTH_SECRET = getEnvKeyOrPanic("AUTH_SECRET")
 	EnvData.AUTH_SECRET_BYTES = []byte(EnvData.AUTH_SECRET)
 
@@ -67,9 +90,9 @@ func SetupENV(env_files ...string) {
 	EnvData.OAUTH_CONFIG_GITHUB = &oauth2.Config{
 		ClientID:     EnvData.OAUTH_GITHUB_CLIENT_ID,
 		ClientSecret: EnvData.OAUTH_GITHUB_CLIENT_SECRET,
-		Scopes:       []string{"user:email"},
+		Scopes:       []string{"read:user", "user:email"},
 		Endpoint:     github.Endpoint,
-		RedirectURL:  "http://127.0.0.1:35232/api/v1/auth/oauth/github/return", // todo: somehow set this in the .env
+		RedirectURL:  JoinUrlOrPanic(EnvData.API_PROD_URL, "/api/v1/auth/oauth/github/return"),
 	}
 
 	// EnvData.MAIL_CLIENT_AUTOMATION_HOST = getEnvKeyOrPanic("MAIL_CLIENT_AUTOMATION_HOST")

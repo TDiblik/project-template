@@ -12,6 +12,10 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -35,6 +39,31 @@ func main() {
 		log.Fatalln("Unable to ping a database", err)
 	}
 	log.Println("Checking database connectivity: done")
+
+	if !fiber.IsChild() {
+		log.Println("Running database migrations: start")
+		m, err := migrate.New(utils.EnvData.DB_MIGRATIONS_PATH, utils.EnvData.DB_CONNECTION_STRING)
+		if err != nil {
+			log.Fatalln("Unable to run database migrations (when creating migrate instance)", err)
+		}
+		if utils.EnvData.DB_DEV_FORCE_MIGRATE_DOWN {
+			if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+				log.Fatalln("Unable to run database migrations (down)", err)
+			} else if err == migrate.ErrNoChange {
+				log.Println("No new migrations to run (down)")
+			} else {
+				log.Println("Successfully run migrations (down)")
+			}
+		}
+		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+			log.Fatalln("Unable to run database migrations (up)", err)
+		} else if err == migrate.ErrNoChange {
+			log.Println("No new migrations to run (up)")
+		} else {
+			log.Println("Successfully run migrations (up)")
+		}
+		log.Println("Running database migrations: done")
+	}
 
 	// 	images_path := filepath.Join(utils.EnvData.IMAGES_PATH, db_name)
 	// 	if err := os.MkdirAll(images_path, utils.FoldrePerms); err != nil {
