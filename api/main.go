@@ -79,13 +79,22 @@ func main() {
 		BodyLimit:     15 * 1024 * 1024, // 15mb
 	})
 	app.Use(logger.New())
-	app.Use(recover.New())
+	app.Use(recover.New(
+		recover.Config{
+			Next:              recover.ConfigDefault.Next,
+			StackTraceHandler: recover.ConfigDefault.StackTraceHandler,
+			EnableStackTrace:  utils.EnvData.Debug,
+		},
+	))
 	app.Use(cors.New())
 	log.Println("Setting up the app: done")
 
 	log.Println("Setting up the routes: start")
 	router.SetupRoutes(app)
 	log.Println("Setting up the routes: done")
+
+	cron_ctx := utils.WithSignalCancel("cron jobs")
+	utils.SetupCronJobs(cron_ctx)
 
 	log.Println("Initialization completed")
 	log.Fatal(app.Listen(":"+utils.EnvData.API_PORT, fiber.ListenConfig{

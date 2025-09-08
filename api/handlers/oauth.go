@@ -146,11 +146,11 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) error {
 		}
 
 		// when adding a new oauth provider and user table fields, add the checks here:
-		if !existingUser.GithubHandle.Valid {
-			existingUser.GithubHandle = possiblyNewUser.GithubHandle
-		}
 		if !existingUser.GithubId.Valid {
 			existingUser.GithubId = possiblyNewUser.GithubId
+		}
+		if !existingUser.GithubHandle.Valid {
+			existingUser.GithubHandle = possiblyNewUser.GithubHandle
 		}
 
 		// when adding a new oauth provider and user table fields, change the query here:
@@ -161,8 +161,8 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) error {
 				last_name = :last_name,
 				avatar_url = :avatar_url,
 				email_verified = :email_verified,
-				github_handle = :github_handle,
-				github_id = :github_id
+				github_id = :github_id,
+				github_handle = :github_handle
 			where id = :id
 		`, existingUser); err != nil {
 			return fmt.Errorf("unable to update existing user: %w", err)

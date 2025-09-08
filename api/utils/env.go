@@ -85,6 +85,7 @@ func SetupENV(env_files ...string) {
 	EnvData.AUTH_SECRET = getEnvKeyOrPanic("AUTH_SECRET")
 	EnvData.AUTH_SECRET_BYTES = []byte(EnvData.AUTH_SECRET)
 
+	// when adding a new oauth provider and user table fields, add the checks here:
 	EnvData.OAUTH_GITHUB_CLIENT_ID = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_ID")
 	EnvData.OAUTH_GITHUB_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_SECRET")
 	EnvData.OAUTH_CONFIG_GITHUB = &oauth2.Config{

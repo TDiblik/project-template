@@ -1,10 +1,15 @@
 package utils
 
 import (
+	"context"
+	"log"
 	"math"
 	"math/rand/v2"
 	"net/url"
+	"os"
+	"os/signal"
 	"path"
+	"syscall"
 )
 
 // WARNING: This fucks up the order of the array tho
@@ -51,4 +56,16 @@ func DerefOrEmpty[T any](val *T) T {
 
 func IsNotNil[T any](val *T) bool {
 	return val != nil
+}
+
+func WithSignalCancel(usecase string) context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		log.Println("Received shutdown signal, stopping " + usecase + "...")
+		cancel()
+	}()
+	return ctx
 }

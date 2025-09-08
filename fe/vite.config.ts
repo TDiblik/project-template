@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 // import {visualizer} from "rollup-plugin-visualizer";
@@ -7,15 +7,6 @@ export default defineConfig(() => ({
   plugins: [
     react(),
     tailwindcss(),
-    // svgr({
-    //   svgrOptions: {
-    //     plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
-    //     svgoConfig: {
-    //       multipass: true,
-    //       floatPrecision: 2,
-    //     },
-    //   },
-    // }),
     // visualizer({
     //   emitFile: true,
     //   filename: "stats.html",
