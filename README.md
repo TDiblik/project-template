@@ -20,3 +20,7 @@ docker container logs project-template_db --follow
 docker start project-template_db
 docker container logs project-template_db --follow
 ```
+
+```
+openapi-generator generate -i ./api/generated/swagger.yaml -g typescript-fetch -o ./shared-fe/api-client/src/generated --skip-validate-spec --additional-properties=supportsES6=true,npmVersion=$(npm --version),typescriptThreePlus=true
+```

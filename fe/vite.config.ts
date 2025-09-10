@@ -1,6 +1,7 @@
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 // import {visualizer} from "rollup-plugin-visualizer";
 
 export default defineConfig(() => ({
@@ -29,8 +30,17 @@ export default defineConfig(() => ({
           if (id.includes("node_modules")) {
             return "vendor";
           }
+          console.log(id);
+          if (id.includes("shared-fe")) {
+            return "shared-fe";
+          }
         },
       },
+    },
+  },
+  resolve: {
+    alias: {
+      "@shared/api-client": path.resolve(__dirname, "../shared-fe/api-client/dist/index"),
     },
   },
   server: {
