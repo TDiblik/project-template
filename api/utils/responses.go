@@ -47,7 +47,6 @@ func NotFoundResponse(c fiber.Ctx, msg_reason string) error {
 	return c.Status(404).JSON(fiber.Map{"status": "not found", "msg": msg_reason})
 }
 
-func OkResponse(c fiber.Ctx, data fiber.Map) error {
-	data["status"] = "ok"
+func OkResponse(c fiber.Ctx, data any) error {
 	return c.Status(200).JSON(data)
 }

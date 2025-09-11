@@ -1,14 +1,17 @@
 DB_NAME=project-template_db
 DB_PORT=35232
 DB_PASSWORD=s0m3C0mpl3xP4ss
-DB_IMAGE=postgres:17.2-alpine3.20
+DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: db gen-types fe fe-install
+.PHONY: api api-install db db-follow db-stop db-remove gen-types fe fe-install
 
 # ---------- Backend ----------
 api:
 	cd ./api && air
+
+api-install:
+	cd ./api && go mod tidy
 
 db:
 	@if [ $$(docker ps -a -q -f name=$(DB_NAME)) ]; then \
@@ -18,7 +21,18 @@ db:
 		echo "Running database container for the first time..."; \
 		docker run --name $(DB_NAME) -p $(DB_PORT):5432 -e POSTGRES_PASSWORD=$(DB_PASSWORD) -v $(DB_VOLUME):/var/lib/postgresql/data -d $(DB_IMAGE) -c max_connections=200; \
 	fi
+
+db-follow:
 	docker logs $(DB_NAME) --follow
+	
+db-stop:
+	echo "Stopping database container..."; \
+	docker stop $(DB_NAME); \
+
+db-remove:
+	echo "Removing database container..."; \
+	docker stop $(DB_NAME); \
+	docker rm -f $(DB_NAME); \
 
 gen-types:
 	openapi-generator generate \

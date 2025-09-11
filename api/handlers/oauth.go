@@ -3,29 +3,36 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/TDiblik/project-template/api/constants"
 	"github.com/TDiblik/project-template/api/database"
 	"github.com/TDiblik/project-template/api/models"
 	"github.com/TDiblik/project-template/api/utils"
 	"github.com/gofiber/fiber/v3"
 )
 
-var githubOauthStateCookieName = "oauthstate_github"
+const githubProviderName = "GitHub"
+
+type GithubRedirectResponse struct {
+	OAuthState  string `json:"oauth_state"`
+	RedirectURL string `json:"redirect_url"`
+}
 
 func GithubRedirect(c fiber.Ctx) error {
-	state, err := utils.GenerateAndSetOauthStateCookie(c, githubOauthStateCookieName, constants.OAUTH_GITHUB_RETURN_PATH)
+	state, err := utils.GenerateOauthState(githubProviderName)
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
-	return c.Redirect().To(utils.EnvData.OAUTH_CONFIG_GITHUB.AuthCodeURL(state))
+	utils.Log(state)
+	return utils.OkResponse(c, GithubRedirectResponse{
+		OAuthState:  state,
+		RedirectURL: utils.EnvData.OAUTH_CONFIG_GITHUB.AuthCodeURL(state),
+	})
 }
 
-type GithubReturnQuery struct {
+type OAuthPostReturQuery struct {
 	State string `query:"state" validate:"required"`
 	Code  string `query:"code" validate:"required"`
 }
@@ -38,32 +45,46 @@ type GithubUserResponse struct {
 	AvatarURL string `json:"avatar_url"`
 }
 
-func GithubReturn(c fiber.Ctx) error {
-	var query GithubReturnQuery
+func OAuthPostReturn(c fiber.Ctx) error {
+	var query OAuthPostReturQuery
 	if err := utils.GetValidQuery(&query, c); err != nil {
 		return utils.InvalidRequestResponse(c, err)
 	}
 
-	cookieState := utils.GetOauthStateCookie(c, githubOauthStateCookieName)
-	if query.State != cookieState || query.State == "" {
-		return utils.UnauthorizedResponse(c, errors.New("invalid OAuth state"))
+	if query.State == "" || !utils.CheckOauthState(query.State) {
+		return utils.UnauthorizedResponse(c, fmt.Errorf("invalid OAuth state"))
 	}
 
-	token, err := utils.EnvData.OAUTH_CONFIG_GITHUB.Exchange(context.Background(), query.Code)
+	provider, err := utils.GetOauthProvider(query.State)
 	if err != nil {
-		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to exchange token: %w", err))
+		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider name inside the state: %w", err))
+	}
+
+	if provider == githubProviderName {
+		if err := githubReturn(query.Code); err != nil {
+			return utils.InternalServerErrorResponse(c, err)
+		}
+	}
+
+	return utils.OkResponse(c, fiber.Map{})
+}
+
+func githubReturn(authCode string) error {
+	token, err := utils.EnvData.OAUTH_CONFIG_GITHUB.Exchange(context.Background(), authCode)
+	if err != nil {
+		return fmt.Errorf("failed to exchange token: %w", err)
 	}
 
 	client := utils.EnvData.OAUTH_CONFIG_GITHUB.Client(context.Background(), token)
 	resp, err := client.Get("https://api.github.com/user")
 	if err != nil {
-		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to get user info: %w", err))
+		return fmt.Errorf("failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
 
 	var ghUserResponse GithubUserResponse
 	if err := json.NewDecoder(resp.Body).Decode(&ghUserResponse); err != nil {
-		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to decode user info: %w", err))
+		return fmt.Errorf("failed to decode user info: %w", err)
 	}
 	var firstName, lastName string
 	if ghUserResponse.Name != "" {
@@ -86,11 +107,10 @@ func GithubReturn(c fiber.Ctx) error {
 	})
 
 	if err != nil {
-		// todo: redirect to some error page saying that there was a problem while connecting to a provider
-		return utils.InternalServerErrorResponse(c, err)
+		return err
 	}
 
-	return utils.OkResponse(c, fiber.Map{})
+	return nil
 }
 
 func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) error {

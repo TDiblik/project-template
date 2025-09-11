@@ -86,7 +86,13 @@ func main() {
 			EnableStackTrace:  utils.EnvData.Debug,
 		},
 	))
-	app.Use(cors.New())
+	app.Use(cors.New(
+		cors.Config{
+			AllowOrigins:     []string{utils.EnvData.FE_PROD_URL}, // frontend origin
+			AllowCredentials: true,
+			AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		},
+	))
 	log.Println("Setting up the app: done")
 
 	log.Println("Setting up the routes: start")

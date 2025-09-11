@@ -21,8 +21,11 @@ type IEnvData struct {
 	DB_MIGRATIONS_PATH        string
 	DB_DEV_FORCE_MIGRATE_DOWN bool
 
-	AUTH_SECRET       string
+	AUTH_JWT_SECRET   string
 	AUTH_SECRET_BYTES []byte
+
+	OAUTH_JWT_SECRET   string
+	OAUTH_SECRET_BYTES []byte
 
 	OAUTH_GITHUB_CLIENT_ID     string
 	OAUTH_GITHUB_CLIENT_SECRET string
@@ -82,8 +85,11 @@ func SetupENV(env_files ...string) {
 		EnvData.FE_PROD_URL += "/"
 	}
 
-	EnvData.AUTH_SECRET = getEnvKeyOrPanic("AUTH_SECRET")
-	EnvData.AUTH_SECRET_BYTES = []byte(EnvData.AUTH_SECRET)
+	EnvData.AUTH_JWT_SECRET = getEnvKeyOrPanic("AUTH_JWT_SECRET")
+	EnvData.AUTH_SECRET_BYTES = []byte(EnvData.AUTH_JWT_SECRET)
+
+	EnvData.OAUTH_JWT_SECRET = getEnvKeyOrPanic("OAUTH_JWT_SECRET")
+	EnvData.OAUTH_SECRET_BYTES = []byte(EnvData.OAUTH_JWT_SECRET)
 
 	// when adding a new oauth provider and user table fields, add the checks here:
 	EnvData.OAUTH_GITHUB_CLIENT_ID = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_ID")
@@ -93,7 +99,7 @@ func SetupENV(env_files ...string) {
 		ClientSecret: EnvData.OAUTH_GITHUB_CLIENT_SECRET,
 		Scopes:       []string{"read:user", "user:email"},
 		Endpoint:     github.Endpoint,
-		RedirectURL:  JoinUrlOrPanic(EnvData.API_PROD_URL, "/api/v1/auth/oauth/github/return"),
+		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
 	}
 
 	// EnvData.MAIL_CLIENT_AUTOMATION_HOST = getEnvKeyOrPanic("MAIL_CLIENT_AUTOMATION_HOST")

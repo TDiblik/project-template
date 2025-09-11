@@ -1,11 +1,9 @@
 import {useState} from "react";
 import {FaInstagram, FaGithub, FaFacebook, FaGoogle} from "react-icons/fa";
-import {config} from "../../api/api";
+import {oAuthRedirectController} from "../../utils/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
-
-  console.log(config);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-base-200">
@@ -34,7 +32,10 @@ export default function Login() {
 
         {/* Social login buttons */}
         <div className="grid grid-cols-2 gap-3">
-          <button className="btn btn-outline w-full flex items-center gap-2">
+          <button
+            className="btn btn-outline w-full flex items-center gap-2"
+            onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGithubGet().then((s) => (window.location.href = s.redirectUrl!))}
+          >
             <FaGoogle /> Google
           </button>
           <button className="btn btn-outline w-full flex items-center gap-2">

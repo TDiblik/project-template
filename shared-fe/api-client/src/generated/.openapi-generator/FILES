@@ -1,5 +1,8 @@
 apis/ApiApi.ts
-apis/ApiV1AuthOauthGithubApi.ts
+apis/ApiV1AuthOauthApi.ts
+apis/ApiV1AuthOauthRedirectApi.ts
 apis/index.ts
 index.ts
+models/GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse.ts
+models/index.ts
 runtime.ts

@@ -23,15 +23,18 @@ func SetupRoutes(app *fiber.App) {
 	api_auth := api_v1.Group("/auth")
 
 	api_oauth := api_auth.Group("/oauth")
-
-	api_oauth_github := api_oauth.Group("/github")
-	api_oauth_github.Get("/redirect", &gofiberswagger.RouteInfo{}, handlers.GithubRedirect)
-	api_oauth_github.Get("/return", &gofiberswagger.RouteInfo{
+	api_oauth.Get("/return", &gofiberswagger.RouteInfo{
 		Parameters: gofiberswagger.NewParameters(
 			gofiberswagger.NewQueryParameter("state"),
 			gofiberswagger.NewQueryParameter("code"),
 		),
-	}, handlers.GithubReturn)
+	}, handlers.OAuthPostReturn)
+	api_oauth_redirect := api_oauth.Group("/redirect")
+	api_oauth_redirect.Get("/github", &gofiberswagger.RouteInfo{
+		Responses: gofiberswagger.NewResponses(
+			gofiberswagger.NewResponseInfo[handlers.GithubRedirectResponse]("200", "ok"),
+		),
+	}, handlers.GithubRedirect)
 
 	if utils.EnvData.Debug {
 		gofiberswagger.Register(app, gofiberswagger.Config{

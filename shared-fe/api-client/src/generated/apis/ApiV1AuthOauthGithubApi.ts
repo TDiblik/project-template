@@ -14,6 +14,13 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse,
+} from '../models/index';
+import {
+    GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseToJSON,
+} from '../models/index';
 
 export interface ApiV1AuthOauthGithubReturnGetRequest {
     state?: string;
@@ -27,7 +34,7 @@ export class ApiV1AuthOauthGithubApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthGithubRedirectGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async apiV1AuthOauthGithubRedirectGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -46,13 +53,14 @@ export class ApiV1AuthOauthGithubApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthGithubRedirectGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1AuthOauthGithubRedirectGetRaw(initOverrides);
+    async apiV1AuthOauthGithubRedirectGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse> {
+        const response = await this.apiV1AuthOauthGithubRedirectGetRaw(initOverrides);
+        return await response.value();
     }
 
     /**
