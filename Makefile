@@ -4,7 +4,7 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install db db-follow db-stop db-remove gen-types fe fe-install
+.PHONY: api api-install api-update db db-follow db-stop db-remove gen-types fe fe-install
 
 # ---------- Backend ----------
 api:
@@ -12,6 +12,10 @@ api:
 
 api-install:
 	cd ./api && go mod tidy
+
+api-update:
+	cd ./api && go get -u all && go mod tidy
+
 
 db:
 	@if [ $$(docker ps -a -q -f name=$(DB_NAME)) ]; then \
