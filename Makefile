@@ -4,7 +4,7 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-update db db-follow db-stop db-remove gen-types fe fe-install
+.PHONY: api api-install api-update db db-follow db-stop db-remove gen-types fe fe-install fe-update install update
 
 # ---------- Backend ----------
 api:
@@ -16,7 +16,7 @@ api-install:
 api-update:
 	cd ./api && go get -u all && go mod tidy
 
-
+# ---------- Database ----------
 db:
 	@if [ $$(docker ps -a -q -f name=$(DB_NAME)) ]; then \
 		echo "Starting existing database container..."; \
@@ -53,3 +53,11 @@ fe:
 
 fe-install:
 	cd ./fe && yarn
+
+fe-update:
+	cd ./fe && yarn upgrade --latest
+
+# ---------- Combined Targets ----------
+install: api-install fe-install gen-types
+
+update: api-update fe-update gen-types

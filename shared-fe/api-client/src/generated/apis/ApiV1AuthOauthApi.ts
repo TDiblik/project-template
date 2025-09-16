@@ -14,10 +14,17 @@
 
 
 import * as runtime from '../runtime';
+import type {
+  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse,
+} from '../models/index';
+import {
+    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseToJSON,
+} from '../models/index';
 
 export interface ApiV1AuthOauthReturnGetRequest {
-    state?: string;
-    code?: string;
+    state: string;
+    code: string;
 }
 
 /**
@@ -27,7 +34,21 @@ export class ApiV1AuthOauthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthReturnGetRaw(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async apiV1AuthOauthReturnGetRaw(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse>> {
+        if (requestParameters['state'] == null) {
+            throw new runtime.RequiredError(
+                'state',
+                'Required parameter "state" was null or undefined when calling apiV1AuthOauthReturnGet().'
+            );
+        }
+
+        if (requestParameters['code'] == null) {
+            throw new runtime.RequiredError(
+                'code',
+                'Required parameter "code" was null or undefined when calling apiV1AuthOauthReturnGet().'
+            );
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters['state'] != null) {
@@ -54,13 +75,14 @@ export class ApiV1AuthOauthApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthReturnGet(requestParameters: ApiV1AuthOauthReturnGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1AuthOauthReturnGetRaw(requestParameters, initOverrides);
+    async apiV1AuthOauthReturnGet(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse> {
+        const response = await this.apiV1AuthOauthReturnGetRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

@@ -30,7 +30,6 @@ export default defineConfig(() => ({
           if (id.includes("node_modules")) {
             return "vendor";
           }
-          console.log(id);
           if (id.includes("shared-fe")) {
             return "shared-fe";
           }

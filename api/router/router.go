@@ -25,8 +25,11 @@ func SetupRoutes(app *fiber.App) {
 	api_oauth := api_auth.Group("/oauth")
 	api_oauth.Get("/return", &gofiberswagger.RouteInfo{
 		Parameters: gofiberswagger.NewParameters(
-			gofiberswagger.NewQueryParameter("state"),
-			gofiberswagger.NewQueryParameter("code"),
+			gofiberswagger.NewQueryParameterRequired("state"),
+			gofiberswagger.NewQueryParameterRequired("code"),
+		),
+		Responses: gofiberswagger.NewResponses(
+			gofiberswagger.NewResponseInfo[handlers.OAuthPostReturnResponse]("200", "ok"),
 		),
 	}, handlers.OAuthPostReturn)
 	api_oauth_redirect := api_oauth.Group("/redirect")

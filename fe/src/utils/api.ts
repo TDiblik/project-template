@@ -9,5 +9,3 @@ const config = new Configuration({
 
 export const oAuthController = new ApiV1AuthOauthApi(config);
 export const oAuthRedirectController = new ApiV1AuthOauthRedirectApi(config);
-
-console.log(config);

@@ -11,6 +11,7 @@ import (
 	"github.com/TDiblik/project-template/api/models"
 	"github.com/TDiblik/project-template/api/utils"
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 )
 
 const githubProviderName = "GitHub"
@@ -20,6 +21,7 @@ type GithubRedirectResponse struct {
 	RedirectURL string `json:"redirect_url"`
 }
 
+// todo: add param: isMobile, redirectToPage
 func GithubRedirect(c fiber.Ctx) error {
 	state, err := utils.GenerateOauthState(githubProviderName)
 	if err != nil {
@@ -37,12 +39,9 @@ type OAuthPostReturQuery struct {
 	Code  string `query:"code" validate:"required"`
 }
 
-type GithubUserResponse struct {
-	ID        int64  `json:"id"`
-	Login     string `json:"login"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	AvatarURL string `json:"avatar_url"`
+type OAuthPostReturnResponse struct {
+	AuthToken string `json:"auth_token" validate:"required"`
+	// todo: Add redirectToPage, which is taken from token
 }
 
 func OAuthPostReturn(c fiber.Ctx) error {
@@ -51,7 +50,7 @@ func OAuthPostReturn(c fiber.Ctx) error {
 		return utils.InvalidRequestResponse(c, err)
 	}
 
-	if query.State == "" || !utils.CheckOauthState(query.State) {
+	if query.State == "" || !utils.IsValidOauthState(query.State) {
 		return utils.UnauthorizedResponse(c, fmt.Errorf("invalid OAuth state"))
 	}
 
@@ -60,31 +59,61 @@ func OAuthPostReturn(c fiber.Ctx) error {
 		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider name inside the state: %w", err))
 	}
 
+	var userUUID uuid.UUID
+	// when adding a new oauth provider and user table fields, add new "else if" here:
 	if provider == githubProviderName {
-		if err := githubReturn(query.Code); err != nil {
+		if userUUID, err = githubReturn(query.Code); err != nil {
 			return utils.InternalServerErrorResponse(c, err)
 		}
+	} else {
+		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider name (not implemented) inside the state: %w", err))
 	}
 
-	return utils.OkResponse(c, fiber.Map{})
+	db, err := database.CreateConnection()
+	if err != nil {
+		return fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
+	}
+
+	var userInfo models.UsersModelDB
+	err = db.Get(&userInfo, `select * from users where id = $1`, userUUID)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to select existing user: %w", err))
+	}
+
+	newAuthToken, err := utils.GenerateJWT(userInfo)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to generate new oauth token: %w", err))
+	}
+
+	return utils.OkResponse(c, OAuthPostReturnResponse{
+		AuthToken: newAuthToken,
+	})
 }
 
-func githubReturn(authCode string) error {
+type githubUserApiResponse struct {
+	ID        int64  `json:"id"`
+	Login     string `json:"login"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	AvatarURL string `json:"avatar_url"`
+}
+
+func githubReturn(authCode string) (uuid.UUID, error) {
 	token, err := utils.EnvData.OAUTH_CONFIG_GITHUB.Exchange(context.Background(), authCode)
 	if err != nil {
-		return fmt.Errorf("failed to exchange token: %w", err)
+		return uuid.Nil, fmt.Errorf("failed to exchange token: %w", err)
 	}
 
 	client := utils.EnvData.OAUTH_CONFIG_GITHUB.Client(context.Background(), token)
 	resp, err := client.Get("https://api.github.com/user")
 	if err != nil {
-		return fmt.Errorf("failed to get user info: %w", err)
+		return uuid.Nil, fmt.Errorf("failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
 
-	var ghUserResponse GithubUserResponse
+	var ghUserResponse githubUserApiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&ghUserResponse); err != nil {
-		return fmt.Errorf("failed to decode user info: %w", err)
+		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 	var firstName, lastName string
 	if ghUserResponse.Name != "" {
@@ -95,7 +124,7 @@ func githubReturn(authCode string) error {
 		}
 	}
 
-	err = CreateOrUpdateUser(models.UsersModelDB{
+	return CreateOrUpdateUser(models.UsersModelDB{
 		Email:         ghUserResponse.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(firstName),
@@ -105,51 +134,56 @@ func githubReturn(authCode string) error {
 		GithubHandle:  utils.SQLNullStringFromString(ghUserResponse.Login),
 		AvatarUrl:     utils.SQLNullStringFromString(ghUserResponse.AvatarURL),
 	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
-func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) error {
+func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) {
 	db, err := database.CreateConnection()
 	if err != nil {
-		return fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
+		return uuid.Nil, fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
 	}
 
-	var email_exists, handle_exists bool
+	var emailExists, handleExists bool
 	err = db.QueryRow(`select 
 		exists(select 1 from users where email = $1) as email_exists,
 		exists(select 1 from users where handle = $2) as handle_exists`,
-		possiblyNewUser.Email, possiblyNewUser.Handle).Scan(&email_exists, &handle_exists)
+		possiblyNewUser.Email, possiblyNewUser.Handle).Scan(&emailExists, &handleExists)
 	if err != nil {
-		return fmt.Errorf("unable to query exists staments inside CreateOrUpdateUser: %w", err)
+		return uuid.Nil, fmt.Errorf("unable to query exists staments inside CreateOrUpdateUser: %w", err)
 	}
 
-	if !email_exists {
-		if handle_exists {
+	var existingUser models.UsersModelDB
+	if !emailExists {
+		if handleExists {
 			possiblyNewUser.Handle = models.SQLNullString{}
 		}
 
-		// when adding a new oauth provider and user table fields, change the query here:
-		if _, err := db.NamedExec(
-			`insert into users (email, email_verified, handle, first_name, last_name, avatar_url, github_id, github_handle) 
-			values (:email, :email_verified, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_handle)`,
-			possiblyNewUser); err != nil {
-			return fmt.Errorf("unable to insert new user: %w", err)
+		rows, err := db.NamedQuery(`
+			insert into users (
+				email, email_verified, handle, first_name, last_name, avatar_url, github_id, github_handle
+			) 
+			values (
+				:email, :email_verified, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_handle
+			)
+			returning *
+		`, possiblyNewUser)
+		if err != nil {
+			return uuid.Nil, fmt.Errorf("unable to insert new user: %w", err)
+		}
+		defer rows.Close()
+		if !rows.Next() {
+			return uuid.Nil, fmt.Errorf("no user inserted, but no error provided ? this should never occured, user object: %+v", possiblyNewUser)
+		}
+		if err := rows.StructScan(&existingUser); err != nil {
+			return uuid.Nil, fmt.Errorf("unable to scan inserted user: %w", err)
 		}
 	}
-
-	if email_exists {
-		var existingUser models.UsersModelDB
+	if emailExists {
 		err := db.Get(&existingUser, `select * from users where email = $1`, possiblyNewUser.Email)
 		if err != nil {
-			return fmt.Errorf("unable to select existing user: %w", err)
+			return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
 		}
 
-		if !existingUser.Handle.Valid && !handle_exists {
+		if !existingUser.Handle.Valid && !handleExists {
 			existingUser.Handle = possiblyNewUser.Handle
 		}
 		if !existingUser.FirstName.Valid {
@@ -185,9 +219,9 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) error {
 				github_handle = :github_handle
 			where id = :id
 		`, existingUser); err != nil {
-			return fmt.Errorf("unable to update existing user: %w", err)
+			return uuid.Nil, fmt.Errorf("unable to update existing user: %w", err)
 		}
 	}
 
-	return nil
+	return existingUser.Id, nil
 }

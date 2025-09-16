@@ -17,7 +17,7 @@ func GenerateOauthState(oauthProviderName string) (string, error) {
 	return token.SignedString(EnvData.OAUTH_SECRET_BYTES)
 }
 
-func CheckOauthState(state string) bool {
+func IsValidOauthState(state string) bool {
 	token, err := jwt.Parse(state, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrInvalidType

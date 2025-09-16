@@ -32,13 +32,13 @@ export default function Login() {
 
         {/* Social login buttons */}
         <div className="grid grid-cols-2 gap-3">
+          <button className="btn btn-outline w-full flex items-center gap-2">
+            <FaGoogle /> Google
+          </button>
           <button
             className="btn btn-outline w-full flex items-center gap-2"
             onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGithubGet().then((s) => (window.location.href = s.redirectUrl!))}
           >
-            <FaGoogle /> Google
-          </button>
-          <button className="btn btn-outline w-full flex items-center gap-2">
             <FaGithub /> GitHub
           </button>
           <button className="btn btn-outline w-full flex items-center gap-2">
