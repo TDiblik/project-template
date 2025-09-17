@@ -3,4 +3,6 @@ export const routes = {
   login: "/login",
   loginOAuthRedired: "/login/oauth/redirect",
   logout: "/logout",
+  profile: "/profile",
+  settings: "/settings",
 };

@@ -4,6 +4,7 @@ import {routes} from "../../utils/routes";
 
 const Logout: React.FC = () => {
   React.useEffect(() => {
+    // easiest way to reset every state
     localStorage.removeItem(constants.LOCAL_STORAGE_TOKEN_KEY);
     window.location.href = routes.login;
   }, []);

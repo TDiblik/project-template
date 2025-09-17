@@ -25,13 +25,32 @@ export interface GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnRespon
      * @memberof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse
      */
     authToken: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse
+     */
+    redirectBackToAfterOauth: GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseRedirectBackToAfterOauthEnum;
 }
+
+
+/**
+ * @export
+ */
+export const GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseRedirectBackToAfterOauthEnum = {
+    Index: 'index',
+    Profile: 'profile',
+    Settings: 'settings'
+} as const;
+export type GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseRedirectBackToAfterOauthEnum = typeof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseRedirectBackToAfterOauthEnum[keyof typeof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseRedirectBackToAfterOauthEnum];
+
 
 /**
  * Check if a given object implements the GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse interface.
  */
 export function instanceOfGithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse(value: object): value is GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse {
     if (!('authToken' in value) || value['authToken'] === undefined) return false;
+    if (!('redirectBackToAfterOauth' in value) || value['redirectBackToAfterOauth'] === undefined) return false;
     return true;
 }
 
@@ -46,6 +65,7 @@ export function GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnRespons
     return {
         
         'authToken': json['auth_token'],
+        'redirectBackToAfterOauth': json['redirect_back_to_after_oauth'],
     };
 }
 
@@ -61,6 +81,7 @@ export function GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnRespons
     return {
         
         'auth_token': value['authToken'],
+        'redirect_back_to_after_oauth': value['redirectBackToAfterOauth'],
     };
 }
 

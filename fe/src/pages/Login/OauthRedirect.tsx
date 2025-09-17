@@ -2,6 +2,7 @@ import React from "react";
 import {useNavigate, useSearchParams} from "react-router";
 import {oAuthController} from "../../utils/api";
 import {useAuthTokenStore} from "../../stores/TokenStore";
+import {routes} from "../../utils/routes";
 
 const OAuthRedirect = () => {
   const navigate = useNavigate();
@@ -23,8 +24,18 @@ const OAuthRedirect = () => {
       })
       .then((s) => {
         setToken(s.authToken);
-        // todo: respect redirectToPage
-        navigate("/");
+        // when adding redirect url after oauth, add it here
+        switch (s.redirectBackToAfterOauth) {
+          case "index":
+            navigate(routes.index);
+            break;
+          case "profile":
+            navigate(routes.profile);
+            break;
+          case "settings":
+            navigate(routes.settings);
+            break;
+        }
       })
       .catch(() => {});
   }, [oAuthCode, oAuthState]);

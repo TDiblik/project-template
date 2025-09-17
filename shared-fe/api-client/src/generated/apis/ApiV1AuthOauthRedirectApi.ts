@@ -22,6 +22,10 @@ import {
     GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseToJSON,
 } from '../models/index';
 
+export interface ApiV1AuthOauthRedirectGithubGetRequest {
+    redirectBackToAfterOauth?: ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum;
+}
+
 /**
  * 
  */
@@ -29,8 +33,12 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse>> {
+    async apiV1AuthOauthRedirectGithubGetRaw(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse>> {
         const queryParameters: any = {};
+
+        if (requestParameters['redirectBackToAfterOauth'] != null) {
+            queryParameters['redirect_back_to_after_oauth'] = requestParameters['redirectBackToAfterOauth'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -53,9 +61,19 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse> {
-        const response = await this.apiV1AuthOauthRedirectGithubGetRaw(initOverrides);
+    async apiV1AuthOauthRedirectGithubGet(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse> {
+        const response = await this.apiV1AuthOauthRedirectGithubGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
+
+/**
+ * @export
+ */
+export const ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = {
+    Index: 'index',
+    Profile: 'profile',
+    Settings: 'settings'
+} as const;
+export type ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = typeof ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum];

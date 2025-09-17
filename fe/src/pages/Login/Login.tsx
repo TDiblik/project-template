@@ -11,7 +11,7 @@ export default function Login() {
   });
 
   const onSubmit = (data: LoginFirstPageFormType) => {
-    console.log("a");
+    console.log(data);
   };
 
   return (

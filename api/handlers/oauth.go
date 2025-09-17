@@ -21,9 +21,12 @@ type GithubRedirectResponse struct {
 	RedirectURL string `json:"redirect_url"`
 }
 
-// todo: add param: isMobile, redirectToPage
+// todo: add param: isMobile which returns oauth redirect for mobile phones using OAUTH_CONFIG_GITHUB_MOBILE that will be generated
 func GithubRedirect(c fiber.Ctx) error {
-	state, err := utils.GenerateOauthState(githubProviderName)
+	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
+	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
+
+	state, err := utils.GenerateOauthState(githubProviderName, redirectBackTo)
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
@@ -34,18 +37,18 @@ func GithubRedirect(c fiber.Ctx) error {
 	})
 }
 
-type OAuthPostReturQuery struct {
+type OAuthPostReturnQuery struct {
 	State string `query:"state" validate:"required"`
 	Code  string `query:"code" validate:"required"`
 }
 
 type OAuthPostReturnResponse struct {
-	AuthToken string `json:"auth_token" validate:"required"`
-	// todo: Add redirectToPage, which is taken from token
+	AuthToken                string                   `json:"auth_token" validate:"required"`
+	RedirectBackToAfterOauth utils.RedirectAfterOauth `json:"redirect_back_to_after_oauth" validate:"required"`
 }
 
 func OAuthPostReturn(c fiber.Ctx) error {
-	var query OAuthPostReturQuery
+	var query OAuthPostReturnQuery
 	if err := utils.GetValidQuery(&query, c); err != nil {
 		return utils.InvalidRequestResponse(c, err)
 	}
@@ -54,9 +57,9 @@ func OAuthPostReturn(c fiber.Ctx) error {
 		return utils.UnauthorizedResponse(c, fmt.Errorf("invalid OAuth state"))
 	}
 
-	provider, err := utils.GetOauthProvider(query.State)
+	provider, redirect, err := utils.GetOauthProviderAndRedirectFromOauthState(query.State)
 	if err != nil {
-		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider name inside the state: %w", err))
+		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider or redirect info inside the state: %w", err))
 	}
 
 	var userUUID uuid.UUID
@@ -86,7 +89,8 @@ func OAuthPostReturn(c fiber.Ctx) error {
 	}
 
 	return utils.OkResponse(c, OAuthPostReturnResponse{
-		AuthToken: newAuthToken,
+		AuthToken:                newAuthToken,
+		RedirectBackToAfterOauth: redirect,
 	})
 }
 

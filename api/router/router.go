@@ -34,6 +34,9 @@ func SetupRoutes(app *fiber.App) {
 	}, handlers.OAuthPostReturn)
 	api_oauth_redirect := api_oauth.Group("/redirect")
 	api_oauth_redirect.Get("/github", &gofiberswagger.RouteInfo{
+		Parameters: gofiberswagger.NewParameters(
+			gofiberswagger.INewQueryParameter[utils.RedirectAfterOauth]("redirect_back_to_after_oauth"),
+		),
 		Responses: gofiberswagger.NewResponses(
 			gofiberswagger.NewResponseInfo[handlers.GithubRedirectResponse]("200", "ok"),
 		),
