@@ -27,31 +27,15 @@ const Layout: React.FC<SidebarLayoutProps> = ({children}) => {
         </ul>
 
         <div className="p-6 border-t border-base-300 relative">
-          {/* <div className="dropdown dropdown-top dropdown-end">
-            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-              <div className="w-12 rounded-full">
-                <img src="https://i.pravatar.cc/300" alt="User Avatar" />
-              </div>
-            </label>
-            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mt-2">
-              <li>
-                <Link to="/profile">Profile Settings</Link>
-              </li>
-              <li>
-                <button onClick={() => alert("Logged out!")}>Logout</button>
-              </li>
-            </ul>
-          </div> */}
-
-          <details className="dropdown dropdown-top">
-            <summary className="btn m-1">
+          <div className="dropdown dropdown-top">
+            <div tabIndex={0} role="button" className="btn m-1">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-12 rounded-full">
                   <img src="https://i.pravatar.cc/300" alt="User Avatar" />
                 </div>
               </label>
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            </div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
               <li>
                 <a>Item 1</a>
               </li>
@@ -59,7 +43,7 @@ const Layout: React.FC<SidebarLayoutProps> = ({children}) => {
                 <a>Item 2</a>
               </li>
             </ul>
-          </details>
+          </div>
         </div>
       </div>
       <div className="flex-1 p-6 overflow-auto">{children}</div>
