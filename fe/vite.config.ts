@@ -1,5 +1,7 @@
 import {defineConfig} from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
+// commended out for now, because the docker build fails with @vitejs/plugin-react-swc
+// import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 // import {visualizer} from "rollup-plugin-visualizer";
@@ -30,7 +32,7 @@ export default defineConfig(() => ({
           if (id.includes("node_modules")) {
             return "vendor";
           }
-          if (id.includes("shared-fe")) {
+          if (id.includes("shared/fe")) {
             return "shared-fe";
           }
         },
@@ -39,7 +41,7 @@ export default defineConfig(() => ({
   },
   resolve: {
     alias: {
-      "@shared/api-client": path.resolve(__dirname, "../shared-fe/api-client/dist/index"),
+      "@shared/api-client": path.resolve(__dirname, "../shared/fe/api-client/dist/index"),
     },
   },
   server: {

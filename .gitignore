@@ -34,4 +34,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-shared-fe/api-client/dist
+shared/fe/api-client/dist

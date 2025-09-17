@@ -42,10 +42,10 @@ gen-types:
 	openapi-generator generate \
 		-i ./api/generated/swagger.yaml \
 		-g typescript-fetch \
-		-o ./shared-fe/api-client/src/generated \
+		-o ./shared/fe/api-client/src/generated \
 		--skip-validate-spec \
 		--additional-properties=supportsES6=true,npmVersion=$$(npm --version),typescriptThreePlus=true
-	cd ./shared-fe/api-client && yarn && yarn build
+	cd ./shared/fe/api-client && yarn && yarn build
 
 # ---------- Frontend ----------
 fe:

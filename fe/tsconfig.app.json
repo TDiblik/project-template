@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@shared/api-client": ["../shared-fe/api-client/dist/index"]
+      "@shared/api-client": ["../shared/fe/api-client/dist/index"]
     }
   },
   "include": ["src"]

@@ -74,16 +74,25 @@ func SetupRoutes(app *fiber.App) {
 		})
 	}
 
-	cache_duration := time.Second * 60 * 60 * 60
-	app.Use("/", static.New("./public", static.Config{
-		IndexNames:    []string{"index.html"},
-		Compress:      true,
-		CacheDuration: cache_duration,
-	}))
-	app.Get("/*", func(c fiber.Ctx) error {
-		return c.SendFile("./public/index.html", fiber.SendFile{
+	if !utils.EnvData.Debug {
+		cache_duration := time.Second * 60 * 60 * 60
+		app.Use("/", static.New("./public", static.Config{
+			IndexNames:    []string{"index.html"},
 			Compress:      true,
 			CacheDuration: cache_duration,
+		}))
+
+		app.Get("/*", func(c fiber.Ctx) error {
+			return c.SendFile("./public/index.html", fiber.SendFile{
+				Compress:      true,
+				CacheDuration: cache_duration,
+			})
 		})
-	})
+	} else {
+		api.Get("/", nil, func(c fiber.Ctx) error {
+			return utils.OkResponse(c, fiber.Map{
+				"message": "this is a default index dev page",
+			})
+		})
+	}
 }

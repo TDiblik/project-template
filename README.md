@@ -22,5 +22,5 @@ docker container logs project-template_db --follow
 ```
 
 ```
-openapi-generator generate -i ./api/generated/swagger.yaml -g typescript-fetch -o ./shared-fe/api-client/src/generated --skip-validate-spec --additional-properties=supportsES6=true,npmVersion=$(npm --version),typescriptThreePlus=true
+docker build -t docker-registry.dev.tomasdiblik.cz/project-template-app:vX.X.X --build-arg app_port=45377 --no-cache -f Dockerfile.app .
 ```
