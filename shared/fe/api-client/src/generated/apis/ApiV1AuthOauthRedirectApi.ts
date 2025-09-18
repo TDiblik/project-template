@@ -15,15 +15,27 @@
 
 import * as runtime from '../runtime';
 import type {
-  GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse,
+  GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse,
 } from '../models/index';
 import {
-    GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseToJSON,
 } from '../models/index';
+
+export interface ApiV1AuthOauthRedirectFacebookGetRequest {
+    redirectBackToAfterOauth?: ApiV1AuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum;
+}
 
 export interface ApiV1AuthOauthRedirectGithubGetRequest {
     redirectBackToAfterOauth?: ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum;
+}
+
+export interface ApiV1AuthOauthRedirectGoogleGetRequest {
+    redirectBackToAfterOauth?: ApiV1AuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum;
+}
+
+export interface ApiV1AuthOauthRedirectSpotifyGetRequest {
+    redirectBackToAfterOauth?: ApiV1AuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum;
 }
 
 /**
@@ -33,7 +45,42 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGetRaw(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse>> {
+    async apiV1AuthOauthRedirectFacebookGetRaw(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['redirectBackToAfterOauth'] != null) {
+            queryParameters['redirect_back_to_after_oauth'] = requestParameters['redirectBackToAfterOauth'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+
+        let urlPath = `/api/v1/auth/oauth/redirect/facebook`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectFacebookGet(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+        const response = await this.apiV1AuthOauthRedirectFacebookGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectGithubGetRaw(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['redirectBackToAfterOauth'] != null) {
@@ -56,18 +103,97 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGet(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersGithubRedirectResponse> {
+    async apiV1AuthOauthRedirectGithubGet(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
         const response = await this.apiV1AuthOauthRedirectGithubGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectGoogleGetRaw(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['redirectBackToAfterOauth'] != null) {
+            queryParameters['redirect_back_to_after_oauth'] = requestParameters['redirectBackToAfterOauth'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+
+        let urlPath = `/api/v1/auth/oauth/redirect/google`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectGoogleGet(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+        const response = await this.apiV1AuthOauthRedirectGoogleGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectSpotifyGetRaw(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['redirectBackToAfterOauth'] != null) {
+            queryParameters['redirect_back_to_after_oauth'] = requestParameters['redirectBackToAfterOauth'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+
+        let urlPath = `/api/v1/auth/oauth/redirect/spotify`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiV1AuthOauthRedirectSpotifyGet(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+        const response = await this.apiV1AuthOauthRedirectSpotifyGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
 
+/**
+ * @export
+ */
+export const ApiV1AuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum = {
+    Index: 'index',
+    Profile: 'profile',
+    Settings: 'settings'
+} as const;
+export type ApiV1AuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum = typeof ApiV1AuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1AuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum];
 /**
  * @export
  */
@@ -77,3 +203,21 @@ export const ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = {
     Settings: 'settings'
 } as const;
 export type ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = typeof ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1AuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum];
+/**
+ * @export
+ */
+export const ApiV1AuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum = {
+    Index: 'index',
+    Profile: 'profile',
+    Settings: 'settings'
+} as const;
+export type ApiV1AuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum = typeof ApiV1AuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1AuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum];
+/**
+ * @export
+ */
+export const ApiV1AuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum = {
+    Index: 'index',
+    Profile: 'profile',
+    Settings: 'settings'
+} as const;
+export type ApiV1AuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum = typeof ApiV1AuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1AuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum];

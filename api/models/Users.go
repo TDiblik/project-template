@@ -22,6 +22,15 @@ type UsersModelDB struct {
 
 	GithubId     SQLNullString `db:"github_id"`
 	GithubHandle SQLNullString `db:"github_handle"`
+	GithubUrl    SQLNullString `db:"github_url"`
+
+	GoogleId SQLNullString `db:"google_id"`
+
+	FacebookId  SQLNullString `db:"facebook_id"`
+	FacebookUrl SQLNullString `db:"facebook_url"`
+
+	SpotifyId  SQLNullString `db:"spotify_id"`
+	SpotifyUrl SQLNullString `db:"spotify_url"`
 
 	LastLoginAt sql.NullTime `db:"last_login_at"`
 

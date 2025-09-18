@@ -33,7 +33,7 @@ const Layout: React.FC<SidebarLayoutProps> = ({children}) => {
         {/* Avatar Dropdown */}
         <div className="p-6 border-t border-base-300">
           <div className="dropdown dropdown-top">
-            <div tabIndex={0} className="cursor-pointer">
+            <div tabIndex={0} className="cursor-pointer flex items-center">
               <div className="btn btn-ghost btn-circle avatar">
                 <div className="w-12 rounded-full">
                   <img src="https://i.pravatar.cc/300" alt="User Avatar" />
@@ -43,6 +43,38 @@ const Layout: React.FC<SidebarLayoutProps> = ({children}) => {
             </div>
 
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-md">
+              <li>
+                <label className="flex cursor-pointer gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="5" />
+                    <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+                  </svg>
+                  <input type="checkbox" value="dark" className="toggle theme-controller" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                </label>
+              </li>
               <li>
                 <Link to={routes.settings}>Settings</Link>
               </li>

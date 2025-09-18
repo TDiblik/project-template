@@ -1,4 +1,4 @@
-import {FaInstagram, FaGithub, FaFacebook, FaGoogle} from "react-icons/fa";
+import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
 import {oAuthRedirectController} from "../../utils/api";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
@@ -31,20 +31,29 @@ export default function Login() {
         <div className="divider">Or continue with</div>
 
         <div className="grid grid-cols-2 gap-3">
-          <button className="btn btn-outline w-full flex items-center gap-2">
-            <FaInstagram /> Instagram
+          <button
+            className="btn btn-outline w-full flex items-center gap-2"
+            onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGoogleGet().then((s) => (window.location.href = s.redirectUrl!))}
+          >
+            <FaGoogle /> Google
+          </button>
+          <button
+            className="btn btn-outline w-full flex items-center gap-2"
+            onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectFacebookGet().then((s) => (window.location.href = s.redirectUrl!))}
+          >
+            <FaFacebook /> Facebook
+          </button>
+          <button
+            className="btn btn-outline w-full flex items-center gap-2"
+            onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectSpotifyGet().then((s) => (window.location.href = s.redirectUrl!))}
+          >
+            <FaSpotify /> Spotify
           </button>
           <button
             className="btn btn-outline w-full flex items-center gap-2"
             onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGithubGet().then((s) => (window.location.href = s.redirectUrl!))}
           >
             <FaGithub /> GitHub
-          </button>
-          <button className="btn btn-outline w-full flex items-center gap-2">
-            <FaGoogle /> Google
-          </button>
-          <button className="btn btn-outline w-full flex items-center gap-2">
-            <FaFacebook /> Facebook
           </button>
         </div>
       </div>

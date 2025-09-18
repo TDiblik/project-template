@@ -8,7 +8,10 @@ import (
 
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/facebook"
 	"golang.org/x/oauth2/github"
+	"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/spotify"
 )
 
 type IEnvData struct {
@@ -29,7 +32,19 @@ type IEnvData struct {
 
 	OAUTH_GITHUB_CLIENT_ID     string
 	OAUTH_GITHUB_CLIENT_SECRET string
-	OAUTH_CONFIG_GITHUB        *oauth2.Config
+	OAUTH_GITHUB_CONFIG        *oauth2.Config
+
+	OAUTH_GOOGLE_CLIENT_ID     string
+	OAUTH_GOOGLE_CLIENT_SECRET string
+	OAUTH_GOOGLE_CONFIG        *oauth2.Config
+
+	OAUTH_FACEBOOK_CLIENT_ID     string
+	OAUTH_FACEBOOK_CLIENT_SECRET string
+	OAUTH_FACEBOOK_CONFIG        *oauth2.Config
+
+	OAUTH_SPOTIFY_CLIENT_ID     string
+	OAUTH_SPOTIFY_CLIENT_SECRET string
+	OAUTH_SPOTIFY_CONFIG        *oauth2.Config
 
 	// MAIL_CLIENT_AUTOMATION_HOST     string
 	// MAIL_CLIENT_AUTOMATION_PORT     int
@@ -94,11 +109,41 @@ func SetupENV(env_files ...string) {
 	// when adding a new oauth provider and user table fields, add the checks here:
 	EnvData.OAUTH_GITHUB_CLIENT_ID = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_ID")
 	EnvData.OAUTH_GITHUB_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_GITHUB_CLIENT_SECRET")
-	EnvData.OAUTH_CONFIG_GITHUB = &oauth2.Config{
+	EnvData.OAUTH_GITHUB_CONFIG = &oauth2.Config{
 		ClientID:     EnvData.OAUTH_GITHUB_CLIENT_ID,
 		ClientSecret: EnvData.OAUTH_GITHUB_CLIENT_SECRET,
 		Scopes:       []string{"read:user", "user:email"},
 		Endpoint:     github.Endpoint,
+		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
+	}
+
+	EnvData.OAUTH_GOOGLE_CLIENT_ID = getEnvKeyOrPanic("OAUTH_GOOGLE_CLIENT_ID")
+	EnvData.OAUTH_GOOGLE_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_GOOGLE_CLIENT_SECRET")
+	EnvData.OAUTH_GOOGLE_CONFIG = &oauth2.Config{
+		ClientID:     EnvData.OAUTH_GOOGLE_CLIENT_ID,
+		ClientSecret: EnvData.OAUTH_GOOGLE_CLIENT_SECRET,
+		Scopes:       []string{"openid", "email", "profile"},
+		Endpoint:     google.Endpoint,
+		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
+	}
+
+	EnvData.OAUTH_FACEBOOK_CLIENT_ID = getEnvKeyOrPanic("OAUTH_FACEBOOK_CLIENT_ID")
+	EnvData.OAUTH_FACEBOOK_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_FACEBOOK_CLIENT_SECRET")
+	EnvData.OAUTH_FACEBOOK_CONFIG = &oauth2.Config{
+		ClientID:     EnvData.OAUTH_FACEBOOK_CLIENT_ID,
+		ClientSecret: EnvData.OAUTH_FACEBOOK_CLIENT_SECRET,
+		Scopes:       []string{"public_profile", "email", "user_link"},
+		Endpoint:     facebook.Endpoint,
+		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
+	}
+
+	EnvData.OAUTH_SPOTIFY_CLIENT_ID = getEnvKeyOrPanic("OAUTH_SPOTIFY_CLIENT_ID")
+	EnvData.OAUTH_SPOTIFY_CLIENT_SECRET = getEnvKeyOrPanic("OAUTH_SPOTIFY_CLIENT_SECRET")
+	EnvData.OAUTH_SPOTIFY_CONFIG = &oauth2.Config{
+		ClientID:     EnvData.OAUTH_SPOTIFY_CLIENT_ID,
+		ClientSecret: EnvData.OAUTH_SPOTIFY_CLIENT_SECRET,
+		Scopes:       []string{"user-read-email", "user-read-private"},
+		Endpoint:     spotify.Endpoint,
 		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
 	}
 

@@ -38,9 +38,35 @@ func SetupRoutes(app *fiber.App) {
 			gofiberswagger.INewQueryParameter[utils.RedirectAfterOauth]("redirect_back_to_after_oauth"),
 		),
 		Responses: gofiberswagger.NewResponses(
-			gofiberswagger.NewResponseInfo[handlers.GithubRedirectResponse]("200", "ok"),
+			gofiberswagger.NewResponseInfo[handlers.OauthRedirectResponse]("200", "ok"),
 		),
 	}, handlers.GithubRedirect)
+	api_oauth_redirect.Get("/google", &gofiberswagger.RouteInfo{
+		Parameters: gofiberswagger.NewParameters(
+			gofiberswagger.INewQueryParameter[utils.RedirectAfterOauth]("redirect_back_to_after_oauth"),
+		),
+		Responses: gofiberswagger.NewResponses(
+			gofiberswagger.NewResponseInfo[handlers.OauthRedirectResponse]("200", "ok"),
+		),
+	}, handlers.GoogleRedirect)
+	api_oauth_redirect.Get("/facebook", &gofiberswagger.RouteInfo{
+		Parameters: gofiberswagger.NewParameters(
+			gofiberswagger.INewQueryParameter[utils.RedirectAfterOauth]("redirect_back_to_after_oauth"),
+		),
+		Responses: gofiberswagger.NewResponses(
+			gofiberswagger.NewResponseInfo[handlers.OauthRedirectResponse]("200", "ok"),
+		),
+	}, handlers.FacebookRedirect)
+	api_oauth_redirect.Get("/spotify", &gofiberswagger.RouteInfo{
+		Parameters: gofiberswagger.NewParameters(
+			gofiberswagger.INewQueryParameter[utils.RedirectAfterOauth]("redirect_back_to_after_oauth"),
+		),
+		Responses: gofiberswagger.NewResponses(
+			gofiberswagger.NewResponseInfo[handlers.OauthRedirectResponse]("200", "ok"),
+		),
+	}, handlers.SpotifyRedirect)
+
+	// api_auth_basic := api_auth.Group("/basic")
 
 	if utils.EnvData.Debug {
 		gofiberswagger.Register(app, gofiberswagger.Config{

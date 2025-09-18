@@ -14,6 +14,15 @@ create table users (
     
     github_id text,
     github_handle text,
+    github_url text,
+    
+    google_id text,
+    
+    facebook_id text,
+    facebook_url text,
+    
+    spotify_id text,
+    spotify_url text,
 
     last_login_at timestamp,
 
