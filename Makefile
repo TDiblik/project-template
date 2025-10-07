@@ -55,9 +55,8 @@ fe-install:
 	cd ./fe && yarn
 
 fe-update:
-	cd ./fe && yarn upgrade --latest
+	cd ./fe && yarn update
 
 # ---------- Combined Targets ----------
 install: api-install fe-install gen-types
-
-update: api-update fe-update gen-types
+update: api-update fe-update install
