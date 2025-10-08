@@ -1,4 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse';
-export * from './GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse';
+export * from './GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponse';
+export * from './GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse';
+export * from './GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponse';
+export * from './GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBody';
+export * from './GithubComTDiblikProjectTemplateApiUtilsErrorResponseType';

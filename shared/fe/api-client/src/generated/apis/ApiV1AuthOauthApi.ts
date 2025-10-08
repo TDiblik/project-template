@@ -15,11 +15,14 @@
 
 import * as runtime from '../runtime';
 import type {
-  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse,
+  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponse,
+  GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
 } from '../models/index';
 import {
-    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseToJSON,
+    GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
+    GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
 
 export interface ApiV1AuthOauthReturnGetRequest {
@@ -34,7 +37,7 @@ export class ApiV1AuthOauthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthReturnGetRaw(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse>> {
+    async apiV1AuthOauthReturnGetRaw(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponse>> {
         if (requestParameters['state'] == null) {
             throw new runtime.RequiredError(
                 'state',
@@ -75,12 +78,12 @@ export class ApiV1AuthOauthApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthReturnGet(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnResponse> {
+    async apiV1AuthOauthReturnGet(requestParameters: ApiV1AuthOauthReturnGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponse> {
         const response = await this.apiV1AuthOauthReturnGetRaw(requestParameters, initOverrides);
         return await response.value();
     }

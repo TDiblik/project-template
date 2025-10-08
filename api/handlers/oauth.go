@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"strconv"
 	"strings"
@@ -22,13 +23,13 @@ const (
 	spotifyProviderName  = "Spotify"
 )
 
-type OauthRedirectResponse struct {
+type OauthRedirectHandlerResponse struct {
 	OAuthState  string `json:"oauth_state"`
 	RedirectURL string `json:"redirect_url"`
 }
 
 // todo: add param: isMobile which returns oauth redirect for mobile phones using OAUTH_CONFIG_GITHUB_MOBILE that will be generated
-func GithubRedirect(c fiber.Ctx) error {
+func GithubRedirectHandler(c fiber.Ctx) error {
 	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
 	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
 
@@ -36,13 +37,13 @@ func GithubRedirect(c fiber.Ctx) error {
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
-	return utils.OkResponse(c, OauthRedirectResponse{
+	return utils.OkResponse(c, OauthRedirectHandlerResponse{
 		OAuthState:  state,
 		RedirectURL: utils.EnvData.OAUTH_GITHUB_CONFIG.AuthCodeURL(state),
 	})
 }
 
-func GoogleRedirect(c fiber.Ctx) error {
+func GoogleRedirectHandler(c fiber.Ctx) error {
 	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
 	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
 
@@ -50,13 +51,13 @@ func GoogleRedirect(c fiber.Ctx) error {
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
-	return utils.OkResponse(c, OauthRedirectResponse{
+	return utils.OkResponse(c, OauthRedirectHandlerResponse{
 		OAuthState:  state,
 		RedirectURL: utils.EnvData.OAUTH_GOOGLE_CONFIG.AuthCodeURL(state),
 	})
 }
 
-func FacebookRedirect(c fiber.Ctx) error {
+func FacebookRedirectHandler(c fiber.Ctx) error {
 	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
 	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
 
@@ -64,13 +65,13 @@ func FacebookRedirect(c fiber.Ctx) error {
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
-	return utils.OkResponse(c, OauthRedirectResponse{
+	return utils.OkResponse(c, OauthRedirectHandlerResponse{
 		OAuthState:  state,
 		RedirectURL: utils.EnvData.OAUTH_FACEBOOK_CONFIG.AuthCodeURL(state),
 	})
 }
 
-func SpotifyRedirect(c fiber.Ctx) error {
+func SpotifyRedirectHandler(c fiber.Ctx) error {
 	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
 	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
 
@@ -78,24 +79,24 @@ func SpotifyRedirect(c fiber.Ctx) error {
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to generate OAuth state: %w", err))
 	}
-	return utils.OkResponse(c, OauthRedirectResponse{
+	return utils.OkResponse(c, OauthRedirectHandlerResponse{
 		OAuthState:  state,
 		RedirectURL: utils.EnvData.OAUTH_SPOTIFY_CONFIG.AuthCodeURL(state),
 	})
 }
 
-type OAuthPostReturnQuery struct {
+type OAuthPostReturnHandlerQuery struct {
 	State string `query:"state" validate:"required"`
 	Code  string `query:"code" validate:"required"`
 }
 
-type OAuthPostReturnResponse struct {
+type OAuthPostReturnHandlerResponse struct {
 	AuthToken                string                   `json:"auth_token" validate:"required"`
 	RedirectBackToAfterOauth utils.RedirectAfterOauth `json:"redirect_back_to_after_oauth" validate:"required"`
 }
 
-func OAuthPostReturn(c fiber.Ctx) error {
-	var query OAuthPostReturnQuery
+func OAuthPostReturnHandler(c fiber.Ctx) error {
+	var query OAuthPostReturnHandlerQuery
 	if err := utils.GetValidQuery(&query, c); err != nil {
 		return utils.InvalidRequestResponse(c, err)
 	}
@@ -132,23 +133,11 @@ func OAuthPostReturn(c fiber.Ctx) error {
 		return utils.InvalidRequestResponse(c, fmt.Errorf("invalid provider name (not implemented) inside the state: %w", err))
 	}
 
-	db, err := database.CreateConnection()
+	newAuthToken, err := GetJwtPostLogin(userUUID)
 	if err != nil {
-		return fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to execute GetJwtPostLogin: %w", err))
 	}
-
-	var userInfo models.UsersModelDB
-	err = db.Get(&userInfo, `update users set last_login_at = now() where id = $1 returning *`, userUUID)
-	if err != nil {
-		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to select existing user: %w", err))
-	}
-
-	newAuthToken, err := utils.GenerateJWT(userInfo)
-	if err != nil {
-		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to generate new oauth token: %w", err))
-	}
-
-	return utils.OkResponse(c, OAuthPostReturnResponse{
+	return utils.OkResponse(c, OAuthPostReturnHandlerResponse{
 		AuthToken:                newAuthToken,
 		RedirectBackToAfterOauth: redirect,
 	})
@@ -175,6 +164,11 @@ func githubReturn(authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return uuid.Nil, fmt.Errorf("GitHub API returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
 
 	var ghUserResponse githubUserApiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&ghUserResponse); err != nil {
@@ -225,6 +219,11 @@ func googleReturn(authCode string) (uuid.UUID, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return uuid.Nil, fmt.Errorf("google API returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
 	var gUser googleUserApiResponse
 	log.Println(resp.Body)
 	if err := json.NewDecoder(resp.Body).Decode(&gUser); err != nil {
@@ -270,6 +269,11 @@ func facebookReturn(authCode string) (uuid.UUID, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return uuid.Nil, fmt.Errorf("facebook API returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
 	var fbUser facebookUserApiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&fbUser); err != nil {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
@@ -310,6 +314,11 @@ func spotifyReturn(authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return uuid.Nil, fmt.Errorf("spotify API returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
 
 	var spUser spotifyUserApiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&spUser); err != nil {
@@ -365,10 +374,10 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		// when adding a new oauth provider and user table fields, add the checks here:
 		rows, err := db.NamedQuery(`
 			insert into users (
-				email, email_verified, handle, first_name, last_name, avatar_url, github_id, github_handle, github_url, google_id, facebook_id, facebook_url, spotify_id, spotify_url
+				email, email_verified, password_hash, handle, first_name, last_name, avatar_url, github_id, github_handle, github_url, google_id, facebook_id, facebook_url, spotify_id, spotify_url
 			) 
 			values (
-				:email, :email_verified, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_handle, :github_url, :google_id, :facebook_id, :facebook_url, :spotify_id, :spotify_url
+				:email, :email_verified, :password_hash, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_handle, :github_url, :google_id, :facebook_id, :facebook_url, :spotify_id, :spotify_url
 			)
 			returning *
 		`, possiblyNewUser)
@@ -389,6 +398,9 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 			return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
 		}
 
+		if !existingUser.PasswordHash.Valid {
+			existingUser.PasswordHash = possiblyNewUser.PasswordHash
+		}
 		if !existingUser.Handle.Valid && !handleExists {
 			existingUser.Handle = possiblyNewUser.Handle
 		}
@@ -434,6 +446,7 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		// when adding a new oauth provider and user table fields, change the query here:
 		if _, err := db.NamedExec(`
 			update users set
+				password_hash = :password_hash,
 				handle = :handle,
 				first_name = :first_name,
 				last_name = :last_name,
@@ -454,4 +467,24 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 	}
 
 	return existingUser.Id, nil
+}
+
+// This MUST always be called ONLY IF THE USER WAS 100% AUTHENTICATED USING OAUTH OR PASSWORD
+func GetJwtPostLogin(userUUID uuid.UUID) (string, error) {
+	db, err := database.CreateConnection()
+	if err != nil {
+		return "", fmt.Errorf("unable to create connection to db inside GetJwtPostLogin: %w", err)
+	}
+
+	var userInfo models.UsersModelDB
+	if err := db.Get(&userInfo, `update users set last_login_at = now() where id = $1 returning *`, userUUID); err != nil {
+		return "", fmt.Errorf("unable to select existing user: %w", err)
+	}
+
+	newAuthToken, err := utils.GenerateJWT(userInfo)
+	if err != nil {
+		return "", fmt.Errorf("unable to generate new oauth token: %w", err)
+	}
+
+	return newAuthToken, nil
 }

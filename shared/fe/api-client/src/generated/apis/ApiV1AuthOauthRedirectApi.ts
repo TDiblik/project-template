@@ -15,11 +15,14 @@
 
 import * as runtime from '../runtime';
 import type {
-  GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse,
+  GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse,
+  GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
 } from '../models/index';
 import {
-    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseToJSON,
+    GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
+    GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
 
 export interface ApiV1AuthOauthRedirectFacebookGetRequest {
@@ -45,7 +48,7 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthOauthRedirectFacebookGetRaw(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+    async apiV1AuthOauthRedirectFacebookGetRaw(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['redirectBackToAfterOauth'] != null) {
@@ -68,19 +71,19 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectFacebookGet(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+    async apiV1AuthOauthRedirectFacebookGet(requestParameters: ApiV1AuthOauthRedirectFacebookGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse> {
         const response = await this.apiV1AuthOauthRedirectFacebookGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGetRaw(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+    async apiV1AuthOauthRedirectGithubGetRaw(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['redirectBackToAfterOauth'] != null) {
@@ -103,19 +106,19 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectGithubGet(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+    async apiV1AuthOauthRedirectGithubGet(requestParameters: ApiV1AuthOauthRedirectGithubGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse> {
         const response = await this.apiV1AuthOauthRedirectGithubGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectGoogleGetRaw(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+    async apiV1AuthOauthRedirectGoogleGetRaw(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['redirectBackToAfterOauth'] != null) {
@@ -138,19 +141,19 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectGoogleGet(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+    async apiV1AuthOauthRedirectGoogleGet(requestParameters: ApiV1AuthOauthRedirectGoogleGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse> {
         const response = await this.apiV1AuthOauthRedirectGoogleGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectSpotifyGetRaw(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse>> {
+    async apiV1AuthOauthRedirectSpotifyGetRaw(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse>> {
         const queryParameters: any = {};
 
         if (requestParameters['redirectBackToAfterOauth'] != null) {
@@ -173,12 +176,12 @@ export class ApiV1AuthOauthRedirectApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthOauthRedirectSpotifyGet(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectResponse> {
+    async apiV1AuthOauthRedirectSpotifyGet(requestParameters: ApiV1AuthOauthRedirectSpotifyGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse> {
         const response = await this.apiV1AuthOauthRedirectSpotifyGetRaw(requestParameters, initOverrides);
         return await response.value();
     }

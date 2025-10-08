@@ -3,8 +3,27 @@ package utils
 import (
 	"fmt"
 
+	"github.com/TDiblik/gofiber-swagger/gofiberswagger"
 	"github.com/gofiber/fiber/v3"
 )
+
+type ErrorResponseType struct {
+	Status string `json:"status" validate:"required"`
+	Msg    string `json:"msg" validate:"required"`
+}
+
+var DefaultErrorResponses = []gofiberswagger.ResponseInfo{
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("400", "invalid request"),
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("401", "user unauthenticated"),
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("403", "user unauthorized"),
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("404", "not found"),
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("409", "conflicting request"),
+	gofiberswagger.NewResponseInfo[ErrorResponseType]("500", "internal server error"),
+}
+
+func NewSwaggerResponsesWithErrors(responses ...gofiberswagger.ResponseInfo) *gofiberswagger.Responses {
+	return gofiberswagger.NewResponses(append(responses, DefaultErrorResponses...)...)
+}
 
 func InvalidRequestResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
@@ -33,9 +52,9 @@ func UnauthentizatedResponse(c fiber.Ctx, e error) error {
 func UnauthorizedResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
 	if EnvData.Debug {
-		return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unatuhorized", "message": "you cannot access this endpoint", "error_info": fmt.Sprint(e)})
+		return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unauthorized", "message": "you cannot access this endpoint", "error_info": fmt.Sprint(e)})
 	}
-	return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unatuhorized"})
+	return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unauthorized"})
 }
 
 func ConflictResponse(c fiber.Ctx, msg_reason string) error {

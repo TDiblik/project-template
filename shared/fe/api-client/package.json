@@ -10,7 +10,7 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "start": "dts watch",
+    "start": "yarn build --watch",
     "build": "tsup src/index.ts --format esm --dts --out-dir dist --target es2022 --sourcemap"
   },
   "dependencies": {

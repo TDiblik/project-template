@@ -1,0 +1,105 @@
+package handlers
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/TDiblik/project-template/api/database"
+	"github.com/TDiblik/project-template/api/models"
+	"github.com/TDiblik/project-template/api/utils"
+	"github.com/gofiber/fiber/v3"
+)
+
+type SignUpRequestBody struct {
+	Email       string `json:"email" validate:"required,email"`
+	Password    string `json:"password" validate:"required,min=6"`
+	UseUsername bool   `json:"useUsername"`
+	FirstName   string `json:"firstName,omitempty"`
+	LastName    string `json:"lastName,omitempty"`
+	Username    string `json:"username,omitempty"`
+}
+
+func (req *SignUpRequestBody) validateSignUpRequestBody() error {
+	if len([]byte(req.Password)) > 72 {
+		return fmt.Errorf("password cannot exceed 72 bytes (bcrypt limit)")
+	}
+	if req.UseUsername {
+		if strings.TrimSpace(req.Username) == "" {
+			return fmt.Errorf("username is required")
+		}
+		if len(req.Username) < 3 {
+			return fmt.Errorf("username must have at least 3 characters")
+		}
+	} else {
+		if strings.TrimSpace(req.FirstName) == "" {
+			return fmt.Errorf("first name is required")
+		}
+		if strings.TrimSpace(req.LastName) == "" {
+			return fmt.Errorf("last name is required")
+		}
+	}
+	return nil
+}
+
+type SignUpHandlerResponse struct {
+	AuthToken string `json:"auth_token" validate:"required"`
+}
+
+func SignUpHandler(c fiber.Ctx) error {
+	var req SignUpRequestBody
+	if err := utils.GetValidRequestBody(&req, c); err != nil {
+		return utils.InvalidRequestResponse(c, err)
+	}
+	if err := req.validateSignUpRequestBody(); err != nil {
+		return utils.InvalidRequestResponse(c, err)
+	}
+
+	hashedPassword, err := utils.HashPassword(req.Password)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to hash password: %w", err))
+	}
+
+	db, err := database.CreateConnection()
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to create db connection: %w", err))
+	}
+
+	var emailExists bool
+	if err := db.QueryRow(`SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, req.Email).Scan(&emailExists); err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to check existing user: %w", err))
+	}
+	if emailExists {
+		return utils.ConflictResponse(c, "msg.login.email_already_in_use")
+	}
+
+	var newUser = models.UsersModelDB{
+		Email:         req.Email,
+		EmailVerified: false,
+		FirstName:     utils.SQLNullStringFromString(req.FirstName),
+		LastName:      utils.SQLNullStringFromString(req.LastName),
+		PasswordHash:  utils.SQLNullStringFromString(hashedPassword),
+	}
+	if req.UseUsername {
+		var handleExists bool
+		if err := db.QueryRow(`SELECT EXISTS(SELECT 1 FROM users WHERE handle = $1)`, req.Username).Scan(&handleExists); err != nil {
+			return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to check existing user: %w", err))
+		}
+		if handleExists {
+			return utils.ConflictResponse(c, "msg.login.handle_already_in_use")
+		}
+		newUser.Handle = utils.SQLNullStringFromString(req.Username)
+	}
+
+	userUUID, err := CreateOrUpdateUser(newUser)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, err)
+	}
+	newAuthToken, err := GetJwtPostLogin(userUUID)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, fmt.Errorf("unable to execute GetJwtPostLogin: %w", err))
+	}
+
+	return utils.OkResponse(c, SignUpHandlerResponse{
+		AuthToken: newAuthToken,
+	})
+}
