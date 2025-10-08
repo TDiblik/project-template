@@ -14,7 +14,7 @@ api-install:
 	cd ./api && go mod tidy
 
 api-update:
-	cd ./api && go get -u all && go mod tidy
+	cd ./api && go get -u all && go mod tidy && gofmt -w -l .
 
 # ---------- Database ----------
 db:
