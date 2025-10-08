@@ -56,7 +56,9 @@ fe-install:
 	cd ./fe && yarn
 
 fe-update:
-	cd ./fe && yarn update && cd ../shared/fe/api-client && yarn update
+	cd ./fe && yarn update && \
+	cd ../shared/fe/api-client && yarn update && \
+	cd ../../../fe && yarn lint
 
 # ---------- Combined Targets ----------
 install: api-install fe-install gen-types

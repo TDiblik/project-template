@@ -11,7 +11,7 @@ const delayed = (delay: number) =>
     initial: {opacity: 0, y: 5},
     animate: {opacity: 1, y: 0},
     transition: {delay},
-  } as HTMLMotionProps<"p"> | HTMLMotionProps<"h1">);
+  }) as HTMLMotionProps<"p"> | HTMLMotionProps<"h1">;
 
 const OAuthRedirect = () => {
   const {t} = useTranslation();
