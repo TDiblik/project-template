@@ -28,33 +28,33 @@ func NewSwaggerResponsesWithErrors(responses ...gofiberswagger.ResponseInfo) *go
 func InvalidRequestResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
 	if EnvData.Debug {
-		return c.Status(400).JSON(fiber.Map{"status": "error", "msg": "msg.general.invalid_request", "message": "Review your input", "error_info": fmt.Sprint(e)})
+		return c.Status(400).JSON(fiber.Map{"status": "error", "msg": "be.error.invalid_request", "message": "Review your input", "error_info": fmt.Sprint(e)})
 	}
-	return c.Status(400).JSON(fiber.Map{"status": "error", "msg": "msg.general.invalid_request"})
+	return c.Status(400).JSON(fiber.Map{"status": "error", "msg": "be.error.invalid_request"})
 }
 
 func InternalServerErrorResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
 	if EnvData.Debug {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "msg": "msg.general.internal_server_error", "message": "Internal Server Error", "error_info": fmt.Sprint(e)})
+		return c.Status(500).JSON(fiber.Map{"status": "error", "msg": "be.error.internal_server_error", "message": "Internal Server Error", "error_info": fmt.Sprint(e)})
 	}
-	return c.Status(500).JSON(fiber.Map{"status": "error", "msg": "msg.general.internal_server_error", "message": "Internal Server Error"})
+	return c.Status(500).JSON(fiber.Map{"status": "error", "msg": "be.error.internal_server_error", "message": "Internal Server Error"})
 }
 
 func UnauthentizatedResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
 	if EnvData.Debug {
-		return c.Status(401).JSON(fiber.Map{"status": "unauthenticated", "msg": "msg.general.invalid_token", "message": "valid token is required", "error_info": fmt.Sprint(e)})
+		return c.Status(401).JSON(fiber.Map{"status": "unauthenticated", "msg": "be.error.invalid_token", "message": "valid token is required", "error_info": fmt.Sprint(e)})
 	}
-	return c.Status(401).JSON(fiber.Map{"status": "unauthenticated", "msg": "msg.general.invalid_token"})
+	return c.Status(401).JSON(fiber.Map{"status": "unauthenticated", "msg": "be.error.invalid_token"})
 }
 
 func UnauthorizedResponse(c fiber.Ctx, e error) error {
 	LogErr(e)
 	if EnvData.Debug {
-		return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unauthorized", "message": "you cannot access this endpoint", "error_info": fmt.Sprint(e)})
+		return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "be.error.unauthorized", "message": "you cannot access this endpoint", "error_info": fmt.Sprint(e)})
 	}
-	return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "msg.general.unauthorized"})
+	return c.Status(403).JSON(fiber.Map{"status": "unauthorized", "msg": "be.error.unauthorized"})
 }
 
 func ConflictResponse(c fiber.Ctx, msg_reason string) error {

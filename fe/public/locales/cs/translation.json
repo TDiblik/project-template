@@ -1,0 +1,80 @@
+{
+  "loginPage": {
+    "email": {
+      "label": "Email",
+      "placeholder": "Zadejte svůj email"
+    },
+    "password": {
+      "label": "Heslo",
+      "placeholder": "Zadejte své heslo"
+    },
+    "confirmPassword": {
+      "label": "Potvrďte heslo",
+      "placeholder": "Zadejte heslo znovu"
+    },
+    "firstName": {
+      "label": "Křestní jméno",
+      "placeholder": "Zadejte své křestní jméno"
+    },
+    "lastName": {
+      "label": "Příjmení",
+      "placeholder": "Zadejte své příjmení"
+    },
+    "username": {
+      "label": "Uživatelské jméno",
+      "placeholder": "Zadejte své uživatelské jméno"
+    },
+    "loginTitle": "Vítejte zpět",
+    "loginContinue": "Pokračovat",
+    "loginDontHaveAccount": "Ještě nemáte účet?",
+    "loginSignUpHere": "Zaregistrujte se zde",
+    "signUpTitle": "Vytvořte si účet",
+    "signUpAlreadyHaveAccount": "Už máte účet?",
+    "signUpLoginHere": "Přihlaste se zde",
+    "signUpButton": "Zaregistrovat se",
+    "continueWith": "Nebo pokračujte pomocí",
+    "useName": "Použít jméno",
+    "useUsername": "Použít uživatelské jméno"
+  },
+  "validation": {
+    "email": {
+      "invalid": "Zadejte platný email"
+    },
+    "password": {
+      "required": "Musíte zadat heslo",
+      "minLength": "Heslo musí mít alespoň 6 znaků",
+      "maxLength": "Heslo nemůže být delší než 32 znaků",
+      "uppercase": "Heslo musí obsahovat alespoň jedno velké písmeno",
+      "lowercase": "Heslo musí obsahovat alespoň jedno malé písmeno",
+      "number": "Heslo musí obsahovat alespoň jedno číslo",
+      "tooLong": "Heslo je příliš dlouhé"
+    },
+    "confirmPassword": {
+      "required": "Zadejte heslo znovu",
+      "mismatch": "Hesla se neshodují"
+    },
+    "username": {
+      "required": "Uživatelské jméno je povinné",
+      "minLength": "Uživatelské jméno musí mít alespoň 3 znaky"
+    },
+    "firstName": {
+      "required": "Křestní jméno je povinné"
+    },
+    "lastName": {
+      "required": "Příjmení je povinné"
+    }
+  },
+  "be": {
+    "error": {
+      "login": {
+        "email_already_in_use": "Zadaný email je již použitý pro jiný účet",
+        "handle_already_in_use": "Zadané uživatelské jméno je již použito pro jiný účet",
+        "username_or_password_incorrect": "Zadané jméno a heslo se neshodují."
+      },
+      "invalid_request": "Něco se pokazilo při odesílání vašeho požadavku. Zkuste to prosím znovu.",
+      "internal_server_error": "Na serveru došlo k neočekávané chybě. Zkuste akci později.",
+      "invalid_token": "Váš přístup vypršel nebo je neplatný. Přihlaste se prosím znovu.",
+      "unauthorized": "Nemáte oprávnění provést tuto akci."
+    }
+  }
+}

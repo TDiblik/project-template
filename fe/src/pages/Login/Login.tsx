@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
 import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
-import {AuthController, ConvertToApiError, oAuthRedirectController} from "../../utils/api";
+import {AuthController, ConvertToApiError, TranslateApiErrorMessage, oAuthRedirectController} from "../../utils/api";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
 import {
@@ -18,8 +18,10 @@ import {useAuthTokenStore} from "../../stores/TokenStore";
 import {useNavigate} from "react-router";
 import {useLoadingStore} from "../../stores/LoadingStore";
 import {routes} from "../../utils/routes";
+import {useTranslation} from "react-i18next";
 
 export default function Login() {
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const {setToken} = useAuthTokenStore();
   const {setLoading} = useLoadingStore();
@@ -47,11 +49,11 @@ export default function Login() {
 
   const handleLoginErr = async (error: any) => {
     const apiError = await ConvertToApiError(error);
-    setBEErrorMessage(apiError.Body.msg || "Something went wrong. Please try again.");
+    setBEErrorMessage(TranslateApiErrorMessage(apiError));
   };
 
   const onSubmit = async (data: LoginOrSignUpPageFormType) => {
-    setLoading(true, "Logging you in...");
+    setLoading(true, t("loginPage.loginContinue") + "...");
     if (isSignUp) {
       const _data = data as SignUpPageFormType;
       AuthController.apiV1AuthSignupPost({
@@ -96,7 +98,7 @@ export default function Login() {
           transition={{duration: 0.3}}
           className="text-3xl font-bold text-center mb-3"
         >
-          {isSignUp ? "Create your account" : "Welcome back"}
+          {isSignUp ? t("loginPage.signUpTitle") : t("loginPage.loginTitle")}
         </motion.h2>
 
         <FormProvider {...form}>
@@ -109,9 +111,15 @@ export default function Login() {
               transition={{duration: 0.35}}
               onSubmit={form.handleSubmit(onSubmit)}
             >
-              {isSignUp && <NameFields />}
-              <TextInput label="Email" name="email" placeholder="Enter your email" inputProps={{type: "email"}} hasBigText />
-              <PasswordFields isSignUp={isSignUp} />
+              {isSignUp && <NameFields t={t} />}
+              <TextInput
+                label={t("loginPage.email.label")}
+                name="email"
+                placeholder={t("loginPage.email.placeholder")}
+                inputProps={{type: "email"}}
+                hasBigText
+              />
+              <PasswordFields t={t} isSignUp={isSignUp} />
               {beErrorMessage && (
                 <motion.p initial={{opacity: 0}} animate={{opacity: 1}} className="text-red-500 text-sm text-center mt-2">
                   {beErrorMessage}
@@ -123,13 +131,13 @@ export default function Login() {
                 className="btn btn-primary w-full mt-5 border-0 text-white shadow-md hover:shadow-lg transition-all"
                 type="submit"
               >
-                {isSignUp ? "Sign up" : "Continue"}
+                {isSignUp ? t("loginPage.signUpButton") : t("loginPage.loginContinue")}
               </motion.button>
             </motion.form>
           </AnimatePresence>
         </FormProvider>
 
-        <div className="divider my-6">Or continue with</div>
+        <div className="divider my-6">{t("loginPage.continueWith")}</div>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
           <OAuthButton provider="Google" icon={<FaGoogle />} onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGoogleGet()} />
@@ -139,13 +147,13 @@ export default function Login() {
         </div>
 
         <motion.p className="text-base text-center" initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+          {isSignUp ? t("loginPage.signUpAlreadyHaveAccount") : t("loginPage.loginDontHaveAccount")}{" "}
           <button
             type="button"
             onClick={toggleFormType}
             className="text-primary font-medium underline hover:text-secondary transition-colors cursor-pointer"
           >
-            {isSignUp ? "Login here" : "Sign up here"}
+            {isSignUp ? t("loginPage.signUpLoginHere") : t("loginPage.loginSignUpHere")}
           </button>
         </motion.p>
       </motion.div>
@@ -153,7 +161,7 @@ export default function Login() {
   );
 }
 
-export const NameFields = () => {
+export const NameFields = ({t}: {t: any}) => {
   const [useUsername, setUseUsername] = useState(false);
   const animation = {
     initial: {opacity: 0, scale: 0.95},
@@ -163,46 +171,57 @@ export const NameFields = () => {
   } as HTMLMotionProps<"div">;
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-4">
       <div className="flex justify-center">
         <button
           type="button"
           onClick={() => setUseUsername(false)}
           className={`btn btn-sm rounded-l-full ${!useUsername ? "btn-primary text-white" : "btn-outline"}`}
         >
-          Use Name
+          {t("loginPage.useName")}
         </button>
         <button
           type="button"
           onClick={() => setUseUsername(true)}
           className={`btn btn-sm rounded-r-full ${useUsername ? "btn-primary text-white" : "btn-outline"}`}
         >
-          Use Username
+          {t("loginPage.useUsername")}
         </button>
       </div>
       {!useUsername ? (
         <motion.div key="name-fields" {...animation} className="flex gap-4">
-          <TextInput label="First Name" name="firstName" placeholder="Enter your first name" hasBigText />
-          <TextInput label="Last Name" name="lastName" placeholder="Enter your last name" hasBigText />
+          <TextInput label={t("loginPage.firstName.label")} name="firstName" placeholder={t("loginPage.firstName.placeholder")} hasBigText />
+          <TextInput label={t("loginPage.lastName.label")} name="lastName" placeholder={t("loginPage.lastName.placeholder")} hasBigText />
         </motion.div>
       ) : (
         <motion.div key="username-field" {...animation}>
-          <TextInput label="Username" name="username" placeholder="Enter your username" hasBigText />
+          <TextInput label={t("loginPage.username.label")} name="username" placeholder={t("loginPage.username.placeholder")} hasBigText />
         </motion.div>
       )}
       <HiddenBooleanInput name="useUsername" value={useUsername} />
     </div>
   );
 };
-const PasswordFields = ({isSignUp}: {isSignUp: boolean}) => (
-  <>
-    <div className="flex gap-4">
-      <TextInput label="Password" name="password" placeholder="Enter your password" inputProps={{type: "password"}} hasBigText />
-      {isSignUp && (
-        <TextInput label="Confirm Password" name="confirmPassword" placeholder="Re-enter your password" inputProps={{type: "password"}} hasBigText />
-      )}
-    </div>
-  </>
+
+const PasswordFields = ({t, isSignUp}: {t: any; isSignUp: boolean}) => (
+  <div className="flex gap-4">
+    <TextInput
+      label={t("loginPage.password.label")}
+      name="password"
+      placeholder={t("loginPage.password.placeholder")}
+      inputProps={{type: "password"}}
+      hasBigText
+    />
+    {isSignUp && (
+      <TextInput
+        label={t("loginPage.confirmPassword.label")}
+        name="confirmPassword"
+        placeholder={t("loginPage.confirmPassword.placeholder")}
+        inputProps={{type: "password"}}
+        hasBigText
+      />
+    )}
+  </div>
 );
 
 const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => Promise<any>}) => (

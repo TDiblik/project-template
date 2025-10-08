@@ -1,19 +1,21 @@
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
+import {t} from "i18next";
 
 export {zodResolver, z};
 
 // ----------- General -----------
-export const EmailSchema = z.email("Enter a valid email").min(1, "Email is required");
+export const EmailSchema = z.email({error: () => t("validation.email.invalid")});
+
 export const PasswordSchema = z
-  .string("You must enter a password")
-  .min(6, "Password must be at least 6 characters long")
-  .max(32, "Password cannot be longer than 32 characters")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one number")
-  .refine((val) => new TextEncoder().encode(val).length <= 72, "Password is too long");
-export const ConfirmPasswordSchema = z.string("Re-enter your password to make sure it's correct");
+  .string({error: () => t("validation.password.required")})
+  .min(6, {error: () => t("validation.password.minLength")})
+  .max(32, {error: () => t("validation.password.maxLength")})
+  .regex(/[A-Z]/, {error: () => t("validation.password.uppercase")})
+  .regex(/[a-z]/, {error: () => t("validation.password.lowercase")})
+  .regex(/[0-9]/, {error: () => t("validation.password.number")})
+  .refine((val) => new TextEncoder().encode(val).length <= 72, {error: () => t("validation.password.tooLong")});
+export const ConfirmPasswordSchema = z.string({error: () => t("validation.confirmPassword.required")});
 // -----------------------------
 
 // ----------- Pages -----------
@@ -33,20 +35,25 @@ export const SignUpFirstPageSchema = z
     lastName: z.string().optional(),
     username: z.string().optional(),
   })
-  .refine(({useUsername, username}) => (useUsername ? (username?.trim().length ?? 0) > 0 : true), {path: ["username"], error: "Username is required"})
+  .refine(({useUsername, username}) => (useUsername ? (username?.trim().length ?? 0) > 0 : true), {
+    path: ["username"],
+    error: () => t("validation.username.required"),
+  })
   .refine(({useUsername, username}) => (useUsername ? (username?.trim().length ?? 0) >= 3 : true), {
     path: ["username"],
-    error: "Username must have 3 or more characters",
+    error: () => t("validation.username.minLength"),
   })
   .refine(({useUsername, firstName}) => (!useUsername ? (firstName?.trim().length ?? 0) > 0 : true), {
     path: ["firstName"],
-    error: "First name is required",
+    error: () => t("validation.firstName.required"),
   })
   .refine(({useUsername, lastName}) => (!useUsername ? (lastName?.trim().length ?? 0) > 0 : true), {
     path: ["lastName"],
-    error: "Last name is required",
+    error: () => t("validation.lastName.required"),
   })
-  .refine(({password, confirmPassword}) => password === confirmPassword, {path: ["confirmPassword"], error: "Passwords do not match"});
+  .refine(({password, confirmPassword}) => password === confirmPassword, {
+    path: ["confirmPassword"],
+    error: () => t("validation.confirmPassword.mismatch"),
+  });
 export type SignUpPageFormType = z.infer<typeof SignUpFirstPageSchema>;
-
 export type LoginOrSignUpPageFormType = LoginPageFormType | SignUpPageFormType;

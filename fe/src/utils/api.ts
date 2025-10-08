@@ -7,6 +7,7 @@ import {
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
 } from "@shared/api-client";
 import {constants} from "./constants";
+import {t} from "i18next";
 
 const config = new Configuration({
   basePath: constants.API_BASE_PATH,
@@ -62,3 +63,5 @@ export const ConvertToApiError = async (error: any): Promise<ApiError> => {
 
   return result;
 };
+
+export const TranslateApiErrorMessage = (error: ApiError) => t(error.Body.msg || "be.error.internal_server_error");

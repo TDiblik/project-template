@@ -36,18 +36,18 @@ func LoginHandler(c fiber.Ctx) error {
 	var userPasswordHash models.SQLNullString
 	if err := db.QueryRow(`select id, password_hash from users where email = $1`, req.Email).Scan(&userUUID, &userPasswordHash); err != nil {
 		if err == sql.ErrNoRows {
-			return utils.ConflictResponse(c, "msg.login.username_or_password_incorrect")
+			return utils.ConflictResponse(c, "be.error.login.username_or_password_incorrect")
 		}
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
 	// Handle accounts created by oauth without a password
 	if !userPasswordHash.Valid || userPasswordHash.String == "" {
-		return utils.ConflictResponse(c, "msg.login.username_or_password_incorrect")
+		return utils.ConflictResponse(c, "be.error.login.username_or_password_incorrect")
 	}
 
 	if !utils.CompareHashAndPassword(userPasswordHash.String, req.Password) {
-		return utils.ConflictResponse(c, "msg.login.username_or_password_incorrect")
+		return utils.ConflictResponse(c, "be.error.login.username_or_password_incorrect")
 	}
 
 	newAuthToken, err := GetJwtPostLogin(userUUID)
@@ -115,7 +115,7 @@ func SignUpHandler(c fiber.Ctx) error {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to check existing user: %w", err))
 	}
 	if emailExists {
-		return utils.ConflictResponse(c, "msg.login.email_already_in_use")
+		return utils.ConflictResponse(c, "be.error.login.email_already_in_use")
 	}
 
 	var newUser = models.UsersModelDB{
@@ -131,7 +131,7 @@ func SignUpHandler(c fiber.Ctx) error {
 			return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to check existing user: %w", err))
 		}
 		if handleExists {
-			return utils.ConflictResponse(c, "msg.login.handle_already_in_use")
+			return utils.ConflictResponse(c, "be.error.login.handle_already_in_use")
 		}
 		newUser.Handle = utils.SQLNullStringFromString(req.Username)
 	}
