@@ -11,10 +11,11 @@
   },
   "scripts": {
     "start": "yarn build --watch",
-    "build": "tsup src/index.ts --format esm --dts --out-dir dist --target es2022 --sourcemap"
+    "build": "tsup src/index.ts --format esm --dts --out-dir dist --target es2022 --sourcemap",
+    "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }

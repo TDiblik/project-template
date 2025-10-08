@@ -15,21 +15,28 @@
 
 import * as runtime from '../runtime';
 import type {
-  GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponse,
-  GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBody,
+  GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse,
+  GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody,
+  GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody,
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
 } from '../models/index';
 import {
-    GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponseFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponseToJSON,
-    GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBodyFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBodyToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBodyFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBodyToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBodyFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBodyToJSON,
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
 
+export interface ApiV1AuthLoginPostRequest {
+    githubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody?: GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody;
+}
+
 export interface ApiV1AuthSignupPostRequest {
-    githubComTDiblikProjectTemplateApiHandlersSignUpRequestBody?: GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBody;
+    githubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody?: GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody;
 }
 
 /**
@@ -39,7 +46,41 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthSignupPostRaw(requestParameters: ApiV1AuthSignupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponse>> {
+    async apiV1AuthLoginPostRaw(requestParameters: ApiV1AuthLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+
+        let urlPath = `/api/v1/auth/login`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBodyToJSON(requestParameters['githubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponseFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiV1AuthLoginPost(requestParameters: ApiV1AuthLoginPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
+        const response = await this.apiV1AuthLoginPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiV1AuthSignupPostRaw(requestParameters: ApiV1AuthSignupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -58,15 +99,15 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: GithubComTDiblikProjectTemplateApiHandlersSignUpRequestBodyToJSON(requestParameters['githubComTDiblikProjectTemplateApiHandlersSignUpRequestBody']),
+            body: GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBodyToJSON(requestParameters['githubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1AuthSignupPost(requestParameters: ApiV1AuthSignupPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerResponse> {
+    async apiV1AuthSignupPost(requestParameters: ApiV1AuthSignupPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
         const response = await this.apiV1AuthSignupPostRaw(requestParameters, initOverrides);
         return await response.value();
     }

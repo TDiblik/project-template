@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 )
 
@@ -68,4 +69,13 @@ func WithSignalCancel(usecase string) context.Context {
 		cancel()
 	}()
 	return ctx
+}
+
+func RandomString(n int) string {
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	sb := strings.Builder{}
+	for range n {
+		sb.WriteByte(letters[rand.IntN(len(letters))])
+	}
+	return sb.String()
 }

@@ -1,5 +1,7 @@
+import {motion} from "motion/react";
 import {Controller, useFormContext} from "react-hook-form";
 import type {FormFieldProps} from "../utils/form";
+import type {AnimationEventHandler} from "react";
 
 export type TextInputProps = FormFieldProps & {
   placeholder?: string;
@@ -8,7 +10,7 @@ export type TextInputProps = FormFieldProps & {
   labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
   labelSpanProps?: React.HTMLAttributes<HTMLSpanElement>;
   labelSpanAdditionalClassname?: string;
-  errorSpanProps?: React.HTMLAttributes<HTMLSpanElement>;
+  errorSpanProps?: AnimationEventHandler<HTMLSpanElement>;
   errorSpanPropsAdditionalClassname?: string;
   isOptional?: boolean;
   hasBigText?: boolean;
@@ -49,9 +51,14 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
             </fieldset>
 
             {hasError && (
-              <span className={`text-red-500 text-sm mt-1 ${props.errorSpanPropsAdditionalClassname}`} {...props.errorSpanProps}>
+              <motion.span
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                className={`text-red-500 text-sm text-center mb-2 ${props.errorSpanPropsAdditionalClassname}`}
+                {...props.errorSpanProps}
+              >
                 {fieldState.error?.message}
-              </span>
+              </motion.span>
             )}
           </div>
         );

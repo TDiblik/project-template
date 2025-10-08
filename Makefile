@@ -39,12 +39,13 @@ db-remove:
 	docker rm -f $(DB_NAME); \
 
 gen-types:
+	rm -rf ./shared/fe/api-client/src/generated; \
 	openapi-generator generate \
 		-i ./api/generated/swagger.yaml \
 		-g typescript-fetch \
 		-o ./shared/fe/api-client/src/generated \
 		--skip-validate-spec \
-		--additional-properties=supportsES6=true,npmVersion=$$(npm --version),typescriptThreePlus=true
+		--additional-properties=supportsES6=true,typescriptThreePlus=true,npmVersion=$$(npm --version)
 	cd ./shared/fe/api-client && yarn && yarn build
 
 # ---------- Frontend ----------
@@ -55,7 +56,7 @@ fe-install:
 	cd ./fe && yarn
 
 fe-update:
-	cd ./fe && yarn update
+	cd ./fe && yarn update && cd ../shared/fe/api-client && yarn update
 
 # ---------- Combined Targets ----------
 install: api-install fe-install gen-types

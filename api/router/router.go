@@ -21,10 +21,16 @@ func SetupRoutes(app *fiber.App) {
 
 	// Auth
 	api_auth := api_v1.Group("/auth")
-	api_auth.Post("/signup", &gofiberswagger.RouteInfo{
-		RequestBody: gofiberswagger.NewRequestBody[handlers.SignUpRequestBody](),
+	api_auth.Post("/login", &gofiberswagger.RouteInfo{
+		RequestBody: gofiberswagger.NewRequestBody[handlers.LoginHandlerRequestBody](),
 		Responses: utils.NewSwaggerResponsesWithErrors(
-			gofiberswagger.NewResponseInfo[handlers.SignUpHandlerResponse]("200", "ok"),
+			gofiberswagger.NewResponseInfo[handlers.AuthHandlerResponse]("200", "ok"),
+		),
+	}, handlers.LoginHandler)
+	api_auth.Post("/signup", &gofiberswagger.RouteInfo{
+		RequestBody: gofiberswagger.NewRequestBody[handlers.SignUpHandlerRequestBody](),
+		Responses: utils.NewSwaggerResponsesWithErrors(
+			gofiberswagger.NewResponseInfo[handlers.AuthHandlerResponse]("200", "ok"),
 		),
 	}, handlers.SignUpHandler)
 

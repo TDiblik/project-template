@@ -367,8 +367,12 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 
 	var existingUser models.UsersModelDB
 	if !emailExists {
-		if handleExists {
-			possiblyNewUser.Handle = models.SQLNullString{}
+		if !possiblyNewUser.Handle.Valid || handleExists {
+			newHandle, genErr := utils.GenerateUniqueUserHandle(db, possiblyNewUser.FirstName, possiblyNewUser.LastName)
+			if genErr != nil {
+				return uuid.Nil, fmt.Errorf("unable to generate unique handle: %w", genErr)
+			}
+			possiblyNewUser.Handle = utils.SQLNullStringFromString(newHandle)
 		}
 
 		// when adding a new oauth provider and user table fields, add the checks here:

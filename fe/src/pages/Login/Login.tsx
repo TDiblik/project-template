@@ -9,18 +9,22 @@ import {
   SignUpFirstPageSchema,
   zodResolver,
   type LoginOrSignUpPageFormType,
+  type LoginPageFormType,
   type SignUpPageFormType,
 } from "../../utils/validations";
 import {HiddenBooleanInput} from "../../components/HiddenBooleanInput";
 import {useFormLog} from "../../utils/useFormLog";
-
-// todo: redirect after successfull signup/login
-// todo: login
-// todo: handle errors
-// todo: show loader while fetching
+import {useAuthTokenStore} from "../../stores/TokenStore";
+import {useNavigate} from "react-router";
+import {useLoadingStore} from "../../stores/LoadingStore";
+import {routes} from "../../utils/routes";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const {setToken} = useAuthTokenStore();
+  const {setLoading} = useLoadingStore();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [beErrorMessage, setBEErrorMessage] = useState<string | undefined>(undefined);
 
   const form = useForm<LoginOrSignUpPageFormType>({
     mode: "onChange",
@@ -29,15 +33,29 @@ export default function Login() {
   useFormLog(form);
 
   const toggleFormType = () => {
+    form.resetField("password");
+    form.resetField("confirmPassword");
     form.clearErrors();
+    setBEErrorMessage(undefined);
     setIsSignUp((prev) => !prev);
   };
 
+  const postLogin = (authToken: string) => {
+    setToken(authToken);
+    navigate(routes.index);
+  };
+
+  const handleLoginErr = async (error: any) => {
+    const apiError = await ConvertToApiError(error);
+    setBEErrorMessage(apiError.Body.msg || "Something went wrong. Please try again.");
+  };
+
   const onSubmit = async (data: LoginOrSignUpPageFormType) => {
+    setLoading(true, "Logging you in...");
     if (isSignUp) {
       const _data = data as SignUpPageFormType;
       AuthController.apiV1AuthSignupPost({
-        githubComTDiblikProjectTemplateApiHandlersSignUpRequestBody: {
+        githubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody: {
           email: _data.email,
           password: _data.password,
           useUsername: _data.useUsername,
@@ -46,13 +64,20 @@ export default function Login() {
           username: _data.username,
         },
       })
-        .then((s) => {
-          console.log(s);
-        })
-        .catch(async (err) => {
-          const erorr = await ConvertToApiError(err);
-          console.log(erorr);
-        });
+        .then((s) => postLogin(s.authToken))
+        .catch(handleLoginErr)
+        .finally(() => setLoading(false));
+    } else {
+      const _data = data as LoginPageFormType;
+      AuthController.apiV1AuthLoginPost({
+        githubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody: {
+          email: _data.email,
+          password: _data.password,
+        },
+      })
+        .then((s) => postLogin(s.authToken))
+        .catch(handleLoginErr)
+        .finally(() => setLoading(false));
     }
   };
 
@@ -87,6 +112,11 @@ export default function Login() {
               {isSignUp && <NameFields />}
               <TextInput label="Email" name="email" placeholder="Enter your email" inputProps={{type: "email"}} hasBigText />
               <PasswordFields isSignUp={isSignUp} />
+              {beErrorMessage && (
+                <motion.p initial={{opacity: 0}} animate={{opacity: 1}} className="text-red-500 text-sm text-center mt-2">
+                  {beErrorMessage}
+                </motion.p>
+              )}
               <motion.button
                 whileHover={{scale: 1.03}}
                 whileTap={{scale: 0.97}}
@@ -152,12 +182,12 @@ export const NameFields = () => {
       </div>
       {!useUsername ? (
         <motion.div key="name-fields" {...animation} className="flex gap-4">
-          <TextInput label="First Name" name="firstName" placeholder="Enter your first name" inputProps={{type: "text"}} hasBigText />
-          <TextInput label="Last Name" name="lastName" placeholder="Enter your last name" inputProps={{type: "text"}} hasBigText />
+          <TextInput label="First Name" name="firstName" placeholder="Enter your first name" hasBigText />
+          <TextInput label="Last Name" name="lastName" placeholder="Enter your last name" hasBigText />
         </motion.div>
       ) : (
         <motion.div key="username-field" {...animation}>
-          <TextInput label="Username" name="username" placeholder="Enter your username" inputProps={{type: "text"}} hasBigText />
+          <TextInput label="Username" name="username" placeholder="Enter your username" hasBigText />
         </motion.div>
       )}
       <HiddenBooleanInput name="useUsername" value={useUsername} />
