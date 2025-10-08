@@ -1,4 +1,5 @@
 {
+  "projectName": "project-template",
   "loginPage": {
     "email": {
       "label": "Email",
@@ -13,8 +14,8 @@
       "placeholder": "Zadejte heslo znovu"
     },
     "firstName": {
-      "label": "Křestní jméno",
-      "placeholder": "Zadejte své křestní jméno"
+      "label": "Jméno",
+      "placeholder": "Zadejte své jméno"
     },
     "lastName": {
       "label": "Příjmení",
@@ -47,6 +48,23 @@
       "description": "Prosím čekejte, pracujeme na tom..."
     }
   },
+  "layout": {
+    "dashboard": "Přehled",
+    "profile": "Profil",
+    "settings": "Nastavení",
+    "userAvatarAlt": "Obrázek uživatelského avataru",
+    "changeTheme": {
+      "label": "Změnit motiv",
+      "light": "Světlý",
+      "dark": "Tmavý"
+    },
+    "changeLanguage": {
+      "label": "Změnit jazyk",
+      "cs": "Čeština",
+      "en": "Angličtina"
+    },
+    "logout": "Odhlásit se"
+  },
   "validation": {
     "email": {
       "invalid": "Zadejte platný email"
@@ -69,7 +87,7 @@
       "minLength": "Uživatelské jméno musí mít alespoň 3 znaky"
     },
     "firstName": {
-      "required": "Křestní jméno je povinné"
+      "required": "Jméno je povinné"
     },
     "lastName": {
       "required": "Příjmení je povinné"

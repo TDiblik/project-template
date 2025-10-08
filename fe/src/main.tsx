@@ -9,17 +9,20 @@ import Login from "./pages/Login/Login.tsx";
 import Logout from "./pages/Logout/Logout.tsx";
 import OAuthRedirect from "./pages/Login/OauthRedirect.tsx";
 import {LoaderProvider} from "./components/LoadingProvider.tsx";
+import {ThemeProvider} from "./components/ThemeProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <LoaderProvider>
-        <Routes>
-          <Route path={routes.index} element={<Home />} />
-          <Route path={routes.login} element={<Login />} />
-          <Route path={routes.loginOAuthRedired} element={<OAuthRedirect />} />
-          <Route path={routes.logout} element={<Logout />} />
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path={routes.index} element={<Home />} />
+            <Route path={routes.login} element={<Login />} />
+            <Route path={routes.loginOAuthRedired} element={<OAuthRedirect />} />
+            <Route path={routes.logout} element={<Logout />} />
+          </Routes>
+        </ThemeProvider>
       </LoaderProvider>
     </BrowserRouter>
   </StrictMode>,

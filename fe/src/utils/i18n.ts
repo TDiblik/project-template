@@ -4,9 +4,21 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import {constants} from "./constants";
 import Backend from "i18next-http-backend";
 
-i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
-  debug: constants.DEBUG,
-  fallbackLng: constants.DEFAULT_FALLBACK_LANGUAGE,
-});
+i18n
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    load: "languageOnly",
+    debug: constants.DEBUG,
+    lng: (localStorage.getItem(constants.LOCAL_STORAGE_LOCALIZATION_KEY) ?? "").split("-")[0],
+    fallbackLng: constants.DEFAULT_FALLBACK_LANGUAGE,
+    detection: {
+      lookupLocalStorage: constants.LOCAL_STORAGE_LOCALIZATION_KEY,
+    },
+  });
+
+export type SupportedLanguagesType = "cs" | "en";
+export const SupportedLanguages: SupportedLanguagesType[] = ["cs", "en"];
 
 export default i18n;

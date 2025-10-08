@@ -1,4 +1,5 @@
 {
+  "projectName": "project-template",
   "loginPage": {
     "email": {
       "label": "Email",
@@ -46,6 +47,23 @@
       "title": "Signing you in...",
       "description": "Please wait while we complete the process."
     }
+  },
+  "layout": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "userAvatarAlt": "User avatar picture",
+    "changeTheme": {
+      "label": "Change Theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "changeLanguage": {
+      "label": "Change Language",
+      "cs": "Czech",
+      "en": "English"
+    },
+    "logout": "Logout"
   },
   "validation": {
     "email": {
