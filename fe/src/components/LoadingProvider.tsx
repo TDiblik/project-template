@@ -5,11 +5,11 @@ import {Loader} from "./Loading";
 export const LoaderProvider: React.FC<{
   children?: React.ReactNode;
 }> = ({children}) => {
-  const {loading, loadingText} = useLoadingStore();
+  const {loading, loadingTextCode} = useLoadingStore();
 
   return (
     <>
-      <AnimatePresence>{loading && <Loader text={loadingText} />}</AnimatePresence>
+      <AnimatePresence>{loading && <Loader textCode={loadingTextCode} />}</AnimatePresence>
       {children}
     </>
   );

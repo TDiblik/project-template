@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   const onSubmit = async (data: LoginOrSignUpPageFormType) => {
-    setLoading(true, t("loginPage.loginContinue") + "...");
+    setLoading(true, "loadingStates.loggingIn");
     if (isSignUp) {
       const _data = data as SignUpPageFormType;
       AuthController.apiV1AuthSignupPost({

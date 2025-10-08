@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router";
 import {useAuthTokenStore} from "../stores/TokenStore";
 import React from "react";
+import {routes} from "../utils/routes";
 
 interface IfLoggedInProps {
   redirectToLogin?: boolean;
@@ -15,7 +16,7 @@ export const IfLoggedIn: React.FC<IfLoggedInProps> = (props) => {
     if (!tokenRaw || !token()) {
       setCanView(false);
       if (props.redirectToLogin) {
-        navigate("/login");
+        navigate(routes.login);
       }
     }
   }, [token, tokenRaw]);

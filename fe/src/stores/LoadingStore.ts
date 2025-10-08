@@ -1,12 +1,13 @@
 import {create} from "zustand";
+import type {LoaderTextPossibilities} from "../components/Loading";
 
 interface LoadingStoreState {
   loading: boolean;
-  loadingText?: string;
-  setLoading: (newState: boolean, loadingText?: string) => void;
+  loadingTextCode?: LoaderTextPossibilities;
+  setLoading: (loading: boolean, loadingTextCode?: LoaderTextPossibilities) => void;
 }
 
 export const useLoadingStore = create<LoadingStoreState>()((set) => ({
   loading: false,
-  setLoading: (newState, loadingText) => set(() => ({loading: newState, loadingText})),
+  setLoading: (loading, loadingTextCode) => set(() => ({loading, loadingTextCode})),
 }));

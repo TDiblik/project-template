@@ -36,6 +36,17 @@
     "useName": "Use name",
     "useUsername": "Use username"
   },
+  "oauthRedirectPage": {
+    "loginFailed": {
+      "title": "Login Failed",
+      "description": "We couldn't complete the sign-in process. Please try again.",
+      "button": "Back to Login"
+    },
+    "loginInProgress": {
+      "title": "Signing you in...",
+      "description": "Please wait while we complete the process."
+    }
+  },
   "validation": {
     "email": {
       "invalid": "Enter a valid email"
@@ -64,12 +75,16 @@
       "required": "Last name is required"
     }
   },
+  "loadingStates": {
+    "default": "Loading...",
+    "loggingIn": "Logging you in..."
+  },
   "be": {
     "error": {
       "login": {
         "email_already_in_use": "The email is already used for another account",
         "handle_already_in_use": "The username is already used for another account",
-        "username_or_password_incorrect": "The username and password do not match."
+        "username_or_password_incorrect": "The email and password do not match."
       },
       "invalid_request": "Something went wrong while submitting your request. Please try again.",
       "internal_server_error": "An unexpected error occurred on the server. Please try again later.",

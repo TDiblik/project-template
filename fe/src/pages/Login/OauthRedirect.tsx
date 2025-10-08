@@ -1,19 +1,29 @@
-import React from "react";
+import {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router";
 import {oAuthController} from "../../utils/api";
 import {useAuthTokenStore} from "../../stores/TokenStore";
-import {routes} from "../../utils/routes";
+import {RedirectBackToAfterOauthToRouteMap, routes} from "../../utils/routes";
+import {useTranslation} from "react-i18next";
+import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
+
+const delayed = (delay: number) =>
+  ({
+    initial: {opacity: 0, y: 5},
+    animate: {opacity: 1, y: 0},
+    transition: {delay},
+  } as HTMLMotionProps<"p"> | HTMLMotionProps<"h1">);
 
 const OAuthRedirect = () => {
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const [query] = useSearchParams();
   const oAuthCode = query.get("code");
   const oAuthState = query.get("state");
-  const shouldFail = !oAuthCode || !oAuthState;
+  const [shouldFail, setShouldFail] = useState(!oAuthCode || !oAuthState);
 
   const {setToken} = useAuthTokenStore();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!oAuthCode || !oAuthState) {
       return;
     }
@@ -24,39 +34,66 @@ const OAuthRedirect = () => {
       })
       .then((s) => {
         setToken(s.authToken);
-        // when adding redirect url after oauth, add it here
-        switch (s.redirectBackToAfterOauth) {
-          case "index":
-            navigate(routes.index);
-            break;
-          case "profile":
-            navigate(routes.profile);
-            break;
-          case "settings":
-            navigate(routes.settings);
-            break;
-        }
+        navigate(RedirectBackToAfterOauthToRouteMap[s.redirectBackToAfterOauth]);
       })
-      .catch(() => {});
+      .catch((error) => {
+        console.log(error); // todo: add better error logging
+        setShouldFail(true);
+      });
   }, [oAuthCode, oAuthState]);
 
-  if (shouldFail) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 px-4 text-center">
-        <h1 className="text-2xl font-bold text-error mb-2">Login Failed</h1>
-        <p className="text-base text-base-content/80 mb-6">We couldn't complete the sign-in process. Please try again.</p>
-        <button className="btn btn-primary" onClick={() => navigate("/login")}>
-          Back to Login
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-base-100">
-      <span className="loading loading-spinner loading-xl text-primary mb-4"></span>
-      <p className="text-lg font-medium text-base-content">Signing you in...</p>
-      <p className="text-sm text-base-content/70 mt-1">Please wait while we complete the process.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 text-center px-4">
+      <AnimatePresence mode="wait">
+        {!shouldFail ? (
+          <motion.div
+            key="loading"
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            exit={{opacity: 0, y: -10}}
+            transition={{duration: 0.6, ease: "easeInOut"}}
+            className="flex flex-col items-center"
+          >
+            <motion.span
+              className="loading loading-spinner loading-xl text-primary mb-4"
+              animate={{
+                scale: [1, 1.15, 1],
+                opacity: [1, 0.7, 1],
+              }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <motion.p className="text-lg font-medium text-base-content" {...delayed(0.2)}>
+              {t("oauthRedirectPage.loginInProgress.title")}
+            </motion.p>
+            <motion.p className="text-sm text-base-content/70 mt-1" {...delayed(0.4)}>
+              {t("oauthRedirectPage.loginInProgress.description")}
+            </motion.p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="fail"
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.8, ease: "easeOut"}}
+            className="flex flex-col items-center"
+          >
+            <motion.h1 className="text-2xl font-bold text-error mb-2" {...delayed(0.2)}>
+              {t("oauthRedirectPage.loginFailed.title")}
+            </motion.h1>
+            <motion.p className="text-base text-base-content/80 mb-6" {...delayed(0.4)}>
+              {t("oauthRedirectPage.loginFailed.description")}
+            </motion.p>
+            <motion.button whileHover={{scale: 1.05}} whileTap={{scale: 0.95}} className="btn btn-primary" onClick={() => navigate(routes.login)}>
+              {t("oauthRedirectPage.loginFailed.button")}
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

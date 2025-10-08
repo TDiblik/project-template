@@ -36,6 +36,17 @@
     "useName": "Použít jméno",
     "useUsername": "Použít uživatelské jméno"
   },
+  "oauthRedirectPage": {
+    "loginFailed": {
+      "title": "Přihlášení Selhalo",
+      "description": "Nepodařilo se dokončit proces přihlášení. Zkuste to prosím později.",
+      "button": "Zpět na Přihlášení"
+    },
+    "loginInProgress": {
+      "title": "Přihlašování...",
+      "description": "Prosím čekejte, pracujeme na tom..."
+    }
+  },
   "validation": {
     "email": {
       "invalid": "Zadejte platný email"
@@ -64,12 +75,16 @@
       "required": "Příjmení je povinné"
     }
   },
+  "loadingStates": {
+    "default": "Načítání...",
+    "loggingIn": "Přihlašujeme Vás..."
+  },
   "be": {
     "error": {
       "login": {
         "email_already_in_use": "Zadaný email je již použitý pro jiný účet",
         "handle_already_in_use": "Zadané uživatelské jméno je již použito pro jiný účet",
-        "username_or_password_incorrect": "Zadané jméno a heslo se neshodují."
+        "username_or_password_incorrect": "Zadaný email a heslo se neshodují."
       },
       "invalid_request": "Něco se pokazilo při odesílání vašeho požadavku. Zkuste to prosím znovu.",
       "internal_server_error": "Na serveru došlo k neočekávané chybě. Zkuste akci později.",
