@@ -10,7 +10,6 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
   const {i18n, t} = useTranslation();
   const {theme, changeTheme} = useThemeStore();
-  const currentLanguage = i18n.language;
 
   const menuItems = [
     {name: t("layout.dashboard"), path: routes.index},
@@ -18,9 +17,8 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
     {name: t("layout.settings"), path: routes.settings},
   ];
 
-  const [languageOpen, setLanguageOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-
+  const [languageOpen, setLanguageOpen] = useState(false);
   const toggleMenuClasses = "absolute left-full top-0 menu rounded-box w-48 bg-base-100 p-2 shadow";
   const toggleMenuAnimation = {
     initial: {opacity: 0, y: -8},
@@ -88,7 +86,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
                     <motion.ul {...toggleMenuAnimation} className={toggleMenuClasses}>
                       {SupportedLanguages.map((lang) => (
                         <li key={lang}>
-                          <a className={currentLanguage === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
+                          <a className={i18n.language === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
                             {t(`layout.changeLanguage.${lang}`)}
                           </a>
                         </li>
