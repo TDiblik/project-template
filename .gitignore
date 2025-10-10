@@ -11,8 +11,6 @@ db-data-prod
 mobile/android
 mobile/ios
 api/**/generated
-.env
-.env.production
 
 ### FE ###
 logs
@@ -36,3 +34,7 @@ dist-ssr
 *.sln
 *.sw?
 shared/fe/api-client/dist
+
+### Shared ###
+.env*
+!.env.example*

@@ -81,6 +81,7 @@ For local production testing:
 
 ```bash
 cp api/.env.example.production api/.env.production
+cp fe/.env.example.production fe/.env.production
 ```
 
 ---
