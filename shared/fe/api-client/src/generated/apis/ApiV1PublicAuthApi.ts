@@ -31,22 +31,22 @@ import {
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
 
-export interface ApiV1AuthLoginPostRequest {
+export interface ApiV1PublicAuthLoginPostRequest {
     githubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody?: GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody;
 }
 
-export interface ApiV1AuthSignupPostRequest {
+export interface ApiV1PublicAuthSignupPostRequest {
     githubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody?: GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody;
 }
 
 /**
  * 
  */
-export class ApiV1AuthApi extends runtime.BaseAPI {
+export class ApiV1PublicAuthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthLoginPostRaw(requestParameters: ApiV1AuthLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
+    async apiV1PublicAuthLoginPostRaw(requestParameters: ApiV1PublicAuthLoginPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -58,7 +58,7 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
         }
 
 
-        let urlPath = `/api/v1/auth/login`;
+        let urlPath = `/api/v1/public/auth/login`;
 
         const response = await this.request({
             path: urlPath,
@@ -73,14 +73,14 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthLoginPost(requestParameters: ApiV1AuthLoginPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
-        const response = await this.apiV1AuthLoginPostRaw(requestParameters, initOverrides);
+    async apiV1PublicAuthLoginPost(requestParameters: ApiV1PublicAuthLoginPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
+        const response = await this.apiV1PublicAuthLoginPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiV1AuthSignupPostRaw(requestParameters: ApiV1AuthSignupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
+    async apiV1PublicAuthSignupPostRaw(requestParameters: ApiV1PublicAuthSignupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -92,7 +92,7 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
         }
 
 
-        let urlPath = `/api/v1/auth/signup`;
+        let urlPath = `/api/v1/public/auth/signup`;
 
         const response = await this.request({
             path: urlPath,
@@ -107,8 +107,8 @@ export class ApiV1AuthApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1AuthSignupPost(requestParameters: ApiV1AuthSignupPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
-        const response = await this.apiV1AuthSignupPostRaw(requestParameters, initOverrides);
+    async apiV1PublicAuthSignupPost(requestParameters: ApiV1PublicAuthSignupPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse> {
+        const response = await this.apiV1PublicAuthSignupPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

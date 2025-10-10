@@ -43,6 +43,10 @@ export const SignUpFirstPageSchema = z
     path: ["username"],
     error: () => t("validation.username.minLength"),
   })
+  .refine(({useUsername, username}) => (useUsername ? (username?.trim().length ?? 0) <= 50 : true), {
+    path: ["username"],
+    error: () => t("validation.username.maxLength"),
+  })
   .refine(({useUsername, firstName}) => (!useUsername ? (firstName?.trim().length ?? 0) > 0 : true), {
     path: ["firstName"],
     error: () => t("validation.firstName.required"),

@@ -28,7 +28,7 @@ const OAuthRedirect = () => {
       return;
     }
     oAuthController
-      .apiV1AuthOauthReturnGet({
+      .apiV1PublicAuthOauthReturnGet({
         state: oAuthState,
         code: oAuthCode,
       })

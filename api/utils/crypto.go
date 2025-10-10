@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -25,6 +26,16 @@ func CompareHashAndPassword(hashedPassword, password string) bool {
 	return err == nil
 }
 
+type JWTInfo struct {
+	Sub           string
+	UserId        uuid.UUID
+	UserEmail     string
+	UserFirstName string
+	UserLastName  string
+	UserHandle    string
+	Exp           int64
+}
+
 func GenerateJWT(user models.UsersModelDB) (string, error) {
 	token_insecure := jwt.New(jwt.SigningMethodHS256)
 
@@ -45,16 +56,6 @@ func GenerateJWT(user models.UsersModelDB) (string, error) {
 	token, err := token_insecure.SignedString(EnvData.AUTH_SECRET_BYTES)
 
 	return token, err
-}
-
-type JWTInfo struct {
-	Sub           string
-	UserId        uuid.UUID
-	UserEmail     string
-	UserFirstName string
-	UserLastName  string
-	UserHandle    string
-	Exp           int64
 }
 
 func TokenClaimsToJwtInfo(claims jwt.MapClaims) (*JWTInfo, error) {
@@ -104,6 +105,20 @@ func ValidateJWT(tokenString string) (jwt.MapClaims, error) {
 	return claims, nil
 }
 
-func GetJWTFromLocals(c fiber.Ctx) *JWTInfo {
-	return c.Locals(constants.TOKEN_CLAIMS_LOCALS_KEY).(*JWTInfo)
+func GetJWTFromLocals(c fiber.Ctx) (*JWTInfo, error) {
+	val := c.Locals(constants.TOKEN_CLAIMS_LOCALS_KEY)
+	if val == nil {
+		return nil, errors.New("JWT claims not found in context locals")
+	}
+
+	jwtInfo, ok := val.(*JWTInfo)
+	if !ok {
+		return nil, errors.New("invalid JWT claims type in context locals")
+	}
+
+	return jwtInfo, nil
+}
+
+func SetJWTToLocals(c fiber.Ctx, tokenInfo *JWTInfo) {
+	c.Locals(constants.TOKEN_CLAIMS_LOCALS_KEY, tokenInfo)
 }

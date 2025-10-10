@@ -1,23 +1,23 @@
 import {
+  ApiV1PublicAuthApi,
+  ApiV1PublicAuthOauthApi,
+  ApiV1PublicAuthOauthRedirectApi,
   Configuration,
-  ApiV1AuthOauthApi,
-  ApiV1AuthOauthRedirectApi,
-  ApiV1AuthApi,
   type GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
 } from "@shared/api-client";
 import {constants} from "./constants";
 import {t} from "i18next";
 
-const config = new Configuration({
+const publicConfig = new Configuration({
   basePath: constants.API_BASE_PATH,
   // optional: add default headers
   // headers: { Authorization: `Bearer ${token}` }
 });
 
-export const AuthController = new ApiV1AuthApi(config);
-export const oAuthController = new ApiV1AuthOauthApi(config);
-export const oAuthRedirectController = new ApiV1AuthOauthRedirectApi(config);
+export const AuthController = new ApiV1PublicAuthApi(publicConfig);
+export const oAuthController = new ApiV1PublicAuthOauthApi(publicConfig);
+export const oAuthRedirectController = new ApiV1PublicAuthOauthRedirectApi(publicConfig);
 
 export interface ApiError {
   Ok: boolean;

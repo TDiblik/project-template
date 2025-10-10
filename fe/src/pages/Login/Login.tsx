@@ -56,7 +56,7 @@ export default function Login() {
     setLoading(true, "loadingStates.loggingIn");
     if (isSignUp) {
       const _data = data as SignUpPageFormType;
-      AuthController.apiV1AuthSignupPost({
+      AuthController.apiV1PublicAuthSignupPost({
         githubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody: {
           email: _data.email,
           password: _data.password,
@@ -71,7 +71,7 @@ export default function Login() {
         .finally(() => setLoading(false));
     } else {
       const _data = data as LoginPageFormType;
-      AuthController.apiV1AuthLoginPost({
+      AuthController.apiV1PublicAuthLoginPost({
         githubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody: {
           email: _data.email,
           password: _data.password,
@@ -140,10 +140,10 @@ export default function Login() {
         <div className="divider my-6">{t("loginPage.continueWith")}</div>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <OAuthButton provider="Google" icon={<FaGoogle />} onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGoogleGet()} />
-          <OAuthButton provider="Facebook" icon={<FaFacebook />} onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectFacebookGet()} />
-          <OAuthButton provider="Spotify" icon={<FaSpotify />} onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectSpotifyGet()} />
-          <OAuthButton provider="GitHub" icon={<FaGithub />} onClick={() => oAuthRedirectController.apiV1AuthOauthRedirectGithubGet()} />
+          <OAuthButton provider="Google" icon={<FaGoogle />} onClick={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGoogleGet()} />
+          <OAuthButton provider="Facebook" icon={<FaFacebook />} onClick={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectFacebookGet()} />
+          <OAuthButton provider="Spotify" icon={<FaSpotify />} onClick={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectSpotifyGet()} />
+          <OAuthButton provider="GitHub" icon={<FaGithub />} onClick={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGithubGet()} />
         </div>
 
         <motion.p className="text-base text-center" initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>

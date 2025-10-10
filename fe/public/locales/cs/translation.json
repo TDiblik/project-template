@@ -84,7 +84,8 @@
     },
     "username": {
       "required": "Uživatelské jméno je povinné",
-      "minLength": "Uživatelské jméno musí mít alespoň 3 znaky"
+      "minLength": "Uživatelské jméno musí mít alespoň 3 znaky",
+      "maxLength": "Uživatelské jméno nesmí vít více než 50 znaků"
     },
     "firstName": {
       "required": "Jméno je povinné"

@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './ApiApi';
-export * from './ApiV1AuthApi';
-export * from './ApiV1AuthOauthApi';
-export * from './ApiV1AuthOauthRedirectApi';
+export * from './ApiV1PrivateUserApi';
+export * from './ApiV1PublicAuthApi';
+export * from './ApiV1PublicAuthOauthApi';
+export * from './ApiV1PublicAuthOauthRedirectApi';

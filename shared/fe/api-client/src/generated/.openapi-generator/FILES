@@ -1,8 +1,9 @@
 .openapi-generator-ignore
 apis/ApiApi.ts
-apis/ApiV1AuthApi.ts
-apis/ApiV1AuthOauthApi.ts
-apis/ApiV1AuthOauthRedirectApi.ts
+apis/ApiV1PrivateUserApi.ts
+apis/ApiV1PublicAuthApi.ts
+apis/ApiV1PublicAuthOauthApi.ts
+apis/ApiV1PublicAuthOauthRedirectApi.ts
 apis/index.ts
 index.ts
 models/GithubComTDiblikProjectTemplateApiHandlersAuthHandlerResponse.ts
@@ -10,6 +11,8 @@ models/GithubComTDiblikProjectTemplateApiHandlersLoginHandlerRequestBody.ts
 models/GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponse.ts
 models/GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse.ts
 models/GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody.ts
+models/GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse.ts
+models/GithubComTDiblikProjectTemplateApiModelsUsersModelDB.ts
 models/GithubComTDiblikProjectTemplateApiUtilsErrorResponseType.ts
 models/index.ts
 runtime.ts
