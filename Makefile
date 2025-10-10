@@ -1,10 +1,10 @@
-DB_NAME=project-template_db
+DB_NAME=project-template-db
 DB_PORT=35232
 DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-update db db-logs db-stop db-remove gen-types fe fe-install fe-update install update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop
+.PHONY: api api-install api-build api-update db db-logs db-stop db-remove gen-types fe fe-install fe-build fe-update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build
 %:
 	@:
 
@@ -14,6 +14,9 @@ api:
 
 api-install:
 	cd ./api && go mod tidy
+
+api-build:
+	cd ./api && go build -o ./tmp/main .
 
 api-update:
 	cd ./api && go get -u all && go mod tidy && gofmt -w -l .
@@ -56,6 +59,9 @@ fe:
 
 fe-install:
 	cd ./fe && yarn
+
+fe-build:
+	cd ./fe && yarn build
 
 fe-update:
 	cd ./fe && yarn update
@@ -100,4 +106,5 @@ prod-locally-stop:
 
 # ---------- Combined Targets ----------
 install: api-install fe-install gen-types
-update: api-update fe-update install
+update: api-update fe-update install build
+build: api-build fe-build

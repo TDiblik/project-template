@@ -99,7 +99,7 @@ make db-remove # Remove container
 
 **Defaults:**
 
-- Name: `project-template_db`
+- Name: `project-template-db`
 - Port: `35232`
 - Password: `s0m3C0mpl3xP4ss`
 
