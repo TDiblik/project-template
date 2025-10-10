@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/facebook"
@@ -61,21 +63,25 @@ var EnvData IEnvData
 var FoldrePerms fs.FileMode = 0o777
 
 func SetupENV(env_files ...string) {
-	log.Println("Setting up env variables: start")
+	LogIfMaster("Setting up env variables: start")
 
 	err := godotenv.Load(env_files...)
 	if err != nil {
-		log.Println("Unable to load .env file: ", err)
-		log.Println("This is normal in production environments, since all environment variables are set in the cloud.")
+		LogIfMaster("Unable to load .env file: ", err)
+		LogIfMaster("This is normal in production environments, since all environment variables are set in the cloud.")
 	}
 
-	switch os.Getenv("GO_ENV") {
+	childStatus := "master"
+	if fiber.IsChild() {
+		childStatus = "child"
+	}
+	switch getEnvKeyOrPanic("GO_ENV") {
 	case "development":
 		EnvData.Debug = true
-		log.SetPrefix("[DEBUG] " + log.Prefix())
+		log.SetPrefix(fmt.Sprintf("[DEBUG] - %d (%s) - ", os.Getpid(), childStatus) + log.Prefix())
 	case "production":
 		EnvData.Debug = false
-		log.SetPrefix("[PROD] " + log.Prefix())
+		log.SetPrefix(fmt.Sprintf("[PROD] - %d (%s) - ", os.Getpid(), childStatus) + log.Prefix())
 	default:
 		log.Fatalln("Error determening GO_ENV (", os.Getenv("GO_ENV"), ")")
 	}
@@ -83,7 +89,7 @@ func SetupENV(env_files ...string) {
 	EnvData.API_PORT = getEnvKeyOrPanic("API_PORT")
 	EnvData.DB_CONNECTION_STRING = getEnvKeyOrPanic("DB_CONNECTION_STRING")
 	EnvData.DB_MIGRATIONS_PATH = getEnvKeyOrPanic("DB_MIGRATIONS_PATH")
-	if strings.ToLower(os.Getenv("DB_DEV_FORCE_MIGRATE_DOWN")) == "true" {
+	if strings.ToLower(getEnvKeyOrPanic("DB_DEV_FORCE_MIGRATE_DOWN")) == "true" {
 		if !EnvData.Debug {
 			log.Fatalln("Cannot use DB_DEV_FORCE_MIGRATE_DOWN while in production mode!")
 		}
@@ -188,4 +194,10 @@ func LogErr(e error) {
 	// if EnvData.Debug {
 	// 	log.Println("DEBUG ERROR: ", e)
 	// }
+}
+
+func LogIfMaster(v ...any) {
+	if !fiber.IsChild() {
+		Log(v...)
+	}
 }

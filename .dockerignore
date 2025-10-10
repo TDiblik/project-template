@@ -12,7 +12,6 @@ mobile/android
 mobile/ios
 api/**/generated
 .env
-.env.production
 
 ### FE ###
 logs

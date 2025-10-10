@@ -117,7 +117,6 @@ func SetupRoutes(app *fiber.App) {
 			Compress:      true,
 			CacheDuration: cache_duration,
 		}))
-
 		app.Get("/*", func(c fiber.Ctx) error {
 			return c.SendFile("./public/index.html", fiber.SendFile{
 				Compress:      true,

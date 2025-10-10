@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/TDiblik/project-template/api/database"
 	"github.com/TDiblik/project-template/api/router"
@@ -19,12 +18,7 @@ import (
 )
 
 func main() {
-	if fiber.IsChild() {
-		log.Printf("[%d] Child: \n", os.Getppid())
-	} else {
-		log.Printf("[%d] Master: \n", os.Getppid())
-	}
-	log.Println("Initializing the Template API server")
+	utils.LogIfMaster("Initializing the Template API server")
 
 	utils.SetupENV()
 	utils.SetupValidator()

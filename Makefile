@@ -4,7 +4,9 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-update db db-follow db-stop db-remove gen-types fe fe-install fe-update install update
+.PHONY: api api-install api-update db db-logs db-stop db-remove gen-types fe fe-install fe-update install update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop
+%:
+	@:
 
 # ---------- Backend ----------
 api:
@@ -26,20 +28,20 @@ db:
 		docker run --name $(DB_NAME) -p $(DB_PORT):5432 -e POSTGRES_PASSWORD=$(DB_PASSWORD) -v $(DB_VOLUME):/var/lib/postgresql/data -d $(DB_IMAGE) -c max_connections=200; \
 	fi
 
-db-follow:
+db-logs:
 	docker logs $(DB_NAME) --follow
 	
 db-stop:
-	echo "Stopping database container..."; \
-	docker stop $(DB_NAME); \
+	@echo "Stopping database container..."
+	docker stop $(DB_NAME)
 
 db-remove:
-	echo "Removing database container..."; \
-	docker stop $(DB_NAME); \
-	docker rm -f $(DB_NAME); \
+	@echo "Removing database container..."
+	docker stop $(DB_NAME)
+	docker rm -f $(DB_NAME)
 
 gen-types:
-	rm -rf ./shared/fe/api-client/src/generated; \
+	rm -rf ./shared/fe/api-client/src/generated
 	openapi-generator generate \
 		-i ./api/generated/swagger.yaml \
 		-g typescript-fetch \
@@ -56,9 +58,45 @@ fe-install:
 	cd ./fe && yarn
 
 fe-update:
-	cd ./fe && yarn update && \
-	cd ../shared/fe/api-client && yarn update && \
-	cd ../../../fe && yarn lint
+	cd ./fe && yarn update
+	cd ./shared/fe/api-client && yarn update
+	cd ./fe && yarn lint
+	
+# ---------- Docker build for production ----------
+VERSION := $(word 2,$(MAKECMDGOALS))
+DOCKER_TAG = v$(shell echo $(VERSION) | sed 's/^v*//')
+prod-build:
+ifndef VERSION
+	$(error VERSION is required. Usage: make prod-build vX.X.X)
+endif
+	@echo "Generating TypeScript types..."
+	$(MAKE) gen-types
+	@echo "Building Docker image $(DOCKER_TAG)..."
+	cp .gitignore .dockerignore
+	docker build -f Dockerfile.app --no-cache -t docker-registry.dev.tomasdiblik.cz/project-template:$(DOCKER_TAG) .
+
+LOCAL_API_PROD_PORT ?= 35230
+prod-locally:
+ifndef VERSION
+	$(error VERSION is required. Usage: make prod-locally vX.X.X)
+endif
+	@echo "Ensuring database is running..."
+	$(MAKE) db
+	$(MAKE) prod-locally-stop
+	@echo "Running Docker image $(DOCKER_TAG) locally on port $(LOCAL_API_PROD_PORT)..."
+	@docker run -d --env-file api/.env.production -p $(LOCAL_API_PROD_PORT):35230 docker-registry.dev.tomasdiblik.cz/project-template:$(DOCKER_TAG)
+
+prod-locally-logs:
+	@CONTAINER_ID=$$(docker ps -q --filter "publish=$(LOCAL_API_PROD_PORT)"); \
+	if [ -z "$$CONTAINER_ID" ]; then \
+		echo "No running container found on port $(LOCAL_API_PROD_PORT)."; \
+	else \
+		docker logs -f $$CONTAINER_ID; \
+	fi
+	
+prod-locally-stop:
+	@echo "Stopping local prod container, if it exists..."
+	@docker ps -q --filter "publish=$(LOCAL_API_PROD_PORT)" | xargs -r docker stop
 
 # ---------- Combined Targets ----------
 install: api-install fe-install gen-types
