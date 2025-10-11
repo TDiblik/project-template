@@ -13,6 +13,8 @@ create table users (
     avatar_url text,
     active boolean default true,
     
+    -- todo: add prefered theme + add prefered language
+    
     github_id text,
     github_email text,
     github_handle text,

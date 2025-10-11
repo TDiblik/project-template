@@ -5,11 +5,13 @@ import {ThemePosibilities, useThemeStore, type ThemePosibilitiesType} from "../s
 import {useTranslation} from "react-i18next";
 import {SupportedLanguages, type SupportedLanguagesType} from "../utils/i18n";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
+import {usei18nStore} from "../stores/i18nStore";
 
 const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
-  const {i18n, t} = useTranslation();
+  const {t} = useTranslation();
   const {theme, changeTheme} = useThemeStore();
+  const {language, changeLanguage} = usei18nStore();
 
   const menuItems = [
     {name: t("layout.dashboard"), path: routes.index},
@@ -41,8 +43,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
     setThemeOpen(false);
   };
   const changeLanguageAndClose = (lang: SupportedLanguagesType) => {
-    // todo: change into a store and sent PATCH to BE on change
-    i18n.changeLanguage(lang);
+    changeLanguage(lang);
     setLanguageOpen(false);
   };
 
@@ -87,7 +88,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
                     <motion.ul {...toggleMenuAnimation} className={toggleMenuClasses}>
                       {SupportedLanguages.map((lang) => (
                         <li key={lang}>
-                          <a className={i18n.language === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
+                          <a className={language() === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
                             {t(`layout.changeLanguage.${lang}`)}
                           </a>
                         </li>

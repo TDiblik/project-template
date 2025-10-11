@@ -16,6 +16,7 @@ import {useAuthTokenStore} from "../stores/TokenStore";
 const config = new Configuration({
   basePath: constants.API_BASE_PATH,
   apiKey: () => useAuthTokenStore.getState().tokenRaw ?? "",
+  // todo: add a middleware that refreshes the api token
 });
 
 export const AuthController = new ApiV1PublicAuthApi(config);
