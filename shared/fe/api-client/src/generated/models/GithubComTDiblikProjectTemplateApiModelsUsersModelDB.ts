@@ -33,12 +33,6 @@ export interface GithubComTDiblikProjectTemplateApiModelsUsersModelDB {
     avatarUrl?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
-     */
-    createdAt?: Date;
-    /**
-     * 
      * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
      */
@@ -54,7 +48,25 @@ export interface GithubComTDiblikProjectTemplateApiModelsUsersModelDB {
      * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
      */
+    facebookEmail?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
+    facebookId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
     firstName?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
+    githubEmail?: string;
     /**
      * 
      * @type {string}
@@ -66,7 +78,25 @@ export interface GithubComTDiblikProjectTemplateApiModelsUsersModelDB {
      * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
      */
+    githubId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
     githubUrl?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
+    googleEmail?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
+    googleId?: string;
     /**
      * 
      * @type {string}
@@ -81,22 +111,22 @@ export interface GithubComTDiblikProjectTemplateApiModelsUsersModelDB {
     id?: string;
     /**
      * 
-     * @type {Date}
-     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
-     */
-    lastLoginAt?: Date;
-    /**
-     * 
      * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
      */
     lastName?: string;
     /**
      * 
-     * @type {Date}
+     * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
      */
-    updatedAt?: Date;
+    spotifyEmail?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUsersModelDB
+     */
+    spotifyId?: string;
     /**
      * 
      * @type {string}
@@ -124,17 +154,22 @@ export function GithubComTDiblikProjectTemplateApiModelsUsersModelDBFromJSONType
         
         'active': json['active'] == null ? undefined : json['active'],
         'avatarUrl': json['avatar_url'] == null ? undefined : json['avatar_url'],
-        'createdAt': json['created_at'] == null ? undefined : (new Date(json['created_at'])),
         'email': json['email'] == null ? undefined : json['email'],
         'emailVerified': json['email_verified'] == null ? undefined : json['email_verified'],
+        'facebookEmail': json['facebook_email'] == null ? undefined : json['facebook_email'],
+        'facebookId': json['facebook_id'] == null ? undefined : json['facebook_id'],
         'firstName': json['first_name'] == null ? undefined : json['first_name'],
+        'githubEmail': json['github_email'] == null ? undefined : json['github_email'],
         'githubHandle': json['github_handle'] == null ? undefined : json['github_handle'],
+        'githubId': json['github_id'] == null ? undefined : json['github_id'],
         'githubUrl': json['github_url'] == null ? undefined : json['github_url'],
+        'googleEmail': json['google_email'] == null ? undefined : json['google_email'],
+        'googleId': json['google_id'] == null ? undefined : json['google_id'],
         'handle': json['handle'] == null ? undefined : json['handle'],
         'id': json['id'] == null ? undefined : json['id'],
-        'lastLoginAt': json['last_login_at'] == null ? undefined : (new Date(json['last_login_at'])),
         'lastName': json['last_name'] == null ? undefined : json['last_name'],
-        'updatedAt': json['updated_at'] == null ? undefined : (new Date(json['updated_at'])),
+        'spotifyEmail': json['spotify_email'] == null ? undefined : json['spotify_email'],
+        'spotifyId': json['spotify_id'] == null ? undefined : json['spotify_id'],
         'userFullName': json['user_full_name'] == null ? undefined : json['user_full_name'],
     };
 }
@@ -152,17 +187,22 @@ export function GithubComTDiblikProjectTemplateApiModelsUsersModelDBToJSONTyped(
         
         'active': value['active'],
         'avatar_url': value['avatarUrl'],
-        'created_at': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
         'email': value['email'],
         'email_verified': value['emailVerified'],
+        'facebook_email': value['facebookEmail'],
+        'facebook_id': value['facebookId'],
         'first_name': value['firstName'],
+        'github_email': value['githubEmail'],
         'github_handle': value['githubHandle'],
+        'github_id': value['githubId'],
         'github_url': value['githubUrl'],
+        'google_email': value['googleEmail'],
+        'google_id': value['googleId'],
         'handle': value['handle'],
         'id': value['id'],
-        'last_login_at': value['lastLoginAt'] == null ? undefined : ((value['lastLoginAt']).toISOString()),
         'last_name': value['lastName'],
-        'updated_at': value['updatedAt'] == null ? undefined : ((value['updatedAt']).toISOString()),
+        'spotify_email': value['spotifyEmail'],
+        'spotify_id': value['spotifyId'],
         'user_full_name': value['userFullName'],
     };
 }

@@ -20,6 +20,8 @@ const OAuthRedirect = () => {
   const oAuthCode = query.get("code");
   const oAuthState = query.get("state");
   const [shouldFail, setShouldFail] = useState(!oAuthCode || !oAuthState);
+  const {isAuthenticated} = useAuthTokenStore();
+  const _isAuthenticated = isAuthenticated();
 
   const {setToken} = useAuthTokenStore();
 
@@ -86,10 +88,15 @@ const OAuthRedirect = () => {
               {t("oauthRedirectPage.loginFailed.title")}
             </motion.h1>
             <motion.p className="text-base text-base-content/80 mb-6" {...delayed(0.4)}>
-              {t("oauthRedirectPage.loginFailed.description")}
+              {_isAuthenticated ? t("oauthRedirectPage.loginFailed.description-authenticated") : t("oauthRedirectPage.loginFailed.description")}
             </motion.p>
-            <motion.button whileHover={{scale: 1.05}} whileTap={{scale: 0.95}} className="btn btn-primary" onClick={() => navigate(routes.login)}>
-              {t("oauthRedirectPage.loginFailed.button")}
+            <motion.button
+              whileHover={{scale: 1.05}}
+              whileTap={{scale: 0.95}}
+              className="btn btn-primary"
+              onClick={() => (_isAuthenticated ? navigate(routes.settings) : navigate(routes.login))}
+            >
+              {_isAuthenticated ? t("oauthRedirectPage.loginFailed.button-authenticated") : t("oauthRedirectPage.loginFailed.button")}
             </motion.button>
           </motion.div>
         )}

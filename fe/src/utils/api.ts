@@ -1,23 +1,27 @@
 import {
+  ApiV1PrivateUserApi,
   ApiV1PublicAuthApi,
   ApiV1PublicAuthOauthApi,
   ApiV1PublicAuthOauthRedirectApi,
   Configuration,
+  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum,
+  type GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse,
   type GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
 } from "@shared/api-client";
 import {constants} from "./constants";
 import {t} from "i18next";
+import {useAuthTokenStore} from "../stores/TokenStore";
 
-const publicConfig = new Configuration({
+const config = new Configuration({
   basePath: constants.API_BASE_PATH,
-  // optional: add default headers
-  // headers: { Authorization: `Bearer ${token}` }
+  apiKey: () => useAuthTokenStore.getState().tokenRaw ?? "",
 });
 
-export const AuthController = new ApiV1PublicAuthApi(publicConfig);
-export const oAuthController = new ApiV1PublicAuthOauthApi(publicConfig);
-export const oAuthRedirectController = new ApiV1PublicAuthOauthRedirectApi(publicConfig);
+export const AuthController = new ApiV1PublicAuthApi(config);
+export const oAuthController = new ApiV1PublicAuthOauthApi(config);
+export const oAuthRedirectController = new ApiV1PublicAuthOauthRedirectApi(config);
+export const UserController = new ApiV1PrivateUserApi(config);
 
 export interface ApiError {
   Ok: boolean;
@@ -63,5 +67,8 @@ export const ConvertToApiError = async (error: any): Promise<ApiError> => {
 
   return result;
 };
-
 export const TranslateApiErrorMessage = (error: ApiError) => t(error.Body.msg || "be.error.internal_server_error");
+
+export type OauthRedirectHandlerResponse = GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse;
+export type OauthRedirectHandlerRequest = Promise<OauthRedirectHandlerResponse>;
+export type RedirectBackToAfterOauthEnum = GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum;

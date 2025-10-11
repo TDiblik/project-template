@@ -110,15 +110,47 @@ func GetJWTFromLocals(c fiber.Ctx) (*JWTInfo, error) {
 	if val == nil {
 		return nil, errors.New("JWT claims not found in context locals")
 	}
-
 	jwtInfo, ok := val.(*JWTInfo)
 	if !ok {
 		return nil, errors.New("invalid JWT claims type in context locals")
 	}
-
 	return jwtInfo, nil
 }
 
 func SetJWTToLocals(c fiber.Ctx, tokenInfo *JWTInfo) {
 	c.Locals(constants.TOKEN_CLAIMS_LOCALS_KEY, tokenInfo)
+}
+
+type ErrJWTNoToken struct{}
+type ErrJWTInvalidToken struct{}
+type ErrJWTTokenConversion struct{}
+
+func (e *ErrJWTNoToken) Error() string {
+	return "jwt auth token is missing"
+}
+func (e *ErrJWTInvalidToken) Error() string {
+	return "jwt auth token is invalid"
+}
+func (e *ErrJWTTokenConversion) Error() string {
+	return "jwt auth token failed to convert to token claims"
+}
+
+var JWTNoTokenErr *ErrJWTNoToken = &ErrJWTNoToken{}
+var JWTInvalidTokenErr *ErrJWTInvalidToken = &ErrJWTInvalidToken{}
+var JWTConversionErr *ErrJWTTokenConversion = &ErrJWTTokenConversion{}
+
+func GetUserInfoFromJWT(c fiber.Ctx) (*JWTInfo, error) {
+	tokenRaw := c.Get(constants.TOKEN_HEADER_NAME)
+	if len(tokenRaw) == 0 {
+		return nil, JWTNoTokenErr
+	}
+	tokenClaims, err := ValidateJWT(tokenRaw)
+	if err != nil {
+		return nil, JWTInvalidTokenErr
+	}
+	tokenInfo, err := TokenClaimsToJwtInfo(tokenClaims)
+	if err != nil {
+		return nil, JWTConversionErr
+	}
+	return tokenInfo, nil
 }

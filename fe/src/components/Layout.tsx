@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {routes} from "../utils/routes";
-import {Link, useLocation} from "react-router";
+import {Link, matchPath, useLocation} from "react-router";
 import {ThemePosibilities, useThemeStore, type ThemePosibilitiesType} from "../stores/ThemeStore";
 import {useTranslation} from "react-i18next";
 import {SupportedLanguages, type SupportedLanguagesType} from "../utils/i18n";
@@ -41,6 +41,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
     setThemeOpen(false);
   };
   const changeLanguageAndClose = (lang: SupportedLanguagesType) => {
+    // todo: change into a store and sent PATCH to BE on change
     i18n.changeLanguage(lang);
     setLanguageOpen(false);
   };
@@ -54,7 +55,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
         {/* Menu */}
         <ul className="menu flex-1 gap-2 p-4">
           {menuItems.map((item) => (
-            <li key={item.name} className={location.pathname.startsWith(item.path) ? "bg-primary text-primary-content rounded-lg" : ""}>
+            <li key={item.name} className={matchPath(item.path, location.pathname) ? "bg-primary text-primary-content rounded-lg" : ""}>
               <Link to={item.path}>{item.name}</Link>
             </li>
           ))}

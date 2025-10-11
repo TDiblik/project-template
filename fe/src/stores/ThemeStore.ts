@@ -17,5 +17,6 @@ export const useThemeStore = create<ThemeStoreState>()((set) => ({
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(constants.LOCAL_STORAGE_THEME_KEY, theme);
     set(() => ({theme}));
+    // todo: sent PATCH to BE, if the user is logged in.
   },
 }));

@@ -14,15 +14,19 @@ create table users (
     active boolean default true,
     
     github_id text,
+    github_email text,
     github_handle text,
     github_url text,
     
     google_id text,
+    google_email text,
     
     facebook_id text,
+    facebook_email text,
     facebook_url text,
     
     spotify_id text,
+    spotify_email text,
     spotify_url text,
 
     last_login_at timestamp,

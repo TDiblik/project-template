@@ -64,3 +64,16 @@ func NormalizeHandle(s string) string {
 
 	return out
 }
+
+// when adding a new oauth provider and user table fields, add emails here:
+const EMAIL_SQL_MATCH_CONDITION = "email = $1 or github_email = $1 or google_email = $1 or facebook_email = $1 or spotify_email = $1"
+
+func UserEmailExistsQuery() string {
+	return `exists(select 1 from users where ` + EMAIL_SQL_MATCH_CONDITION + `)`
+}
+func SelectUserByEmailQuery() string {
+	return `select * from users where ` + EMAIL_SQL_MATCH_CONDITION
+}
+func SelectIdAndPasswordHashByEmailQuery() string {
+	return `select id, password_hash from users where ` + EMAIL_SQL_MATCH_CONDITION
+}

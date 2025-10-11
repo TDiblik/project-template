@@ -20,20 +20,24 @@ type UsersModelDB struct {
 	AvatarUrl    SQLNullString `db:"avatar_url" json:"avatar_url"`
 	Active       bool          `db:"active" json:"active"`
 
-	GithubId     SQLNullString `db:"github_id" json:"-"`
+	GithubId     SQLNullString `db:"github_id" json:"github_id"`
+	GithubEmail  SQLNullString `db:"github_email" json:"github_email"`
 	GithubHandle SQLNullString `db:"github_handle" json:"github_handle"`
 	GithubUrl    SQLNullString `db:"github_url" json:"github_url"`
 
-	GoogleId SQLNullString `db:"google_id" json:"-"`
+	GoogleId    SQLNullString `db:"google_id" json:"google_id"`
+	GoogleEmail SQLNullString `db:"google_email" json:"google_email"`
 
-	FacebookId  SQLNullString `db:"facebook_id" json:"-"`
-	FacebookUrl SQLNullString `db:"facebook_url" json:"-"`
+	FacebookId    SQLNullString `db:"facebook_id" json:"facebook_id"`
+	FacebookEmail SQLNullString `db:"facebook_email" json:"facebook_email"`
+	FacebookUrl   SQLNullString `db:"facebook_url" json:"-"`
 
-	SpotifyId  SQLNullString `db:"spotify_id" json:"-"`
-	SpotifyUrl SQLNullString `db:"spotify_url" json:"-"`
+	SpotifyId    SQLNullString `db:"spotify_id" json:"spotify_id"`
+	SpotifyEmail SQLNullString `db:"spotify_email" json:"spotify_email"`
+	SpotifyUrl   SQLNullString `db:"spotify_url" json:"-"`
 
-	LastLoginAt sql.NullTime `db:"last_login_at" json:"last_login_at"`
+	LastLoginAt sql.NullTime `db:"last_login_at" json:"-"`
 
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
+	CreatedAt time.Time `db:"created_at" json:"-"`
+	UpdatedAt time.Time `db:"updated_at" json:"-"`
 }

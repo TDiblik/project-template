@@ -99,7 +99,7 @@ func SetupRoutes(app *fiber.App) {
 				},
 				Components: &gofiberswagger.Components{
 					SecuritySchemes: map[string]*gofiberswagger.SecuritySchemeRef{
-						"x-user-token": {
+						constants.TOKEN_HEADER_NAME: {
 							Value: &gofiberswagger.SecurityScheme{
 								Type: "apiKey",
 								Name: constants.TOKEN_HEADER_NAME,
@@ -111,7 +111,7 @@ func SetupRoutes(app *fiber.App) {
 			},
 			AutomaticallyRequireAuth: true,
 			RequiredAuth: &gofiberswagger.SecurityRequirements{{
-				"x-user-token": {},
+				constants.TOKEN_HEADER_NAME: {},
 			}},
 			SwaggerUI:          gofiberswagger.DefaultUIConfig,
 			CreateSwaggerFiles: true,

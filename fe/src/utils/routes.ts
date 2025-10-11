@@ -1,4 +1,4 @@
-import type {GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum} from "@shared/api-client";
+import type {RedirectBackToAfterOauthEnum} from "./api";
 
 export const routes = {
   index: "/",
@@ -9,10 +9,7 @@ export const routes = {
   settings: "/settings",
 };
 
-export const RedirectBackToAfterOauthToRouteMap: Record<
-  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum,
-  string
-> = {
+export const RedirectBackToAfterOauthToRouteMap: Record<RedirectBackToAfterOauthEnum, string> = {
   index: routes.index,
   profile: routes.profile,
   settings: routes.settings,

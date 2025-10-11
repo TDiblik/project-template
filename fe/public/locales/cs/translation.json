@@ -41,7 +41,9 @@
     "loginFailed": {
       "title": "Přihlášení Selhalo",
       "description": "Nepodařilo se dokončit proces přihlášení. Zkuste to prosím později.",
-      "button": "Zpět na Přihlášení"
+      "description-authenticated": "Nepodařilo se dokončit proces propojení s externím účtem. Zkuste to prosím později.",
+      "button": "Zpět na Přihlášení",
+      "button-authenticated": "Zpět na nastavení"
     },
     "loginInProgress": {
       "title": "Přihlašování...",
@@ -64,6 +66,44 @@
       "en": "Angličtina"
     },
     "logout": "Odhlásit se"
+  },
+  "settingsPage": {
+    "pageTitle": "Nastavení",
+    "profileInfo": "Informace o profilu",
+    "changePassword": "Změnit heslo",
+    "saveChanges": "Uložit změny",
+    "savePassword": "Uložit heslo",
+    "connectedAccounts": "Propojené účty",
+    "avatar": "Avatar",
+    "changeAvatar": "Změnit avatar",
+    "firstName": {
+      "label": "Jméno",
+      "placeholder": "Zadejte své jméno"
+    },
+    "lastName": {
+      "label": "Příjmení",
+      "placeholder": "Zadejte své příjmení"
+    },
+    "email": {
+      "label": "E-mailová adresa",
+      "placeholder": "Zadejte svůj e-mail"
+    },
+    "username": {
+      "label": "Uživatelské jméno",
+      "placeholder": "Zadejte své uživatelské jméno"
+    },
+    "password": {
+      "label": "Heslo",
+      "placeholder": "Zadejte své heslo"
+    },
+    "confirmPassword": {
+      "label": "Potvrzení hesla",
+      "placeholder": "Zadejte heslo znovu"
+    },
+    "oauth": {
+      "connect": "Připojit",
+      "connected": "Připojeno"
+    }
   },
   "validation": {
     "email": {

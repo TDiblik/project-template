@@ -114,19 +114,19 @@ func OAuthPostReturnHandler(c fiber.Ctx) error {
 	// when adding a new oauth provider and user table fields, add new "case" here:
 	switch provider {
 	case githubProviderName:
-		if userUUID, err = githubReturn(query.Code); err != nil {
+		if userUUID, err = githubReturn(c, query.Code); err != nil {
 			return utils.InternalServerErrorResponse(c, err)
 		}
 	case googleProviderName:
-		if userUUID, err = googleReturn(query.Code); err != nil {
+		if userUUID, err = googleReturn(c, query.Code); err != nil {
 			return utils.InternalServerErrorResponse(c, err)
 		}
 	case facebookProviderName:
-		if userUUID, err = facebookReturn(query.Code); err != nil {
+		if userUUID, err = facebookReturn(c, query.Code); err != nil {
 			return utils.InternalServerErrorResponse(c, err)
 		}
 	case spotifyProviderName:
-		if userUUID, err = spotifyReturn(query.Code); err != nil {
+		if userUUID, err = spotifyReturn(c, query.Code); err != nil {
 			return utils.InternalServerErrorResponse(c, err)
 		}
 	default:
@@ -152,7 +152,7 @@ type githubUserApiResponse struct {
 	HtmlUrl   string `json:"html_url"`
 }
 
-func githubReturn(authCode string) (uuid.UUID, error) {
+func githubReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	token, err := utils.EnvData.OAUTH_GITHUB_CONFIG.Exchange(context.Background(), authCode)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("failed to exchange token: %w", err)
@@ -183,7 +183,7 @@ func githubReturn(authCode string) (uuid.UUID, error) {
 		}
 	}
 
-	return CreateOrUpdateUser(models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UsersModelDB{
 		Email:         ghUserResponse.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(firstName),
@@ -191,6 +191,7 @@ func githubReturn(authCode string) (uuid.UUID, error) {
 		Handle:        utils.SQLNullStringFromString(ghUserResponse.Login),
 		GithubId:      utils.SQLNullStringFromString(strconv.FormatInt(ghUserResponse.ID, 10)),
 		GithubHandle:  utils.SQLNullStringFromString(ghUserResponse.Login),
+		GithubEmail:   utils.SQLNullStringFromString(ghUserResponse.Email),
 		GithubUrl:     utils.SQLNullStringFromString(ghUserResponse.HtmlUrl),
 		AvatarUrl:     utils.SQLNullStringFromString(ghUserResponse.AvatarURL),
 	})
@@ -206,7 +207,7 @@ type googleUserApiResponse struct {
 	Picture       string `json:"picture"`
 }
 
-func googleReturn(authCode string) (uuid.UUID, error) {
+func googleReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	token, err := utils.EnvData.OAUTH_GOOGLE_CONFIG.Exchange(context.Background(), authCode)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("failed to exchange token: %w", err)
@@ -230,12 +231,13 @@ func googleReturn(authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UsersModelDB{
 		Email:         gUser.Email,
 		EmailVerified: gUser.VerifiedEmail,
 		FirstName:     utils.SQLNullStringFromString(gUser.GivenName),
 		LastName:      utils.SQLNullStringFromString(gUser.FamilyName),
 		GoogleId:      utils.SQLNullStringFromString(gUser.ID),
+		GoogleEmail:   utils.SQLNullStringFromString(gUser.Email),
 		AvatarUrl:     utils.SQLNullStringFromString(gUser.Picture),
 	})
 }
@@ -256,7 +258,7 @@ type facebookUserApiResponse struct {
 	Link string `json:"link"`
 }
 
-func facebookReturn(authCode string) (uuid.UUID, error) {
+func facebookReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	token, err := utils.EnvData.OAUTH_FACEBOOK_CONFIG.Exchange(context.Background(), authCode)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("failed to exchange token: %w", err)
@@ -279,12 +281,13 @@ func facebookReturn(authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UsersModelDB{
 		Email:         fbUser.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(fbUser.FirstName),
 		LastName:      utils.SQLNullStringFromString(fbUser.LastName),
 		FacebookId:    utils.SQLNullStringFromString(fbUser.ID),
+		FacebookEmail: utils.SQLNullStringFromString(fbUser.Email),
 		FacebookUrl:   utils.SQLNullStringFromString(fbUser.Link),
 		AvatarUrl:     utils.SQLNullStringFromString(fbUser.Picture.Data.URL),
 	})
@@ -302,7 +305,7 @@ type spotifyUserApiResponse struct {
 	} `json:"external_urls"`
 }
 
-func spotifyReturn(authCode string) (uuid.UUID, error) {
+func spotifyReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	token, err := utils.EnvData.OAUTH_SPOTIFY_CONFIG.Exchange(context.Background(), authCode)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("failed to exchange token: %w", err)
@@ -339,28 +342,34 @@ func spotifyReturn(authCode string) (uuid.UUID, error) {
 		avatarURL = spUser.Images[0].URL
 	}
 
-	return CreateOrUpdateUser(models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UsersModelDB{
 		Email:         spUser.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(firstName),
 		LastName:      utils.SQLNullStringFromString(lastName),
 		SpotifyId:     utils.SQLNullStringFromString(spUser.ID),
+		SpotifyEmail:  utils.SQLNullStringFromString(spUser.Email),
 		SpotifyUrl:    utils.SQLNullStringFromString(spUser.ExternalURLs.Spotify),
 		AvatarUrl:     utils.SQLNullStringFromString(avatarURL),
 	})
 }
 
-func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) {
+func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UsersModelDB) (uuid.UUID, error) {
 	db, err := database.CreateConnection()
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
 	}
 
+	possiblyUserEmail := possiblyNewUser.Email
+	loggedInUserInfo, err := utils.GetUserInfoFromJWT(c)
+	processingLoggedInUser := loggedInUserInfo != nil
+	if err == nil && processingLoggedInUser {
+		possiblyUserEmail = loggedInUserInfo.UserEmail
+	}
+
 	var emailExists, handleExists bool
-	err = db.QueryRow(`select 
-		exists(select 1 from users where email = $1) as email_exists,
-		exists(select 1 from users where handle = $2) as handle_exists`,
-		possiblyNewUser.Email, possiblyNewUser.Handle).Scan(&emailExists, &handleExists)
+	err = db.QueryRow(`select `+utils.UserEmailExistsQuery()+` as email_exists, exists(select 1 from users where handle = $2) as handle_exists`,
+		possiblyUserEmail, possiblyNewUser.Handle).Scan(&emailExists, &handleExists)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("unable to query exists staments inside CreateOrUpdateUser: %w", err)
 	}
@@ -378,10 +387,10 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		// when adding a new oauth provider and user table fields, add the checks here:
 		rows, err := db.NamedQuery(`
 			insert into users (
-				email, email_verified, password_hash, handle, first_name, last_name, avatar_url, github_id, github_handle, github_url, google_id, facebook_id, facebook_url, spotify_id, spotify_url
+				email, email_verified, password_hash, handle, first_name, last_name, avatar_url, github_id, github_email, github_handle, github_url, google_id, google_email, facebook_id, facebook_email, facebook_url, spotify_id, spotify_email, spotify_url
 			) 
 			values (
-				:email, :email_verified, :password_hash, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_handle, :github_url, :google_id, :facebook_id, :facebook_url, :spotify_id, :spotify_url
+				:email, :email_verified, :password_hash, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_email, :github_handle, :github_url, :google_id, :google_email, :facebook_id, :facebook_email, :facebook_url, :spotify_id, :spotify_email, :spotify_url
 			)
 			returning *
 		`, possiblyNewUser)
@@ -397,9 +406,22 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		}
 	}
 	if emailExists {
-		err := db.Get(&existingUser, `select * from users where email = $1`, possiblyNewUser.Email)
-		if err != nil {
-			return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
+		if processingLoggedInUser {
+			err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyNewUser.Email)
+			if err != nil {
+				err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyUserEmail)
+				if err != nil {
+					return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
+				}
+			}
+			if loggedInUserInfo.UserId != existingUser.Id {
+				return uuid.Nil, fmt.Errorf("email is already linked to an account: %v (logged in user) VS %v (existing user)", loggedInUserInfo, existingUser)
+			}
+		} else {
+			err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyUserEmail)
+			if err != nil {
+				return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
+			}
 		}
 
 		if !existingUser.PasswordHash.Valid {
@@ -425,6 +447,9 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		if !existingUser.GithubId.Valid {
 			existingUser.GithubId = possiblyNewUser.GithubId
 		}
+		if !existingUser.GithubEmail.Valid {
+			existingUser.GithubEmail = possiblyNewUser.GithubEmail
+		}
 		if !existingUser.GithubHandle.Valid {
 			existingUser.GithubHandle = possiblyNewUser.GithubHandle
 		}
@@ -434,14 +459,23 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 		if !existingUser.GoogleId.Valid {
 			existingUser.GoogleId = possiblyNewUser.GoogleId
 		}
+		if !existingUser.GoogleEmail.Valid {
+			existingUser.GoogleEmail = possiblyNewUser.GoogleEmail
+		}
 		if !existingUser.FacebookId.Valid {
 			existingUser.FacebookId = possiblyNewUser.FacebookId
+		}
+		if !existingUser.FacebookEmail.Valid {
+			existingUser.FacebookEmail = possiblyNewUser.FacebookEmail
 		}
 		if !existingUser.FacebookUrl.Valid {
 			existingUser.FacebookUrl = possiblyNewUser.FacebookUrl
 		}
 		if !existingUser.SpotifyId.Valid {
 			existingUser.SpotifyId = possiblyNewUser.SpotifyId
+		}
+		if !existingUser.SpotifyEmail.Valid {
+			existingUser.SpotifyEmail = possiblyNewUser.SpotifyEmail
 		}
 		if !existingUser.SpotifyUrl.Valid {
 			existingUser.SpotifyUrl = possiblyNewUser.SpotifyUrl
@@ -457,12 +491,16 @@ func CreateOrUpdateUser(possiblyNewUser models.UsersModelDB) (uuid.UUID, error) 
 				avatar_url = :avatar_url,
 				email_verified = :email_verified,
 				github_id = :github_id,
+				github_email = :github_email,
 				github_handle = :github_handle,
 				github_url = :github_url,
 				google_id = :google_id,
+				google_email = :google_email,
 				facebook_id = :facebook_id,
+				facebook_email = :facebook_email,
 				facebook_url = :facebook_url,
 				spotify_id = :spotify_id,
+				spotify_email = :spotify_email,
 				spotify_url = :spotify_url
 			where id = :id
 		`, existingUser); err != nil {

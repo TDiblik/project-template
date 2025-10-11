@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/TDiblik/project-template/api/constants"
 	"github.com/TDiblik/project-template/api/database"
 	"github.com/TDiblik/project-template/api/router"
 	"github.com/TDiblik/project-template/api/utils"
@@ -84,7 +85,7 @@ func main() {
 		cors.Config{
 			AllowOrigins:     []string{utils.EnvData.FE_PROD_URL}, // frontend origin
 			AllowCredentials: true,
-			AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Accept", constants.TOKEN_HEADER_NAME},
 		},
 	))
 	log.Println("Setting up the app: done")

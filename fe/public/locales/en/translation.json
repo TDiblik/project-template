@@ -40,8 +40,10 @@
   "oauthRedirectPage": {
     "loginFailed": {
       "title": "Login Failed",
-      "description": "We couldn't complete the sign-in process. Please try again.",
-      "button": "Back to Login"
+      "description": "We couldn't complete the sign-in process. Please try again later.",
+      "description-authenticated": "We couldn't finish the process of linking to an external account. Please try again later.",
+      "button": "Back to Login",
+      "button-authenticated": "Back to Settings"
     },
     "loginInProgress": {
       "title": "Signing you in...",
@@ -64,6 +66,44 @@
       "en": "English"
     },
     "logout": "Logout"
+  },
+  "settingsPage": {
+    "pageTitle": "Settings",
+    "profileInfo": "Profile Information",
+    "changePassword": "Change Password",
+    "saveChanges": "Save Changes",
+    "savePassword": "Save Password",
+    "connectedAccounts": "Connected Accounts",
+    "avatar": "Avatar",
+    "changeAvatar": "Change Avatar",
+    "firstName": {
+      "label": "First Name",
+      "placeholder": "Enter your first name"
+    },
+    "lastName": {
+      "label": "Last Name",
+      "placeholder": "Enter your last name"
+    },
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Enter your email"
+    },
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter your username"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password"
+    },
+    "confirmPassword": {
+      "label": "Confirm Password",
+      "placeholder": "Re-enter your password"
+    },
+    "oauth": {
+      "connect": "Connect",
+      "connected": "Connected"
+    }
   },
   "validation": {
     "email": {

@@ -34,7 +34,7 @@ func LoginHandler(c fiber.Ctx) error {
 
 	var userUUID uuid.UUID
 	var userPasswordHash models.SQLNullString
-	if err := db.QueryRow(`select id, password_hash from users where email = $1`, req.Email).Scan(&userUUID, &userPasswordHash); err != nil {
+	if err := db.QueryRow(utils.SelectIdAndPasswordHashByEmailQuery(), req.Email).Scan(&userUUID, &userPasswordHash); err != nil {
 		if err == sql.ErrNoRows {
 			return utils.ConflictResponse(c, "be.error.login.username_or_password_incorrect")
 		}
@@ -111,7 +111,7 @@ func SignUpHandler(c fiber.Ctx) error {
 	}
 
 	var emailExists bool
-	if err := db.QueryRow(`select exists(select 1 from users where email = $1)`, req.Email).Scan(&emailExists); err != nil {
+	if err := db.QueryRow("select "+utils.UserEmailExistsQuery(), req.Email).Scan(&emailExists); err != nil {
 		return utils.InternalServerErrorResponse(c, fmt.Errorf("failed to check existing user: %w", err))
 	}
 	if emailExists {
@@ -136,7 +136,7 @@ func SignUpHandler(c fiber.Ctx) error {
 		newUser.Handle = utils.SQLNullStringFromString(req.Username)
 	}
 
-	userUUID, err := CreateOrUpdateUser(newUser)
+	userUUID, err := CreateOrUpdateUser(c, newUser)
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}

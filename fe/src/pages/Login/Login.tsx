@@ -224,6 +224,7 @@ const PasswordFields = ({t, isSignUp}: {t: any; isSignUp: boolean}) => (
   </div>
 );
 
+// todo: change Promise<any>
 const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => Promise<any>}) => (
   <motion.button
     whileHover={{scale: 1.05}}
