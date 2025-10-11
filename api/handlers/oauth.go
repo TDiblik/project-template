@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 
@@ -226,7 +225,6 @@ func googleReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	}
 
 	var gUser googleUserApiResponse
-	log.Println(resp.Body)
 	if err := json.NewDecoder(resp.Body).Decode(&gUser); err != nil {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
