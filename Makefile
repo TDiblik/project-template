@@ -51,22 +51,24 @@ gen-types:
 		-o ./shared/fe/api-client/src/generated \
 		--skip-validate-spec \
 		--additional-properties=supportsES6=true,typescriptThreePlus=true,npmVersion=$$(npm --version)
-	cd ./shared/fe/api-client && yarn && yarn build
+	cd ./shared/fe/api-client && \
+	bun install && \
+	bun run build
 
 # ---------- Frontend ----------
 fe:
-	cd ./fe && yarn dev
+	cd ./fe && bun run dev
 
 fe-install:
-	cd ./fe && yarn
+	cd ./fe && bun install
 
 fe-build:
-	cd ./fe && yarn build
+	cd ./fe && bun run build
 
 fe-update:
-	cd ./fe && yarn update
-	cd ./shared/fe/api-client && yarn update
-	cd ./fe && yarn lint
+	cd ./fe && bun update --latest
+	cd ./shared/fe/api-client && bun update --latest
+	cd ./fe && bun run lint
 	
 # ---------- Docker build for production ----------
 VERSION := $(word 2,$(MAKECMDGOALS))

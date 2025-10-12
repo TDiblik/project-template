@@ -10,9 +10,8 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "start": "yarn build --watch",
-    "build": "tsup src/index.ts --format esm --dts --out-dir dist --target es2022 --sourcemap",
-    "update": "npx --yes npm-check-updates -u"
+    "start": "bun run build --watch",
+    "build": "tsup src/index.ts --format esm --dts --out-dir dist --target es2022 --sourcemap"
   },
   "dependencies": {
     "tsup": "^8.5.0",

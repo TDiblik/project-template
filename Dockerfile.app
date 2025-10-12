@@ -1,7 +1,7 @@
 # ============================
 # Stage 1: Build frontend
 # ============================
-FROM node:current-alpine AS fe-build
+FROM oven/bun:alpine AS fe-build
 
 # Install dependencies
 RUN apk update && \
@@ -14,17 +14,17 @@ WORKDIR /build
 
 # ---- Build shared API client ----
 WORKDIR /build/shared/fe/api-client
-COPY shared/fe/api-client/package.json shared/fe/api-client/yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY shared/fe/api-client/package.json shared/fe/api-client/bun.lock ./
+RUN bun install --frozen-lockfile
 COPY shared/fe/api-client/ ./
-RUN yarn build
+RUN bun run build
 
 # ---- Build frontend ----
 WORKDIR /build/fe
-COPY fe/package.json fe/yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY fe/package.json fe/bun.lock ./
+RUN bun install --frozen-lockfile
 COPY fe/ ./
-RUN yarn build
+RUN bun run build
 
 # Replace GIT_TAG in env file
 COPY .git/ ./

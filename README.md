@@ -29,7 +29,7 @@ A **full-stack template** featuring:
 
 - [Go](https://golang.org/) (backend)
 - [Air](https://github.com/air-verse/air) (backend hot reloading)
-- [Node.js](https://nodejs.org/) + [Yarn](https://yarnpkg.com/) (frontend)
+- [Bun](https://bun.sh/) (frontend)
 - [Docker](https://www.docker.com/) (database & production builds)
 - [OpenAPI Generator](https://openapi-generator.tech/) (API types)
 
