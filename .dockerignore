@@ -42,8 +42,33 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .cache
 *.tsbuildinfo
 
+### Mobile ###
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.pem
+*.tsbuildinfo
+/ios
+/android
+*.ipa
+*.apk
+*.aab
+
 ### Shared ###
 .env*
+.env*.local
 !.env.example*
 .idea
 .DS_Store
