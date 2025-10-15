@@ -4,7 +4,7 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-build api-update db db-logs db-stop db-remove gen-types fe fe-install fe-build fe-update mobile mobile-android mobile-install mobile-build-ios mobile-build-android mobile-build mobile-update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build
+.PHONY: api api-install api-build api-update api-clean db db-logs db-stop db-remove db-clean gen-types gen-types-clean gen-types-clean-generated fe fe-install fe-build fe-update fe-clean mobile mobile-android mobile-install mobile-build-ios mobile-build-android mobile-build mobile-update mobile-clean prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build clean
 %:
 	@:
 
@@ -20,6 +20,10 @@ api-build:
 
 api-update:
 	cd ./api && go get -u all && go mod tidy && gofmt -w -l .
+
+api-clean:
+	@echo "Cleaning backend build artifacts..."
+	cd ./api && go clean && rm -rf ./tmp/
 
 # ---------- Database ----------
 db:
@@ -43,8 +47,13 @@ db-remove:
 	docker stop $(DB_NAME)
 	docker rm -f $(DB_NAME)
 
+db-clean: db-remove
+	@echo "Removing database volume..."
+	rm -rf $(DB_VOLUME)
+
+# ---------- Type Generation ----------
 gen-types:
-	rm -rf ./shared/fe/api-client/src/generated
+	$(MAKE) gen-types-clean-generated
 	openapi-generator generate \
 		-i ./api/generated/swagger.yaml \
 		-g typescript-fetch \
@@ -54,6 +63,14 @@ gen-types:
 	cd ./shared/fe/api-client && \
 	bun install && \
 	bun run build
+
+gen-types-clean:
+	@echo "Cleaning generated TypeScript types..."
+	cd ./shared/fe/api-client && rm -rf ./node_modules ./dist
+
+gen-types-clean-generated:
+	@echo "Cleaning generated TypeScript types..."
+	cd ./shared/fe/api-client && rm -rf ./src/generated
 
 # ---------- Frontend ----------
 fe:
@@ -70,12 +87,16 @@ fe-update:
 	cd ./shared/fe/api-client && bun update --latest
 	cd ./fe && bun run lint
 
+fe-clean:
+	@echo "Cleaning frontend build..."
+	cd ./fe && rm -rf ./node_modules ./dist
+
 # ---------- Mobile ----------
 mobile:
 	cd ./mobile && bun run ios
 
 mobile-android:
-	cd ./mobile && bun run ios
+	cd ./mobile && bun run android
 
 mobile-install:
 	cd ./mobile && bun install
@@ -91,7 +112,11 @@ mobile-build: mobile-build-ios mobile-build-android
 mobile-update:
 	cd ./mobile && bun run expo-update
 	cd ./mobile && bun run lint
-	
+
+mobile-clean:
+	@echo "Cleaning mobile build..."
+	cd ./mobile && rm -rf ./build ./dist ./.expo ./*.ipa ./*.ipa ./*.apk ./*.aab
+
 # ---------- Docker build for production ----------
 VERSION := $(word 2,$(MAKECMDGOALS))
 DOCKER_TAG = v$(shell echo $(VERSION) | sed 's/^v*//')
@@ -130,5 +155,6 @@ prod-locally-stop:
 
 # ---------- Combined Targets ----------
 install: api-install fe-install mobile-install gen-types
-update: api-update fe-update mobile-update install api-build fe-build
+update: install api-update fe-update mobile-update api-build fe-build
 build: api-build fe-build mobile-build
+clean: api-clean fe-clean mobile-clean gen-types-clean
