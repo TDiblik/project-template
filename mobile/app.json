@@ -19,6 +19,9 @@
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "ExpoLocalization_supportsRTL": true
       }
     },
     "android": {
