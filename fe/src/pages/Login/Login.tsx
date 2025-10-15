@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
 import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
-import {AuthController, ConvertToApiError, TranslateApiErrorMessage, oAuthRedirectController} from "../../utils/api";
+import {AuthController, TranslateApiErrorMessage, oAuthRedirectController} from "../../utils/api";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
 import {
@@ -19,6 +19,7 @@ import {useNavigate} from "react-router";
 import {useLoadingStore} from "../../stores/LoadingStore";
 import {routes} from "../../utils/routes";
 import {useTranslation} from "react-i18next";
+import {ConvertToApiError, type OauthRedirectHandlerRequest} from "@shared/api-client";
 
 export default function Login() {
   const {t} = useTranslation();
@@ -224,8 +225,7 @@ const PasswordFields = ({t, isSignUp}: {t: any; isSignUp: boolean}) => (
   </div>
 );
 
-// todo: change Promise<any>
-const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => Promise<any>}) => (
+const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => OauthRedirectHandlerRequest}) => (
   <motion.button
     whileHover={{scale: 1.05}}
     whileTap={{scale: 0.97}}

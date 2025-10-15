@@ -1,0 +1,9 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@shared/api-client": ["../shared/fe/api-client/dist/index"]
+    }
+  }
+}

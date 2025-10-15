@@ -1,0 +1,9 @@
+import {
+  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum,
+  GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse,
+} from "../generated";
+
+export type OauthRedirectHandlerResponse = GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse;
+export type OauthRedirectHandlerRequest = Promise<OauthRedirectHandlerResponse>;
+export type RedirectBackToAfterOauthEnum =
+  GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum;

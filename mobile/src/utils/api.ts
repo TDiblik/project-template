@@ -1,12 +1,10 @@
 import {type ApiError, Configuration, getAuthController, getoAuthController, getoAuthRedirectController, getUserController} from "@shared/api-client";
 import {constants} from "./constants";
 import {t} from "i18next";
-import {useAuthTokenStore} from "../stores/TokenStore";
 
 const config = new Configuration({
   basePath: constants.API_BASE_PATH,
-  apiKey: () => useAuthTokenStore.getState().tokenRaw ?? "",
-  // todo: add a middleware that refreshes the api token
+  // apiKey: () => useAuthTokenStore.getState().tokenRaw ?? "",
 });
 
 export const AuthController = getAuthController(config);

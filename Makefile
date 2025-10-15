@@ -4,7 +4,7 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-build api-update db db-logs db-stop db-remove gen-types fe fe-install fe-build fe-update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build
+.PHONY: api api-install api-build api-update db db-logs db-stop db-remove gen-types fe fe-install fe-build fe-update mobile mobile-android mobile-install mobile-build-ios mobile-build-android mobile-build mobile-update prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build
 %:
 	@:
 
@@ -69,6 +69,28 @@ fe-update:
 	cd ./fe && bun update --latest
 	cd ./shared/fe/api-client && bun update --latest
 	cd ./fe && bun run lint
+
+# ---------- Mobile ----------
+mobile:
+	cd ./mobile && bun run ios
+
+mobile-android:
+	cd ./mobile && bun run ios
+
+mobile-install:
+	cd ./mobile && bun install
+
+mobile-build-ios:
+	cd ./mobile && bun run build-ios
+
+mobile-build-android:
+	cd ./mobile && bun run build-android
+
+mobile-build: mobile-build-ios mobile-build-android
+
+mobile-update:
+	cd ./mobile && bun run expo-update
+	cd ./mobile && bun run lint
 	
 # ---------- Docker build for production ----------
 VERSION := $(word 2,$(MAKECMDGOALS))
@@ -107,6 +129,6 @@ prod-locally-stop:
 	@docker ps -q --filter "publish=$(LOCAL_API_PROD_PORT)" | xargs -r docker stop
 
 # ---------- Combined Targets ----------
-install: api-install fe-install gen-types
-update: api-update fe-update install build
-build: api-build fe-build
+install: api-install fe-install mobile-install gen-types
+update: api-update fe-update mobile-update install api-build fe-build
+build: api-build fe-build mobile-build
