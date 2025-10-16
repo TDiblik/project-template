@@ -118,7 +118,7 @@ func SignUpHandler(c fiber.Ctx) error {
 		return utils.ConflictResponse(c, "be.error.login.email_already_in_use")
 	}
 
-	var newUser = models.UsersModelDB{
+	var newUser = models.UserModelDB{
 		Email:         req.Email,
 		EmailVerified: false,
 		FirstName:     utils.SQLNullStringFromString(req.FirstName),

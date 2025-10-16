@@ -8,7 +8,8 @@ create table users (
     first_name varchar(50),
     last_name varchar(50),
     handle varchar(50) unique,
-    user_full_name varchar(101),
+    full_name varchar(101) not null,
+    initials varchar(2) not null,
 
     avatar_url text,
     active boolean default true,
@@ -48,14 +49,30 @@ create or replace function generate_user_full_name()
 returns trigger as $$
 begin
     if new.first_name is not null and new.last_name is not null then
-        new.user_full_name := initcap(new.first_name) || ' ' || initcap(new.last_name);
+        new.full_name := initcap(new.first_name) || ' ' || initcap(new.last_name);
     else
-        new.user_full_name := new.handle;
+        new.full_name := new.handle;
     end if;
     return new;
 end;
 $$ language plpgsql;
-
 create trigger users_user_full_name_trg
     before insert or update on users
     for each row execute function generate_user_full_name();
+
+create or replace function generate_user_initials()
+returns trigger as $$
+begin
+    if new.first_name is not null and new.last_name is not null then
+        new.initials := upper(left(new.first_name, 1) || left(new.last_name, 1));
+    elsif new.handle is not null then
+        new.initials := upper(left(new.handle, 2));
+    else
+        new.initials := null;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+create trigger users_user_initials_trg
+    before insert or update on users
+    for each row execute function generate_user_initials();

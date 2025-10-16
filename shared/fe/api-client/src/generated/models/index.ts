@@ -6,5 +6,5 @@ export * from './GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandle
 export * from './GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse';
 export * from './GithubComTDiblikProjectTemplateApiHandlersSignUpHandlerRequestBody';
 export * from './GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse';
-export * from './GithubComTDiblikProjectTemplateApiModelsUsersModelDB';
+export * from './GithubComTDiblikProjectTemplateApiModelsUserModelDB';
 export * from './GithubComTDiblikProjectTemplateApiUtilsErrorResponseType';

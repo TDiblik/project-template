@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
 import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
-import {AuthController, TranslateApiErrorMessage, oAuthRedirectController} from "../../utils/api";
+import {AuthController, oAuthRedirectController} from "../../utils/api";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
 import {
@@ -20,6 +20,7 @@ import {useLoadingStore} from "../../stores/LoadingStore";
 import {routes} from "../../utils/routes";
 import {useTranslation} from "react-i18next";
 import {ConvertToApiError, type OauthRedirectHandlerRequest} from "@shared/api-client";
+import {TranslateApiErrorMessage} from "../../utils/general";
 
 export default function Login() {
   const {t} = useTranslation();
@@ -225,13 +226,26 @@ const PasswordFields = ({t, isSignUp}: {t: any; isSignUp: boolean}) => (
   </div>
 );
 
-const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => OauthRedirectHandlerRequest}) => (
-  <motion.button
-    whileHover={{scale: 1.05}}
-    whileTap={{scale: 0.97}}
-    className="btn btn-outline w-full flex items-center gap-2 transition-all hover:border-primary"
-    onClick={() => onClick().then((s) => (window.location.href = s.redirectUrl!))}
-  >
-    {icon} {provider}
-  </motion.button>
-);
+const OAuthButton = ({provider, icon, onClick}: {provider: string; icon: React.ReactNode; onClick: () => OauthRedirectHandlerRequest}) => {
+  const {loading, setLoading} = useLoadingStore();
+  return (
+    <motion.button
+      whileHover={{scale: 1.05}}
+      whileTap={{scale: 0.97}}
+      className="btn btn-outline w-full flex items-center gap-2 transition-all hover:border-primary"
+      onClick={() => {
+        setLoading(true);
+        onClick()
+          .then((s) => {
+            setLoading(false);
+            window.location.href = s.redirectUrl!;
+          })
+          .finally(() => {
+            if (loading) setLoading(false);
+          });
+      }}
+    >
+      {icon} {provider}
+    </motion.button>
+  );
+};

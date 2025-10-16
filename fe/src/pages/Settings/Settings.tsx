@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import Layout from "../../components/Layout";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
@@ -6,33 +6,17 @@ import {zodResolver, SignUpFirstPageSchema, type SignUpPageFormType} from "../..
 import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
 import {useLoadingStore} from "../../stores/LoadingStore";
 import {t} from "i18next";
-import {type GithubComTDiblikProjectTemplateApiModelsUsersModelDB} from "@shared/api-client";
-import {oAuthRedirectController, UserController} from "../../utils/api";
+import {oAuthRedirectController} from "../../utils/api";
+import {useLoggedUser} from "../../stores/LoggedUserStore";
 
 export default function SettingsPage() {
-  const [user, setUser] = useState<GithubComTDiblikProjectTemplateApiModelsUsersModelDB | null>(null);
+  const {loggedUser} = useLoggedUser();
   const {setLoading} = useLoadingStore();
   const form = useForm<SignUpPageFormType>({
     mode: "onChange",
+    defaultValues: loggedUser,
     resolver: zodResolver(SignUpFirstPageSchema),
   });
-
-  useEffect(() => {
-    // todo: use some kind of user store that fetches the data when neccessary, using react-query
-    UserController.apiV1PrivateUserMeGet().then((res) => {
-      const info = res.userInfo;
-      setUser(info ?? null);
-      form.reset({
-        email: info?.email ?? "",
-        firstName: info?.firstName ?? "",
-        lastName: info?.lastName ?? "",
-        username: info?.handle ?? "",
-        useUsername: !!info?.handle,
-        password: "",
-        confirmPassword: "",
-      });
-    });
-  }, []);
 
   // todo: create and use a PATCH endpoint
   const onSubmit = async (data: SignUpPageFormType) => {
@@ -78,14 +62,19 @@ export default function SettingsPage() {
       <div className="max-w-4xl mx-auto py-10 space-y-8">
         <h1 className="text-3xl font-bold">{t("settingsPage.pageTitle")}</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left Column: Avatar + OAuth */}
           <div className="space-y-6">
             <div className="flex flex-col items-center p-6 rounded-2xl shadow-md bg-base-100">
-              <img
-                src={user?.avatarUrl ?? "/default-avatar.png"}
-                alt={user?.userFullName ?? "Avatar"}
-                className="w-32 h-32 rounded-full object-cover mb-4"
-              />
+              {loggedUser && loggedUser.avatarUrl && (
+                <img src={loggedUser.avatarUrl} alt={t("layout.userAvatarAlt")} className="rounded-full object-cover mb-4" />
+              )}
+              {loggedUser && !loggedUser.avatarUrl && (
+                <div className="avatar avatar-placeholder mb-4">
+                  <div className="bg-neutral text-neutral-content w-32 rounded-full">
+                    <span className="text-5xl">{loggedUser.initials}</span>
+                  </div>
+                </div>
+              )}
+
               <button className="btn btn-outline w-full">{t("settingsPage.changeAvatar")}</button>
             </div>
 
@@ -95,7 +84,7 @@ export default function SettingsPage() {
                 <OAuthButton
                   provider="Google"
                   icon={<FaGoogle />}
-                  connected={!!user?.googleId}
+                  connected={!!loggedUser?.googleId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
                   onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGoogleGet({redirectBackToAfterOauth: "settings"})}
@@ -103,7 +92,7 @@ export default function SettingsPage() {
                 <OAuthButton
                   provider="Facebook"
                   icon={<FaFacebook />}
-                  connected={!!user?.facebookId}
+                  connected={!!loggedUser?.facebookId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
                   onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectFacebookGet({redirectBackToAfterOauth: "settings"})}
@@ -111,7 +100,7 @@ export default function SettingsPage() {
                 <OAuthButton
                   provider="Spotify"
                   icon={<FaSpotify />}
-                  connected={!!user?.spotifyId}
+                  connected={!!loggedUser?.spotifyId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
                   onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectSpotifyGet({redirectBackToAfterOauth: "settings"})}
@@ -119,7 +108,7 @@ export default function SettingsPage() {
                 <OAuthButton
                   provider="Github"
                   icon={<FaGithub />}
-                  connected={!!user?.githubHandle}
+                  connected={!!loggedUser?.githubHandle}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
                   onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGithubGet({redirectBackToAfterOauth: "settings"})}
@@ -128,7 +117,6 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Right Column: Editable Fields */}
           <div className="md:col-span-2 space-y-6">
             <FormProvider {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

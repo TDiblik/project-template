@@ -6,12 +6,14 @@ import {useTranslation} from "react-i18next";
 import {SupportedLanguages, type SupportedLanguagesType} from "../utils/i18n";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
 import {usei18nStore} from "../stores/i18nStore";
+import {useLoggedUser} from "../stores/LoggedUserStore";
 
 const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
   const {t} = useTranslation();
   const {theme, changeTheme} = useThemeStore();
   const {language, changeLanguage} = usei18nStore();
+  const {loggedUser} = useLoggedUser();
 
   const menuItems = [
     {name: t("layout.dashboard"), path: routes.index},
@@ -64,14 +66,16 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
 
         {/* Avatar & Settings */}
         <div className="border-t border-base-300 p-4">
-          <div className="dropdown dropdown-top dropdown-end w-full">
-            <div tabIndex={0} className="cursor-pointer flex items-center">
-              <div className="btn btn-ghost btn-circle avatar">
-                <div className="w-12 rounded-full">
-                  <img src="https://i.pravatar.cc/300" alt={t("layout.userAvatarAlt")} />
+          <div className="dropdown dropdown-top dropdown-end w-full cursor-pointer">
+            <div tabIndex={0} className="flex items-center w-full">
+              {loggedUser && (
+                <div className={`btn btn-ghost btn-circle avatar ${!loggedUser.avatarUrl ? "avatar-placeholder" : ""}`}>
+                  <div className="w-12 rounded-full bg-neutral text-neutral-content">
+                    {loggedUser.avatarUrl ? <img src={loggedUser.avatarUrl} alt={t("layout.userAvatarAlt")} /> : <span>{loggedUser.initials}</span>}
+                  </div>
                 </div>
-              </div>
-              <span className="ml-2 text-base font-medium normal-case">Username (todo)</span>
+              )}
+              <span className="ml-2 text-base font-medium normal-case">{loggedUser?.fullName}</span>
             </div>
 
             <ul tabIndex={0} className="dropdown-content menu rounded-box z-[1] mb-2 w-52 bg-base-100 p-2 shadow">

@@ -3,7 +3,7 @@ import type {RedirectBackToAfterOauthEnum} from "@shared/api-client";
 export const routes = {
   index: "/",
   login: "/login",
-  loginOAuthRedired: "/login/oauth/redirect",
+  loginOAuthRedirect: "/login/oauth/redirect",
   logout: "/logout",
   profile: "/profile",
   settings: "/settings",

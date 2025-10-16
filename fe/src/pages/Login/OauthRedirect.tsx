@@ -5,6 +5,7 @@ import {useAuthTokenStore} from "../../stores/TokenStore";
 import {RedirectBackToAfterOauthToRouteMap, routes} from "../../utils/routes";
 import {useTranslation} from "react-i18next";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
+import {useLoggedUser} from "../../stores/LoggedUserStore";
 
 const delayed = (delay: number) =>
   ({
@@ -21,6 +22,7 @@ const OAuthRedirect = () => {
   const oAuthState = query.get("state");
   const [shouldFail, setShouldFail] = useState(!oAuthCode || !oAuthState);
   const {isAuthenticated} = useAuthTokenStore();
+  const {refetchUser} = useLoggedUser();
   const _isAuthenticated = isAuthenticated();
 
   const {setToken} = useAuthTokenStore();
@@ -36,6 +38,7 @@ const OAuthRedirect = () => {
       })
       .then((s) => {
         setToken(s.authToken);
+        refetchUser();
         navigate(RedirectBackToAfterOauthToRouteMap[s.redirectBackToAfterOauth]);
       })
       .catch((error) => {

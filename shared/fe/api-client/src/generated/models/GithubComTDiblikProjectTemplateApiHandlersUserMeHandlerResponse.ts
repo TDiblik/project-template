@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { GithubComTDiblikProjectTemplateApiModelsUsersModelDB } from './GithubComTDiblikProjectTemplateApiModelsUsersModelDB';
+import type { GithubComTDiblikProjectTemplateApiModelsUserModelDB } from './GithubComTDiblikProjectTemplateApiModelsUserModelDB';
 import {
-    GithubComTDiblikProjectTemplateApiModelsUsersModelDBFromJSON,
-    GithubComTDiblikProjectTemplateApiModelsUsersModelDBFromJSONTyped,
-    GithubComTDiblikProjectTemplateApiModelsUsersModelDBToJSON,
-    GithubComTDiblikProjectTemplateApiModelsUsersModelDBToJSONTyped,
-} from './GithubComTDiblikProjectTemplateApiModelsUsersModelDB';
+    GithubComTDiblikProjectTemplateApiModelsUserModelDBFromJSON,
+    GithubComTDiblikProjectTemplateApiModelsUserModelDBFromJSONTyped,
+    GithubComTDiblikProjectTemplateApiModelsUserModelDBToJSON,
+    GithubComTDiblikProjectTemplateApiModelsUserModelDBToJSONTyped,
+} from './GithubComTDiblikProjectTemplateApiModelsUserModelDB';
 
 /**
  * 
@@ -29,10 +29,10 @@ import {
 export interface GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse {
     /**
      * 
-     * @type {GithubComTDiblikProjectTemplateApiModelsUsersModelDB}
+     * @type {GithubComTDiblikProjectTemplateApiModelsUserModelDB}
      * @memberof GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse
      */
-    userInfo?: GithubComTDiblikProjectTemplateApiModelsUsersModelDB;
+    userInfo?: GithubComTDiblikProjectTemplateApiModelsUserModelDB;
 }
 
 /**
@@ -52,7 +52,7 @@ export function GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponseF
     }
     return {
         
-        'userInfo': json['user_info'] == null ? undefined : GithubComTDiblikProjectTemplateApiModelsUsersModelDBFromJSON(json['user_info']),
+        'userInfo': json['user_info'] == null ? undefined : GithubComTDiblikProjectTemplateApiModelsUserModelDBFromJSON(json['user_info']),
     };
 }
 
@@ -67,7 +67,7 @@ export function GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponseT
 
     return {
         
-        'user_info': GithubComTDiblikProjectTemplateApiModelsUsersModelDBToJSON(value['userInfo']),
+        'user_info': GithubComTDiblikProjectTemplateApiModelsUserModelDBToJSON(value['userInfo']),
     };
 }
 

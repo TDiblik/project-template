@@ -1,9 +1,11 @@
 import {
   GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum,
   GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse,
+  GithubComTDiblikProjectTemplateApiModelsUserModelDB,
 } from "../generated";
 
 export type OauthRedirectHandlerResponse = GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse;
 export type OauthRedirectHandlerRequest = Promise<OauthRedirectHandlerResponse>;
 export type RedirectBackToAfterOauthEnum =
   GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum;
+export type UserModel = GithubComTDiblikProjectTemplateApiModelsUserModelDB | undefined;

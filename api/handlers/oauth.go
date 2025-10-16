@@ -182,7 +182,7 @@ func githubReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		}
 	}
 
-	return CreateOrUpdateUser(c, models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UserModelDB{
 		Email:         ghUserResponse.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(firstName),
@@ -229,7 +229,7 @@ func googleReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(c, models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UserModelDB{
 		Email:         gUser.Email,
 		EmailVerified: gUser.VerifiedEmail,
 		FirstName:     utils.SQLNullStringFromString(gUser.GivenName),
@@ -279,7 +279,7 @@ func facebookReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(c, models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UserModelDB{
 		Email:         fbUser.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(fbUser.FirstName),
@@ -340,7 +340,7 @@ func spotifyReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		avatarURL = spUser.Images[0].URL
 	}
 
-	return CreateOrUpdateUser(c, models.UsersModelDB{
+	return CreateOrUpdateUser(c, models.UserModelDB{
 		Email:         spUser.Email,
 		EmailVerified: true,
 		FirstName:     utils.SQLNullStringFromString(firstName),
@@ -352,7 +352,7 @@ func spotifyReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	})
 }
 
-func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UsersModelDB) (uuid.UUID, error) {
+func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UserModelDB) (uuid.UUID, error) {
 	db, err := database.CreateConnection()
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
@@ -372,7 +372,7 @@ func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UsersModelDB) (uuid.
 		return uuid.Nil, fmt.Errorf("unable to query exists staments inside CreateOrUpdateUser: %w", err)
 	}
 
-	var existingUser models.UsersModelDB
+	var existingUser models.UserModelDB
 	if !emailExists {
 		if !possiblyNewUser.Handle.Valid || handleExists {
 			newHandle, genErr := utils.GenerateUniqueUserHandle(db, possiblyNewUser.FirstName, possiblyNewUser.LastName)
@@ -516,7 +516,7 @@ func GetJwtPostLogin(userUUID uuid.UUID) (string, error) {
 		return "", fmt.Errorf("unable to create connection to db inside GetJwtPostLogin: %w", err)
 	}
 
-	var userInfo models.UsersModelDB
+	var userInfo models.UserModelDB
 	if err := db.Get(&userInfo, `update users set last_login_at = now() where id = $1 returning *`, userUUID); err != nil {
 		return "", fmt.Errorf("unable to select existing user: %w", err)
 	}

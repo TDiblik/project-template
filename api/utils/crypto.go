@@ -36,7 +36,7 @@ type JWTInfo struct {
 	Exp           int64
 }
 
-func GenerateJWT(user models.UsersModelDB) (string, error) {
+func GenerateJWT(user models.UserModelDB) (string, error) {
 	token_insecure := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token_insecure.Claims.(jwt.MapClaims)

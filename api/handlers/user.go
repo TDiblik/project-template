@@ -8,7 +8,7 @@ import (
 )
 
 type UserMeHandlerResponse struct {
-	UserInfo models.UsersModelDB `json:"user_info"`
+	UserInfo models.UserModelDB `json:"user_info"`
 }
 
 func UserMeHandler(c fiber.Ctx) error {
@@ -22,7 +22,7 @@ func UserMeHandler(c fiber.Ctx) error {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	var userInfo models.UsersModelDB
+	var userInfo models.UserModelDB
 	if err := db.Get(&userInfo, "select * from users where id = $1", userJWTInfo.UserId); err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}

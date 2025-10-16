@@ -6,6 +6,7 @@ interface TokenStoreState {
   tokenRaw: string | null;
   token: () => IAuthToken | null;
   setToken: (newToken: string) => void;
+  resetToken: () => void;
   isAuthenticated: () => boolean;
 }
 
@@ -15,6 +16,10 @@ export const useAuthTokenStore = create<TokenStoreState>()((set, get) => ({
   setToken: (newToken) => {
     localStorage.setItem(constants.LOCAL_STORAGE_TOKEN_KEY, newToken);
     set(() => ({tokenRaw: newToken}));
+  },
+  resetToken: () => {
+    localStorage.removeItem(constants.LOCAL_STORAGE_TOKEN_KEY);
+    set(() => ({tokenRaw: undefined}));
   },
   isAuthenticated: () => {
     const tokenParsed = get().token();
