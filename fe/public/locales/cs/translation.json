@@ -50,6 +50,10 @@
       "description": "Prosím čekejte, pracujeme na tom..."
     }
   },
+  "logoutPage": {
+    "title": "Odhlašování...",
+    "description": "Prosím čekejte, pracujeme na tom..."
+  },
   "layout": {
     "dashboard": "Přehled",
     "profile": "Profil",

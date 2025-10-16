@@ -50,6 +50,10 @@
       "description": "Please wait while we complete the process."
     }
   },
+  "logoutPage": {
+    "title": "Signing you out...",
+    "description": "Please wait while we complete the process."
+  },
   "layout": {
     "dashboard": "Dashboard",
     "profile": "Profile",

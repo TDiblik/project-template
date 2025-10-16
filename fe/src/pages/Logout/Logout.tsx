@@ -1,8 +1,11 @@
 import React from "react";
 import {constants} from "../../utils/constants";
 import {routes} from "../../utils/routes";
+import {useTranslation} from "react-i18next";
 
 const Logout: React.FC = () => {
+  const {t} = useTranslation();
+
   React.useEffect(() => {
     // easiest way to reset every state
     localStorage.removeItem(constants.LOCAL_STORAGE_TOKEN_KEY);
@@ -12,8 +15,8 @@ const Logout: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-base-100">
       <span className="loading loading-spinner loading-xl text-primary mb-4"></span>
-      <p className="text-lg font-medium text-base-content">Signing you out...</p>
-      <p className="text-sm text-base-content/70 mt-1">Please wait while we complete the process.</p>
+      <p className="text-lg font-medium text-base-content">{t("logoutPage.title")}</p>
+      <p className="text-sm text-base-content/70 mt-1">{t("logoutPage.description")}</p>
     </div>
   );
 };
