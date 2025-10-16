@@ -1,7 +1,5 @@
 import {defineConfig} from "vite";
-import react from "@vitejs/plugin-react";
-// commended out for now, because the docker build fails with @vitejs/plugin-react-swc
-// import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
