@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {getRawJWT, type IAuthToken, parseJWT} from "../utils/token";
 import {constants} from "../utils/constants";
+import {useLoggedUserStore} from "./LoggedUserStore";
 
 interface TokenStoreState {
   tokenRaw: string | null;
@@ -8,6 +9,7 @@ interface TokenStoreState {
   setToken: (newToken: string) => void;
   resetToken: () => void;
   isAuthenticated: () => boolean;
+  isAuthenticatedAndLoaded: () => boolean;
 }
 
 export const useAuthTokenStore = create<TokenStoreState>()((set, get) => ({
@@ -26,4 +28,5 @@ export const useAuthTokenStore = create<TokenStoreState>()((set, get) => ({
     if (!tokenParsed) return false;
     return new Date(tokenParsed.exp * 1000) > new Date();
   },
+  isAuthenticatedAndLoaded: () => get().isAuthenticated() && !!useLoggedUserStore.getState().user,
 }));

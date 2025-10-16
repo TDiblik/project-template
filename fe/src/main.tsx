@@ -13,26 +13,29 @@ import {LoaderProvider} from "./components/LoadingProvider.tsx";
 import {ThemeProvider} from "./components/ThemeProvider.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
 import {LoggedUserProvider} from "./components/LoggedUserProvider.tsx";
+import {I18nProvider} from "./components/I18nProvider.tsx";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <LoaderProvider>
-          <ThemeProvider>
-            <LoggedUserProvider>
-              <Routes>
-                <Route path={routes.login} element={<Login />} />
-                <Route path={routes.loginOAuthRedirect} element={<OAuthRedirect />} />
-                <Route path={routes.logout} element={<Logout />} />
+        <ThemeProvider>
+          <I18nProvider>
+            <LoaderProvider>
+              <LoggedUserProvider>
+                <Routes>
+                  <Route path={routes.login} element={<Login />} />
+                  <Route path={routes.loginOAuthRedirect} element={<OAuthRedirect />} />
+                  <Route path={routes.logout} element={<Logout />} />
 
-                <Route path={routes.index} element={<Home />} />
-                <Route path={routes.settings} element={<Settings />} />
-              </Routes>
-            </LoggedUserProvider>
-          </ThemeProvider>
-        </LoaderProvider>
+                  <Route path={routes.index} element={<Home />} />
+                  <Route path={routes.settings} element={<Settings />} />
+                </Routes>
+              </LoggedUserProvider>
+            </LoaderProvider>
+          </I18nProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

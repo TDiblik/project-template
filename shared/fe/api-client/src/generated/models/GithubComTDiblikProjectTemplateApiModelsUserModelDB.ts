@@ -132,6 +132,18 @@ export interface GithubComTDiblikProjectTemplateApiModelsUserModelDB {
      * @type {string}
      * @memberof GithubComTDiblikProjectTemplateApiModelsUserModelDB
      */
+    preferedLanguage?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUserModelDB
+     */
+    preferedTheme?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GithubComTDiblikProjectTemplateApiModelsUserModelDB
+     */
     spotifyEmail?: string;
     /**
      * 
@@ -176,6 +188,8 @@ export function GithubComTDiblikProjectTemplateApiModelsUserModelDBFromJSONTyped
         'id': json['id'] == null ? undefined : json['id'],
         'initials': json['initials'] == null ? undefined : json['initials'],
         'lastName': json['last_name'] == null ? undefined : json['last_name'],
+        'preferedLanguage': json['prefered_language'] == null ? undefined : json['prefered_language'],
+        'preferedTheme': json['prefered_theme'] == null ? undefined : json['prefered_theme'],
         'spotifyEmail': json['spotify_email'] == null ? undefined : json['spotify_email'],
         'spotifyId': json['spotify_id'] == null ? undefined : json['spotify_id'],
     };
@@ -210,6 +224,8 @@ export function GithubComTDiblikProjectTemplateApiModelsUserModelDBToJSONTyped(v
         'id': value['id'],
         'initials': value['initials'],
         'last_name': value['lastName'],
+        'prefered_language': value['preferedLanguage'],
+        'prefered_theme': value['preferedTheme'],
         'spotify_email': value['spotifyEmail'],
         'spotify_id': value['spotifyId'],
     };

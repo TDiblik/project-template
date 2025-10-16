@@ -77,3 +77,27 @@ func SelectUserByEmailQuery() string {
 func SelectIdAndPasswordHashByEmailQuery() string {
 	return `select id, password_hash from users where ` + EMAIL_SQL_MATCH_CONDITION
 }
+
+type ThemePosibilities string
+
+const (
+	ThemeLight ThemePosibilities = "light"
+	ThemeDark  ThemePosibilities = "dark"
+)
+
+// Implement ISwaggerEnum
+func (e ThemePosibilities) EnumValues() []any {
+	return []any{ThemeLight, ThemeDark}
+}
+
+type TranslationsPossibilities string
+
+const (
+	LangCS TranslationsPossibilities = "cs"
+	LangEN TranslationsPossibilities = "en"
+)
+
+// Implement ISwaggerEnum
+func (e TranslationsPossibilities) EnumValues() []any {
+	return []any{LangCS, LangEN}
+}

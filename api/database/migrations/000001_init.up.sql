@@ -1,6 +1,12 @@
 -- Add plugins
 create extension if not exists "uuid-ossp";
 
+-- create domains
+create domain theme_possibilities as text
+    check (value in ('light', 'dark'));
+create domain translations_possibilities as text
+    check (value in ('cs', 'en'));
+
 -- create general functions
 create or replace function automatically_update_updated_at_column()
 returns trigger as $$

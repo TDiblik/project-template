@@ -85,9 +85,15 @@ func SetupRoutes(app *fiber.App) {
 	api_user := api_v1_private.Group("/user", middleware.AuthedMiddleware())
 	api_user.Get("/me", &gofiberswagger.RouteInfo{
 		Responses: utils.NewSwaggerResponsesWithErrors(
-			gofiberswagger.NewResponseInfo[handlers.UserMeHandlerResponse]("200", "ok"),
+			gofiberswagger.NewResponseInfo[handlers.GetUserMeHandlerResponse]("200", "ok"),
 		),
-	}, handlers.UserMeHandler)
+	}, handlers.GetUserMeHandler)
+	api_user.Patch("/me", &gofiberswagger.RouteInfo{
+		RequestBody: gofiberswagger.NewRequestBody[handlers.PatchUserMeHandlerRequest](),
+		Responses: utils.NewSwaggerResponsesWithErrors(
+			gofiberswagger.NewResponseInfo[handlers.PatchUserMeHandlerResponse]("200", "ok"),
+		),
+	}, handlers.PatchUserMeHandler)
 
 	if utils.EnvData.Debug {
 		gofiberswagger.Register(app, gofiberswagger.Config{

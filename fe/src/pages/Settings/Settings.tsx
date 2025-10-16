@@ -136,13 +136,6 @@ export default function SettingsPage() {
                       hasBigText
                     />
                   </div>
-                  <TextInput label={t("settingsPage.email.label")} name="email" placeholder={t("settingsPage.email.placeholder")} hasBigText />
-                  <TextInput
-                    label={t("settingsPage.username.label")}
-                    name="username"
-                    placeholder={t("settingsPage.username.placeholder")}
-                    hasBigText
-                  />
                   <button type="submit" className="btn btn-primary w-full mt-4">
                     {t("settingsPage.saveChanges")}
                   </button>

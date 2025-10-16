@@ -18,7 +18,4 @@ i18n
     },
   });
 
-export type SupportedLanguagesType = "cs" | "en";
-export const SupportedLanguages: SupportedLanguagesType[] = ["cs", "en"];
-
 export default i18n;

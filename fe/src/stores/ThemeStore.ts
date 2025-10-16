@@ -1,8 +1,9 @@
 import {create} from "zustand";
 import {constants} from "../utils/constants";
+import type {ThemePosibilitiesType} from "@shared/api-client";
+import {UserController} from "../utils/api";
+import {useAuthTokenStore} from "./TokenStore";
 
-export type ThemePosibilitiesType = "light" | "dark";
-export const ThemePosibilities: ThemePosibilitiesType[] = ["light", "dark"];
 interface ThemeStoreState {
   theme: ThemePosibilitiesType;
   changeTheme: (theme: ThemePosibilitiesType) => void;
@@ -17,6 +18,12 @@ export const useThemeStore = create<ThemeStoreState>()((set) => ({
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(constants.LOCAL_STORAGE_THEME_KEY, theme);
     set(() => ({theme}));
-    // todo: sent PATCH to BE, if the user is logged in.
+    if (useAuthTokenStore.getState().isAuthenticatedAndLoaded()) {
+      UserController.apiV1PrivateUserMePatch({
+        githubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest: {
+          preferedTheme: theme,
+        },
+      });
+    }
   },
 }));

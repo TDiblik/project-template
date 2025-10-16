@@ -23,7 +23,6 @@ export const useFetchLoggedUser = () => {
     retry: 10,
     retryDelay: 1_500,
   });
-
   useEffect(() => {
     if (query.data) setUser(query.data.userInfo);
     if (query.error) setUser(undefined);

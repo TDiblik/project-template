@@ -21,6 +21,9 @@ type UserModelDB struct {
 	AvatarUrl SQLNullString `db:"avatar_url" json:"avatar_url"`
 	Active    bool          `db:"active" json:"active"`
 
+	PreferedTheme    SQLNullString `db:"prefered_theme" json:"prefered_theme"`
+	PreferedLanguage SQLNullString `db:"prefered_language" json:"prefered_language"`
+
 	GithubId     SQLNullString `db:"github_id" json:"github_id"`
 	GithubEmail  SQLNullString `db:"github_email" json:"github_email"`
 	GithubHandle SQLNullString `db:"github_handle" json:"github_handle"`

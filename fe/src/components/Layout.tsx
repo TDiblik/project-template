@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import {routes} from "../utils/routes";
 import {Link, matchPath, useLocation} from "react-router";
-import {ThemePosibilities, useThemeStore, type ThemePosibilitiesType} from "../stores/ThemeStore";
+import {useThemeStore} from "../stores/ThemeStore";
 import {useTranslation} from "react-i18next";
-import {SupportedLanguages, type SupportedLanguagesType} from "../utils/i18n";
 import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
 import {usei18nStore} from "../stores/i18nStore";
 import {useLoggedUser} from "../stores/LoggedUserStore";
+import {ThemePosibilities, TranslationPossibilities, type ThemePosibilitiesType, type TranslationPosibilitiesType} from "@shared/api-client";
 
 const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
@@ -44,7 +44,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
     changeTheme(newTheme);
     setThemeOpen(false);
   };
-  const changeLanguageAndClose = (lang: SupportedLanguagesType) => {
+  const changeLanguageAndClose = (lang: TranslationPosibilitiesType) => {
     changeLanguage(lang);
     setLanguageOpen(false);
   };
@@ -90,7 +90,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
                 <AnimatePresence>
                   {languageOpen && (
                     <motion.ul {...toggleMenuAnimation} className={toggleMenuClasses}>
-                      {SupportedLanguages.map((lang) => (
+                      {TranslationPossibilities.map((lang) => (
                         <li key={lang}>
                           <a className={language() === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
                             {t(`layout.changeLanguage.${lang}`)}

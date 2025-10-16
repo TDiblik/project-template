@@ -15,15 +15,22 @@
 
 import * as runtime from '../runtime';
 import type {
-  GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse,
+  GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponse,
+  GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest,
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
 } from '../models/index';
 import {
-    GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponseFromJSON,
-    GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponseFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponseToJSON,
+    GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestFromJSON,
+    GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestToJSON,
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
+
+export interface ApiV1PrivateUserMePatchRequest {
+    githubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest?: GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest;
+}
 
 /**
  * 
@@ -32,7 +39,7 @@ export class ApiV1PrivateUserApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiV1PrivateUserMeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse>> {
+    async apiV1PrivateUserMeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponse>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -51,13 +58,47 @@ export class ApiV1PrivateUserApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponseFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiV1PrivateUserMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersUserMeHandlerResponse> {
+    async apiV1PrivateUserMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GithubComTDiblikProjectTemplateApiHandlersGetUserMeHandlerResponse> {
         const response = await this.apiV1PrivateUserMeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiV1PrivateUserMePatchRaw(requestParameters: ApiV1PrivateUserMePatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+
+        let urlPath = `/api/v1/private/user/me`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestToJSON(requestParameters['githubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     */
+    async apiV1PrivateUserMePatch(requestParameters: ApiV1PrivateUserMePatchRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.apiV1PrivateUserMePatchRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

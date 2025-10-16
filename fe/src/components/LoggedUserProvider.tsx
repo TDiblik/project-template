@@ -18,7 +18,7 @@ export const LoggedUserProvider: React.FC<React.PropsWithChildren> = ({children}
 
 const LoggedUserProviderInternal: React.FC<React.PropsWithChildren> = ({children}) => {
   const navigate = useNavigate();
-  const {resetToken} = useAuthTokenStore();
+  const {tokenRaw, resetToken} = useAuthTokenStore();
   const {loading: loadingIndicator, setLoading: setLoadingIndicator} = useLoadingStore();
   const {isLoading: loadingRequest, isError: isFetchingError, isFetching} = useFetchLoggedUser();
 
@@ -36,7 +36,7 @@ const LoggedUserProviderInternal: React.FC<React.PropsWithChildren> = ({children
       resetToken();
       navigate(routes.loginOAuthRedirect);
     }
-  }, [user, loadingRequest, isError]);
+  }, [user, loadingRequest, isError, tokenRaw]);
 
   return <>{children}</>;
 };

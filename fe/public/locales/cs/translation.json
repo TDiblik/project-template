@@ -84,10 +84,6 @@
       "label": "Příjmení",
       "placeholder": "Zadejte své příjmení"
     },
-    "email": {
-      "label": "E-mailová adresa",
-      "placeholder": "Zadejte svůj e-mail"
-    },
     "username": {
       "label": "Uživatelské jméno",
       "placeholder": "Zadejte své uživatelské jméno"

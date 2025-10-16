@@ -14,7 +14,8 @@ create table users (
     avatar_url text,
     active boolean default true,
     
-    -- todo: add prefered theme + add prefered language
+    prefered_theme theme_possibilities,
+    prefered_language translations_possibilities,
     
     github_id text,
     github_email text,

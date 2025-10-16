@@ -1,6 +1,8 @@
 import {
   GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum,
   GithubComTDiblikProjectTemplateApiHandlersOauthRedirectHandlerResponse,
+  GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestPreferedLanguageEnum,
+  GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestPreferedThemeEnum,
   GithubComTDiblikProjectTemplateApiModelsUserModelDB,
 } from "../generated";
 
@@ -9,3 +11,11 @@ export type OauthRedirectHandlerRequest = Promise<OauthRedirectHandlerResponse>;
 export type RedirectBackToAfterOauthEnum =
   GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum;
 export type UserModel = GithubComTDiblikProjectTemplateApiModelsUserModelDB | undefined;
+
+export type ThemePosibilitiesType =
+  GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestPreferedThemeEnum;
+export const ThemePosibilities: ThemePosibilitiesType[] = ["light", "dark"];
+
+export type TranslationPosibilitiesType =
+  GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequestPreferedLanguageEnum;
+export const TranslationPossibilities: TranslationPosibilitiesType[] = ["cs", "en"];

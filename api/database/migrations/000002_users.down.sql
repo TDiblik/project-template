@@ -12,4 +12,4 @@ drop index if exists users_email_index;
 drop index if exists users_handle_index;
 
 -- Drop the table
-drop table if exists users;
+drop table if exists users cascade;
