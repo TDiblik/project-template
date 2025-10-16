@@ -4,8 +4,8 @@
     "": {
       "name": "@shared/api-client",
       "dependencies": {
-        "tsup": "^8.5.0",
-        "typescript": "^5.9.3",
+        "tsup": "latest",
+        "typescript": "latest",
       },
     },
   },
