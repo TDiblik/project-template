@@ -24,13 +24,15 @@ WORKDIR /build/fe
 COPY fe/package.json fe/bun.lock ./
 RUN bun install --frozen-lockfile
 COPY fe/ ./
-RUN bun run build
 
 # Replace GIT_TAG in env file
 COPY .git/ ./
 RUN GIT_TAG=$(git rev-parse --verify HEAD) && \
     sed -i -e "s/__GIT_TAG__/${GIT_TAG}/g" .env.production && \
-    rm -rf .git/
+    rm -rf .git/ && \
+    cp .env.production .env
+
+RUN bun run build
 
 # ============================
 # Stage 2: Build backend

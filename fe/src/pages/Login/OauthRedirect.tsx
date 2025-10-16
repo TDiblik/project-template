@@ -14,6 +14,7 @@ const delayed = (delay: number) =>
     transition: {delay},
   }) as HTMLMotionProps<"p"> | HTMLMotionProps<"h1">;
 
+// todo: when logging in, this re-renders
 const OAuthRedirect = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();

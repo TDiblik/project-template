@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && NODE_ENV=production vite build --mode production",
+    "build": "NODE_ENV=production tsc -b && NODE_ENV=production vite build --mode production",
     "lint": "prettier . --write --config ./.prettierrc  && eslint --fix --config ./eslint.config.ts ."
   },
   "dependencies": {
