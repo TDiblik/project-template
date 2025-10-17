@@ -56,7 +56,6 @@
   },
   "layout": {
     "dashboard": "Dashboard",
-    "profile": "Profile",
     "settings": "Settings",
     "userAvatarAlt": "User avatar picture",
     "changeTheme": {

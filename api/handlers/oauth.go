@@ -352,6 +352,7 @@ func spotifyReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 	})
 }
 
+// todo: download user profile picture, save it, and save reference to db
 func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UserModelDB) (uuid.UUID, error) {
 	db, err := database.CreateConnection()
 	if err != nil {

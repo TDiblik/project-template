@@ -22,12 +22,12 @@ func GetUserMeHandler(c fiber.Ctx) error {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	var userInfo models.UserModelDB
-	if err := db.Get(&userInfo, "select * from users where id = $1", userJWTInfo.UserId); err != nil {
+	var user models.UserModelDB
+	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}
 
-	return utils.OkResponse(c, GetUserMeHandlerResponse{UserInfo: userInfo})
+	return utils.OkResponse(c, GetUserMeHandlerResponse{UserInfo: user})
 }
 
 type PatchUserMeHandlerRequest struct {
@@ -55,7 +55,7 @@ func PatchUserMeHandler(c fiber.Ctx) error {
 	}
 
 	var user models.UserModelDB
-	if err := db.Get(&user, "select * from users where id = $1", userJWTInfo.UserId); err != nil {
+	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}
 
@@ -85,4 +85,45 @@ func PatchUserMeHandler(c fiber.Ctx) error {
 	}
 
 	return utils.OkResponse(c, PatchUserMeHandlerResponse{})
+}
+
+type PostUserMeAvatarHandlerResponse struct{}
+
+func PostUserMeAvatarHandler(c fiber.Ctx) error {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		return utils.InvalidRequestResponse(c, err)
+	}
+
+	userJWTInfo, err := utils.GetJWTFromLocals(c)
+	if err != nil {
+		return utils.InvalidRequestResponse(c, err)
+	}
+
+	db, err := database.CreateConnection()
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, err)
+	}
+
+	var user models.UserModelDB
+	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
+		return utils.NotFoundResponse(c, "be.error.user.not_found")
+	}
+
+	newAvatarImageUUID, err := utils.SaveImage(c, file, utils.GetAvatarImageFolder(), 450, 450)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, err)
+	}
+	newAvatarImageUrlPath, err := utils.GetAvatarImageUrl(newAvatarImageUUID)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, err)
+	}
+	user.AvatarUrl = utils.SQLNullStringFromString(newAvatarImageUrlPath)
+
+	_, err = db.NamedExec(`update users set avatar_url = :avatar_url where id = :id`, user)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c, err)
+	}
+
+	return utils.OkResponse(c, PostUserMeAvatarHandlerResponse{})
 }

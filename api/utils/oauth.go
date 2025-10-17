@@ -12,14 +12,12 @@ type RedirectAfterOauth string
 // when adding redirect url after oauth, add it here
 const (
 	RedirectAfterOauthIndex    RedirectAfterOauth = "index"
-	RedirectAfterOauthProfile  RedirectAfterOauth = "profile"
 	RedirectAfterOauthSettings RedirectAfterOauth = "settings"
 )
 
 // when adding redirect url after oauth, add it here
 var validRedirectAfterOauth = map[RedirectAfterOauth]struct{}{
 	RedirectAfterOauthIndex:    {},
-	RedirectAfterOauthProfile:  {},
 	RedirectAfterOauthSettings: {},
 }
 
@@ -32,7 +30,7 @@ func ValidateRedirectAfterOauth(value string) RedirectAfterOauth {
 }
 
 func (e RedirectAfterOauth) EnumValues() []any {
-	return []any{RedirectAfterOauthIndex, RedirectAfterOauthProfile, RedirectAfterOauthSettings}
+	return []any{RedirectAfterOauthIndex, RedirectAfterOauthSettings}
 }
 
 func GenerateOauthState(oauthProviderName string, redirectAfterOauth RedirectAfterOauth) (string, error) {

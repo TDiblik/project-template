@@ -69,7 +69,7 @@ RUN apk update && \
 
 # Create non-root user
 RUN addgroup -S app_perms && adduser -S -G app_perms app_perms 
-# RUN mkdir -p /app/images && chown -R app_perms:app_perms /app/images
+RUN mkdir -p /app/images && chown -R app_perms:app_perms /app/images
 
 # Copy built artifacts
 COPY --chown=app_perms:app_perms --from=api-build /build/api-executable ./api

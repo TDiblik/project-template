@@ -17,7 +17,6 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
 
   const menuItems = [
     {name: t("layout.dashboard"), path: routes.index},
-    {name: t("layout.profile"), path: routes.profile},
     {name: t("layout.settings"), path: routes.settings},
   ];
 

@@ -28,6 +28,10 @@ import {
     GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeToJSON,
 } from '../models/index';
 
+export interface ApiV1PrivateUserMeAvatarPostRequest {
+    avatar: Blob;
+}
+
 export interface ApiV1PrivateUserMePatchRequest {
     githubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest?: GithubComTDiblikProjectTemplateApiHandlersPatchUserMeHandlerRequest;
 }
@@ -36,6 +40,65 @@ export interface ApiV1PrivateUserMePatchRequest {
  * 
  */
 export class ApiV1PrivateUserApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async apiV1PrivateUserMeAvatarPostRaw(requestParameters: ApiV1PrivateUserMeAvatarPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['avatar'] == null) {
+            throw new runtime.RequiredError(
+                'avatar',
+                'Required parameter "avatar" was null or undefined when calling apiV1PrivateUserMeAvatarPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-user-token"] = await this.configuration.apiKey("x-user-token"); // x-user-token authentication
+        }
+
+        const consumes: runtime.Consume[] = [
+            { contentType: 'multipart/form-data' },
+        ];
+        // @ts-ignore: canConsumeForm may be unused
+        const canConsumeForm = runtime.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): any };
+        let useForm = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        useForm = canConsumeForm;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new URLSearchParams();
+        }
+
+        if (requestParameters['avatar'] != null) {
+            formParams.append('avatar', requestParameters['avatar'] as any);
+        }
+
+
+        let urlPath = `/api/v1/private/user/me/avatar`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: formParams,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     */
+    async apiV1PrivateUserMeAvatarPost(requestParameters: ApiV1PrivateUserMeAvatarPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.apiV1PrivateUserMeAvatarPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */

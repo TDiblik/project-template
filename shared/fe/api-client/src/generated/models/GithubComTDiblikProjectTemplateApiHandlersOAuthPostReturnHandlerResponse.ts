@@ -39,7 +39,6 @@ export interface GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandle
  */
 export const GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum = {
     Index: 'index',
-    Profile: 'profile',
     Settings: 'settings'
 } as const;
 export type GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum = typeof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum[keyof typeof GithubComTDiblikProjectTemplateApiHandlersOAuthPostReturnHandlerResponseRedirectBackToAfterOauthEnum];

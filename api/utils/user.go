@@ -77,6 +77,9 @@ func SelectUserByEmailQuery() string {
 func SelectIdAndPasswordHashByEmailQuery() string {
 	return `select id, password_hash from users where ` + EMAIL_SQL_MATCH_CONDITION
 }
+func SelectUserById() string {
+	return "select * from users where id = $1"
+}
 
 type ThemePosibilities string
 

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"mime/multipart"
 	"time"
 
 	"github.com/TDiblik/gofiber-swagger/gofiberswagger"
@@ -94,6 +95,14 @@ func SetupRoutes(app *fiber.App) {
 			gofiberswagger.NewResponseInfo[handlers.PatchUserMeHandlerResponse]("200", "ok"),
 		),
 	}, handlers.PatchUserMeHandler)
+	api_user.Post("/me/avatar", &gofiberswagger.RouteInfo{
+		RequestBody: gofiberswagger.NewRequestBodyFormData[struct {
+			avatar multipart.FileHeader `validate:"required"`
+		}](),
+		Responses: utils.NewSwaggerResponsesWithErrors(
+			gofiberswagger.NewResponseInfo[handlers.PostUserMeAvatarHandlerResponse]("200", "ok"),
+		),
+	}, handlers.PostUserMeAvatarHandler)
 
 	if utils.EnvData.Debug {
 		gofiberswagger.Register(app, gofiberswagger.Config{
@@ -127,8 +136,15 @@ func SetupRoutes(app *fiber.App) {
 		})
 	}
 
+	cache_duration := time.Second * 60 * 60 * 60
+	app_be_assests := app.Group(constants.BE_ASSETS_PATH_PREFIC)
+	app_be_assests.Use(constants.IMAGES_PATH_PREFIX, static.New(utils.EnvData.IMAGES_PATH, static.Config{
+		Compress:      true,
+		ByteRange:     true,
+		CacheDuration: cache_duration,
+	}))
+
 	if !utils.EnvData.Debug {
-		cache_duration := time.Second * 60 * 60 * 60
 		app.Use("/", static.New("./public", static.Config{
 			IndexNames:    []string{"index.html"},
 			Compress:      true,
@@ -137,6 +153,7 @@ func SetupRoutes(app *fiber.App) {
 		app.Get("/*", func(c fiber.Ctx) error {
 			return c.SendFile("./public/index.html", fiber.SendFile{
 				Compress:      true,
+				ByteRange:     true,
 				CacheDuration: cache_duration,
 			})
 		})

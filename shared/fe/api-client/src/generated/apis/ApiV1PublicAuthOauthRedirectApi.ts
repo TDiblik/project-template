@@ -193,7 +193,6 @@ export class ApiV1PublicAuthOauthRedirectApi extends runtime.BaseAPI {
  */
 export const ApiV1PublicAuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum = {
     Index: 'index',
-    Profile: 'profile',
     Settings: 'settings'
 } as const;
 export type ApiV1PublicAuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum = typeof ApiV1PublicAuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1PublicAuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum];
@@ -202,7 +201,6 @@ export type ApiV1PublicAuthOauthRedirectFacebookGetRedirectBackToAfterOauthEnum 
  */
 export const ApiV1PublicAuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = {
     Index: 'index',
-    Profile: 'profile',
     Settings: 'settings'
 } as const;
 export type ApiV1PublicAuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = typeof ApiV1PublicAuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1PublicAuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum];
@@ -211,7 +209,6 @@ export type ApiV1PublicAuthOauthRedirectGithubGetRedirectBackToAfterOauthEnum = 
  */
 export const ApiV1PublicAuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum = {
     Index: 'index',
-    Profile: 'profile',
     Settings: 'settings'
 } as const;
 export type ApiV1PublicAuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum = typeof ApiV1PublicAuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1PublicAuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum];
@@ -220,7 +217,6 @@ export type ApiV1PublicAuthOauthRedirectGoogleGetRedirectBackToAfterOauthEnum = 
  */
 export const ApiV1PublicAuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum = {
     Index: 'index',
-    Profile: 'profile',
     Settings: 'settings'
 } as const;
 export type ApiV1PublicAuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum = typeof ApiV1PublicAuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum[keyof typeof ApiV1PublicAuthOauthRedirectSpotifyGetRedirectBackToAfterOauthEnum];

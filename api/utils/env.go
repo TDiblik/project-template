@@ -48,6 +48,10 @@ type IEnvData struct {
 	OAUTH_SPOTIFY_CLIENT_SECRET string
 	OAUTH_SPOTIFY_CONFIG        *oauth2.Config
 
+	IMAGES_PATH        string
+	IMAGES_PATH_AVATAR string
+	IMAGES_PATH_TEMP   string
+
 	// MAIL_CLIENT_AUTOMATION_HOST     string
 	// MAIL_CLIENT_AUTOMATION_PORT     int
 	// MAIL_CLIENT_AUTOMATION_USERNAME string
@@ -151,6 +155,19 @@ func SetupENV(env_files ...string) {
 		Scopes:       []string{"user-read-email", "user-read-private"},
 		Endpoint:     spotify.Endpoint,
 		RedirectURL:  JoinUrlOrPanic(EnvData.FE_PROD_URL, "/login/oauth/redirect"),
+	}
+
+	EnvData.IMAGES_PATH = getEnvKeyOrPanic("IMAGES_PATH")
+	if err := os.MkdirAll(EnvData.IMAGES_PATH, FoldrePerms); err != nil {
+		log.Fatal("Error ensuring images path (\"", EnvData.IMAGES_PATH, "\"): ", err)
+	}
+	EnvData.IMAGES_PATH_AVATAR = GetAvatarImageFolder()
+	if err := os.MkdirAll(EnvData.IMAGES_PATH_AVATAR, FoldrePerms); err != nil {
+		log.Fatal("Error ensuring images path (\"", EnvData.IMAGES_PATH_AVATAR, "\"): ", err)
+	}
+	EnvData.IMAGES_PATH_TEMP = GetTempImageFolder()
+	if err := os.MkdirAll(EnvData.IMAGES_PATH_TEMP, FoldrePerms); err != nil {
+		log.Fatal("Error ensuring images path (\"", EnvData.IMAGES_PATH_TEMP, "\"): ", err)
 	}
 
 	// EnvData.MAIL_CLIENT_AUTOMATION_HOST = getEnvKeyOrPanic("MAIL_CLIENT_AUTOMATION_HOST")
