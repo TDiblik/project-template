@@ -1,16 +1,23 @@
-import React from "react";
+import React, {useState} from "react";
 import Layout from "../../components/Layout";
 import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
 import {zodResolver, SignUpFirstPageSchema, type SignUpPageFormType} from "../../utils/validations";
-import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
+import {FaGithub, FaFacebook, FaGoogle, FaSpotify, FaTimes} from "react-icons/fa";
+import {HiOutlineChevronDown} from "react-icons/hi";
 import {useLoadingStore} from "../../stores/LoadingStore";
-import {t} from "i18next";
 import {oAuthRedirectController} from "../../utils/api";
 import {useLoggedUser} from "../../stores/LoggedUserStore";
+import {TranslationPossibilities, type OauthRedirectHandlerRequest} from "@shared/api-client";
+import {usei18nStore} from "../../stores/i18nStore";
+import {useThemeStore} from "../../stores/ThemeStore";
+import {useTranslation} from "react-i18next";
 
 export default function SettingsPage() {
+  const {i18n, t} = useTranslation();
   const {loggedUser} = useLoggedUser();
+  const {theme, changeTheme} = useThemeStore();
+  const {changeLanguage} = usei18nStore();
   const {setLoading} = useLoadingStore();
   const form = useForm<SignUpPageFormType>({
     mode: "onChange",
@@ -29,58 +36,61 @@ export default function SettingsPage() {
     }
   };
 
-  // todo: extract into a separate type and out of the render loop
-  // todo: add an "x" that can redact the oauth connection
-  // todo: fix the problem that when connecting different accounts with different emails, it just fucks everything
-  const OAuthButton = ({
-    provider,
-    icon,
-    connected,
-    textConnect,
-    textConnected,
-    onConnect,
-  }: {
-    provider: string;
-    icon: React.ReactNode;
-    connected?: boolean;
-    textConnect: string;
-    textConnected: string;
-    onConnect: () => Promise<any>;
-  }) => (
-    <button
-      className={`flex items-center gap-2 px-4 py-2 rounded-md w-full justify-start ${
-        connected ? "bg-green-100 text-green-700 cursor-not-allowed" : "border border-gray-300 hover:bg-gray-50 cursor-pointer"
-      }`}
-      onClick={() => !connected && onConnect().then((s) => (window.location.href = s.redirectUrl!))}
-    >
-      {icon} {provider} {connected ? textConnected : textConnect}
-    </button>
-  );
-
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto py-10 space-y-8">
-        <h1 className="text-3xl font-bold">{t("settingsPage.pageTitle")}</h1>
+      <div className="max-w-5xl mx-auto py-8 space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold">{t("settingsPage.pageTitle")}</h1>
+          <div className="flex items-center gap-2">
+            <div className="dropdown dropdown-end">
+              <label tabIndex={0} className="btn btn-sm gap-1">
+                {t(`layout.changeLanguage.${i18n.language}`)}
+                <HiOutlineChevronDown className="w-4 h-4 ml-1" />
+              </label>
+              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
+                {TranslationPossibilities.map((lang) => (
+                  <li key={lang}>
+                    <button
+                      onClick={() => changeLanguage(lang)}
+                      className={`w-full text-left ${i18n.language === lang ? "font-semibold text-primary" : ""}`}
+                    >
+                      {t(`layout.changeLanguage.${lang}`)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="w-px h-5 bg-base-300 mx-2"></div>
+            <button
+              onClick={() => changeTheme(theme === "dark" ? "light" : "dark")}
+              className="flex items-center gap-1 px-2.5 py-1 text-sm rounded-md border border-base-300 text-base-content hover:border-primary/50 hover:text-primary transition cursor-pointer"
+            >
+              <span className="mr-1">{theme === "dark" ? "🌙" : "☀️"}</span>
+              {t(`layout.changeTheme.${theme}`)}
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-6">
-            <div className="flex flex-col items-center p-6 rounded-2xl shadow-md bg-base-100">
-              {loggedUser && loggedUser.avatarUrl && (
-                <img src={loggedUser.avatarUrl} alt={t("layout.userAvatarAlt")} className="rounded-full object-cover mb-4" />
+            <div className="p-4 rounded-xl shadow-sm bg-base-100 flex flex-col items-center">
+              {loggedUser && (
+                <>
+                  {loggedUser.avatarUrl ? (
+                    <img src={loggedUser.avatarUrl} alt={t("layout.userAvatarAlt")} className="w-28 h-28 rounded-full object-cover mb-3" />
+                  ) : (
+                    <div className="avatar-placeholder w-32 h-32 rounded-full bg-neutral text-neutral-content flex items-center justify-center mb-3">
+                      <span className="text-4xl">{loggedUser.initials}</span>
+                    </div>
+                  )}
+                  <button className="btn btn-sm btn-outline w-full">{t("settingsPage.changeAvatar")}</button>
+                </>
               )}
-              {loggedUser && !loggedUser.avatarUrl && (
-                <div className="avatar avatar-placeholder mb-4">
-                  <div className="bg-neutral text-neutral-content w-32 rounded-full">
-                    <span className="text-5xl">{loggedUser.initials}</span>
-                  </div>
-                </div>
-              )}
-
-              <button className="btn btn-outline w-full">{t("settingsPage.changeAvatar")}</button>
             </div>
 
-            <div className="p-6 rounded-2xl shadow-md bg-base-100 space-y-3">
-              <h2 className="font-semibold">{t("settingsPage.connectedAccounts")}</h2>
-              <div className="space-y-2">
+            <div className="p-4 rounded-xl shadow-sm bg-base-100">
+              <h2 className="font-semibold mb-3">{t("settingsPage.connectedAccounts")}</h2>
+              <div className="flex flex-col gap-2">
                 <OAuthButton
                   provider="Google"
                   icon={<FaGoogle />}
@@ -120,7 +130,7 @@ export default function SettingsPage() {
           <div className="md:col-span-2 space-y-6">
             <FormProvider {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="p-6 rounded-2xl shadow-md bg-base-100 space-y-4">
+                <div className="p-6 rounded-xl shadow-sm bg-base-100 space-y-4">
                   <h2 className="font-semibold text-lg">{t("settingsPage.profileInfo")}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <TextInput
@@ -136,12 +146,9 @@ export default function SettingsPage() {
                       hasBigText
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary w-full mt-4">
-                    {t("settingsPage.saveChanges")}
-                  </button>
+                  <button className="btn btn-primary w-full mt-2">{t("settingsPage.saveChanges")}</button>
                 </div>
-
-                <div className="p-6 rounded-2xl shadow-md bg-base-100 space-y-4">
+                <div className="p-6 rounded-xl shadow-sm bg-base-100 space-y-4">
                   <h2 className="font-semibold text-lg">{t("settingsPage.changePassword")}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <TextInput
@@ -159,9 +166,7 @@ export default function SettingsPage() {
                       hasBigText
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary w-full mt-4">
-                    {t("settingsPage.savePassword")}
-                  </button>
+                  <button className="btn btn-primary w-full mt-2">{t("settingsPage.savePassword")}</button>
                 </div>
               </form>
             </FormProvider>
@@ -171,3 +176,42 @@ export default function SettingsPage() {
     </Layout>
   );
 }
+
+interface OAuthButtonProps {
+  provider: string;
+  icon: React.ReactNode;
+  connected: boolean;
+  textConnect: string;
+  textConnected: string;
+  onConnect: () => OauthRedirectHandlerRequest;
+  // onDisconnect: () => Promise<any>;
+}
+const OAuthButton: React.FC<OAuthButtonProps> = ({provider, icon, connected, textConnect, textConnected, onConnect}) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      onClick={() => !connected && onConnect().then((s) => (window.location.href = s.redirectUrl!))}
+      className={`group relative flex items-center justify-between w-full px-4 py-2 rounded-md border transition ${
+        connected ? "bg-green-100 text-green-700 border-green-200 cursor-not-allowed" : "border-gray-300 hover:bg-gray-50 cursor-pointer"
+      }`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span className="flex items-center gap-2">
+        {icon}
+        <span className="font-medium">{provider}</span>
+      </span>
+
+      <span className={`text-sm opacity-80 ${connected && hovered && "mr-3"}`}>{connected ? textConnected : textConnect}</span>
+
+      {connected && (
+        <FaTimes
+          size={16}
+          className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600 transition cursor-pointer"
+          onClick={() => console.log("todo")}
+        />
+      )}
+    </button>
+  );
+};

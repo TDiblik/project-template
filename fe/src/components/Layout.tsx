@@ -10,9 +10,9 @@ import {ThemePosibilities, TranslationPossibilities, type ThemePosibilitiesType,
 
 const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const {theme, changeTheme} = useThemeStore();
-  const {language, changeLanguage} = usei18nStore();
+  const {changeLanguage} = usei18nStore();
   const {loggedUser} = useLoggedUser();
 
   const menuItems = [
@@ -92,7 +92,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
                     <motion.ul {...toggleMenuAnimation} className={toggleMenuClasses}>
                       {TranslationPossibilities.map((lang) => (
                         <li key={lang}>
-                          <a className={language() === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
+                          <a className={i18n.language === lang ? "font-bold text-primary" : ""} onClick={() => changeLanguageAndClose(lang)}>
                             {t(`layout.changeLanguage.${lang}`)}
                           </a>
                         </li>

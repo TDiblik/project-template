@@ -7,13 +7,13 @@ import {useTranslation} from "react-i18next";
 
 export const I18nProvider: React.FC<React.PropsWithChildren> = ({children}) => {
   const {loggedUser} = useLoggedUser();
-  const {language, changeLanguage} = usei18nStore();
+  const {changeLanguage} = usei18nStore();
   const {isAuthenticatedAndLoaded} = useAuthTokenStore();
   const {i18n} = useTranslation();
 
   const _language = i18n.language as TranslationPosibilitiesType;
   useEffect(() => {
-    if (language() !== _language) {
+    if (i18n.language !== _language) {
       changeLanguage(_language);
     }
   }, [_language]);
