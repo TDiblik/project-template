@@ -155,6 +155,13 @@ prod-locally-stop:
 
 # ---------- Combined Targets ----------
 install: api-install fe-install mobile-install gen-types
-update: install api-update fe-update mobile-update api-build fe-build
+update:
+	$(MAKE) install
+	$(MAKE) api-update
+	$(MAKE) fe-update
+	$(MAKE) mobile-update
+	$(MAKE) api-build
+	$(MAKE) fe-build
+	$(MAKE) install
 build: api-build fe-build mobile-build
 clean: api-clean fe-clean mobile-clean gen-types-clean
