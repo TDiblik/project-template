@@ -59,7 +59,12 @@ gen-types:
 		-g typescript-fetch \
 		-o ./shared/fe/api-client/src/generated \
 		--skip-validate-spec \
-		--additional-properties=supportsES6=true,typescriptThreePlus=true,npmVersion=$$(npm --version)
+		--additional-properties=supportsES6=true \
+		--additional-properties=typescriptThreePlus=true \
+		--additional-properties=useSingleRequestParameter=true \
+		--additional-properties=modelPropertyNaming=camelCase \
+		--additional-properties=enumPropertyNaming=PascalCase \
+		--global-property apiDocs=false,modelDocs=false
 	cd ./shared/fe/api-client && \
 	bun install && \
 	bun run build
