@@ -8,8 +8,6 @@ api/api
 api/api.exe
 api/dist/api
 db-data-prod
-mobile/android
-mobile/ios
 api/**/generated
 
 ### FE ###

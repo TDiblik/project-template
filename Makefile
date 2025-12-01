@@ -4,7 +4,7 @@ DB_PASSWORD=s0m3C0mpl3xP4ss
 DB_IMAGE=postgres:alpine
 DB_VOLUME=$(shell pwd)/db-data
 
-.PHONY: api api-install api-build api-update api-clean db db-logs db-stop db-remove db-clean gen-types gen-types-clean gen-types-clean-generated fe fe-install fe-build fe-update fe-clean mobile mobile-android mobile-install mobile-build-ios mobile-build-android mobile-build mobile-update mobile-clean prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build clean
+.PHONY: api api-install api-build api-update api-clean db db-logs db-stop db-remove db-clean gen-types gen-types-clean gen-types-clean-generated fe fe-install fe-build fe-update fe-clean prod-build prod-publish prod-locally prod-locally-logs prod-locally-stop install update build clean
 %:
 	@:
 
@@ -96,32 +96,6 @@ fe-clean:
 	@echo "Cleaning frontend build..."
 	cd ./fe && rm -rf ./node_modules ./dist
 
-# ---------- Mobile ----------
-mobile:
-	cd ./mobile && bun run ios
-
-mobile-android:
-	cd ./mobile && bun run android
-
-mobile-install:
-	cd ./mobile && bun install
-
-mobile-build-ios:
-	cd ./mobile && bun run build-ios
-
-mobile-build-android:
-	cd ./mobile && bun run build-android
-
-mobile-build: mobile-build-ios mobile-build-android
-
-mobile-update:
-	cd ./mobile && bun run expo-update
-	cd ./mobile && bun run lint
-
-mobile-clean:
-	@echo "Cleaning mobile build..."
-	cd ./mobile && rm -rf ./build ./dist ./.expo ./*.ipa ./*.ipa ./*.apk ./*.aab
-
 # ---------- Docker build for production ----------
 VERSION := $(word 2,$(MAKECMDGOALS))
 DOCKER_TAG = v$(shell echo $(VERSION) | sed 's/^v*//')
@@ -159,14 +133,13 @@ prod-locally-stop:
 	@docker ps -q --filter "publish=$(LOCAL_API_PROD_PORT)" | xargs -r docker stop
 
 # ---------- Combined Targets ----------
-install: api-install fe-install mobile-install gen-types
+install: api-install fe-install gen-types
 update:
 	$(MAKE) install
 	$(MAKE) api-update
 	$(MAKE) fe-update
-	$(MAKE) mobile-update
 	$(MAKE) api-build
 	$(MAKE) fe-build
 	$(MAKE) install
-build: api-build fe-build mobile-build
-clean: api-clean fe-clean mobile-clean gen-types-clean
+build: api-build fe-build
+clean: api-clean fe-clean gen-types-clean
