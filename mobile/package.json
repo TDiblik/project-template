@@ -11,7 +11,7 @@
     "build-ios": "NODE_ENV=production eas build --profile production --local --clear-cache --platform ios",
     "build-android": "NODE_ENV=production eas build --profile production --local --clear-cache --platform android",
     "expo-update": "bun expo install expo@latest && bunx expo install --fix",
-    "lint": "prettier . --write --config ./.prettierrc && expo lint --fix",
+    "lint": "biome check --write --unsafe --max-diagnostics none",
     "install-package": "bunx expo install"
   },
   "dependencies": {
@@ -42,8 +42,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",
     "@types/react": "~19.1.0",
-    "eslint": "^9.0.0",
-    "eslint-config-expo": "~10.0.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.14",

@@ -1,8 +1,8 @@
-import {useLoadingStore} from "../stores/LoadingStore";
-import {useAuthTokenStore} from "../stores/TokenStore";
 import {useEffect} from "react";
-import {useFetchLoggedUser, useLoggedUserStore} from "../stores/LoggedUserStore";
 import {useNavigate} from "react-router";
+import {useLoadingStore} from "../stores/LoadingStore";
+import {useFetchLoggedUser, useLoggedUserStore} from "../stores/LoggedUserStore";
+import {useAuthTokenStore} from "../stores/TokenStore";
 import {routes} from "../utils/routes";
 
 export const LoggedUserProvider: React.FC<React.PropsWithChildren> = ({children}) => {

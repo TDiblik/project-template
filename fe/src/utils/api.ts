@@ -1,6 +1,6 @@
 import {Configuration, getAuthController, getoAuthController, getoAuthRedirectController, getUserController} from "@shared/api-client";
-import {constants} from "./constants";
 import {useAuthTokenStore} from "../stores/TokenStore";
+import {constants} from "./constants";
 
 const config = new Configuration({
   basePath: constants.API_BASE_PATH,

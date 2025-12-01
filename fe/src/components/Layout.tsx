@@ -1,12 +1,13 @@
-import React, {useState} from "react";
-import {routes} from "../utils/routes";
-import {Link, matchPath, useLocation} from "react-router";
-import {useThemeStore} from "../stores/ThemeStore";
+import {ThemePosibilities, type ThemePosibilitiesType, type TranslationPosibilitiesType, TranslationPossibilities} from "@shared/api-client";
+import {AnimatePresence, type HTMLMotionProps, motion} from "motion/react";
+import type React from "react";
+import {useState} from "react";
 import {useTranslation} from "react-i18next";
-import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
+import {Link, matchPath, useLocation} from "react-router";
 import {usei18nStore} from "../stores/i18nStore";
 import {useLoggedUser} from "../stores/LoggedUserStore";
-import {ThemePosibilities, TranslationPossibilities, type ThemePosibilitiesType, type TranslationPosibilitiesType} from "@shared/api-client";
+import {useThemeStore} from "../stores/ThemeStore";
+import {routes} from "../utils/routes";
 
 const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const location = useLocation();
@@ -66,7 +67,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
         {/* Avatar & Settings */}
         <div className="border-t border-base-300 p-4">
           <div className="dropdown dropdown-top dropdown-end w-full cursor-pointer">
-            <div tabIndex={0} className="flex items-center w-full">
+            <div className="flex items-center w-full">
               {loggedUser && (
                 <div className={`btn btn-ghost btn-circle avatar ${!loggedUser.avatarUrl ? "avatar-placeholder" : ""}`}>
                   <div className="w-12 rounded-full bg-neutral text-neutral-content">
@@ -77,7 +78,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
               <span className="ml-2 text-base font-medium normal-case">{loggedUser?.fullName}</span>
             </div>
 
-            <ul tabIndex={0} className="dropdown-content menu rounded-box z-[1] mb-2 w-52 bg-base-100 p-2 shadow">
+            <ul className="dropdown-content menu rounded-box z-1 mb-2 w-52 bg-base-100 p-2 shadow">
               <li>
                 <Link to={routes.settings}>{t("layout.settings")}</Link>
               </li>

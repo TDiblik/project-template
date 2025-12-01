@@ -1,6 +1,6 @@
+import React from "react";
 import {useNavigate} from "react-router";
 import {useAuthTokenStore} from "../stores/TokenStore";
-import React from "react";
 import {routes} from "../utils/routes";
 
 type IfLoggedInProps = {

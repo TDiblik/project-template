@@ -1,9 +1,9 @@
-import {useEffect} from "react";
-import {useLoggedUser} from "../stores/LoggedUserStore";
 import type {TranslationPosibilitiesType} from "@shared/api-client";
-import {useAuthTokenStore} from "../stores/TokenStore";
-import {usei18nStore} from "../stores/i18nStore";
+import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
+import {usei18nStore} from "../stores/i18nStore";
+import {useLoggedUser} from "../stores/LoggedUserStore";
+import {useAuthTokenStore} from "../stores/TokenStore";
 
 export const I18nProvider: React.FC<React.PropsWithChildren> = ({children}) => {
   const {loggedUser} = useLoggedUser();

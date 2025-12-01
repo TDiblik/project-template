@@ -1,18 +1,18 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import React, {useState} from "react";
-import {View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform} from "react-native";
-import {useForm, FormProvider} from "react-hook-form";
+import {useState} from "react";
+import {FormProvider, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
+import {KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {TextInput} from "../../src/components/TextInput";
+import {AuthController, oAuthRedirectController} from "../../src/utils/api";
 // import {useNavigation} from "@react-navigation/native";
 import {
   LoginFirstPageSchema,
-  SignUpFirstPageSchema,
-  SignUpPageFormType,
-  zodResolver,
   type LoginOrSignUpPageFormType,
+  SignUpFirstPageSchema,
+  type SignUpPageFormType,
+  zodResolver,
 } from "../../src/utils/validations";
-import {AuthController, oAuthRedirectController} from "../../src/utils/api";
-import {TextInput} from "../../src/components/TextInput";
 
 // todo:
 // - add register
@@ -44,7 +44,7 @@ const LoginScreen = () => {
     setIsSignUp((prev) => !prev);
   };
 
-  const postLogin = (authToken: string) => {
+  const postLogin = (_authToken: string) => {
     // setToken(authToken);
     // navigation.navigate(); // Adjust based on your navigator
   };
@@ -96,7 +96,7 @@ const LoginScreen = () => {
           <FormProvider {...form}>
             <View>
               <TextInput form={form} label={t("loginPage.email.label")} name="email" placeholder={t("loginPage.email.placeholder")} hasBigText />
-              <PasswordFields t={t} form={form} isSignUp={isSignUp} />
+              <PasswordFields t={t} form={form} />
               {beErrorMessage && <Text className="text-red-500 text-sm text-center mt-2">{beErrorMessage}</Text>}
               <TouchableOpacity className="bg-primary py-3 rounded-md mt-5 shadow-md" onPress={form.handleSubmit(onSubmit)}>
                 <Text className="text-white text-center font-bold">{isSignUp ? t("loginPage.signUpButton") : t("loginPage.loginContinue")}</Text>
@@ -133,7 +133,7 @@ const LoginScreen = () => {
   );
 };
 
-const PasswordFields = ({t, form, isSignUp}: {t: any; form: any; isSignUp: boolean}) => (
+const PasswordFields = ({t, form}: {t: any; form: any}) => (
   <View className="flex-row gap-4 mt-2">
     <TextInput
       form={form}

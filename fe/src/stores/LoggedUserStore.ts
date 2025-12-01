@@ -1,8 +1,8 @@
 import type {UserModel} from "@shared/api-client";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useEffect} from "react";
 import {create} from "zustand";
 import {UserController} from "../utils/api";
-import {useEffect} from "react";
 
 interface LoggedUserStoreState {
   user: UserModel | undefined;

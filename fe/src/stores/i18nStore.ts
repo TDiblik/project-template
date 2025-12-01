@@ -1,8 +1,8 @@
-import i18n, {type i18n as i18nType} from "i18next";
 import type {TranslationPosibilitiesType} from "@shared/api-client";
+import i18n, {type i18n as i18nType} from "i18next";
 import {create} from "zustand";
-import {useAuthTokenStore} from "./TokenStore";
 import {UserController} from "../utils/api";
+import {useAuthTokenStore} from "./TokenStore";
 
 interface i18nStoreState {
   i18n: i18nType;

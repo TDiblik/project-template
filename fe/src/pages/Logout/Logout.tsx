@@ -1,7 +1,7 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 import {constants} from "../../utils/constants";
 import {routes} from "../../utils/routes";
-import {useTranslation} from "react-i18next";
 
 const Logout: React.FC = () => {
   const {t} = useTranslation();

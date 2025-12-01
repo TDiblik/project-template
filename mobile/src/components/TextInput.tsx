@@ -1,6 +1,7 @@
-import React, {useEffect, useRef} from "react";
-import {Text, TextInput as RNTextInput, View, Animated} from "react-native";
+import type React from "react";
+import {useEffect, useRef} from "react";
 import {Controller} from "react-hook-form";
+import {Animated, TextInput as RNTextInput, Text, View} from "react-native";
 import type {FormFieldProps} from "../utils/form";
 
 export type TextInputProps = FormFieldProps & {

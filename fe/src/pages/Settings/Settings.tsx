@@ -1,17 +1,18 @@
-import React, {useState} from "react";
+import {type OauthRedirectHandlerRequest, TranslationPossibilities} from "@shared/api-client";
+import type React from "react";
+import {useState} from "react";
+import {FormProvider, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {FaFacebook, FaGithub, FaGoogle, FaSpotify, FaTimes} from "react-icons/fa";
+import {HiOutlineChevronDown} from "react-icons/hi";
 import Layout from "../../components/Layout";
 import {TextInput} from "../../components/TextInput";
-import {FormProvider, useForm} from "react-hook-form";
-import {zodResolver, SignUpFirstPageSchema, type SignUpPageFormType} from "../../utils/validations";
-import {FaGithub, FaFacebook, FaGoogle, FaSpotify, FaTimes} from "react-icons/fa";
-import {HiOutlineChevronDown} from "react-icons/hi";
-import {useLoadingStore} from "../../stores/LoadingStore";
-import {oAuthRedirectController} from "../../utils/api";
-import {useLoggedUser} from "../../stores/LoggedUserStore";
-import {TranslationPossibilities, type OauthRedirectHandlerRequest} from "@shared/api-client";
 import {usei18nStore} from "../../stores/i18nStore";
+import {useLoadingStore} from "../../stores/LoadingStore";
+import {useLoggedUser} from "../../stores/LoggedUserStore";
 import {useThemeStore} from "../../stores/ThemeStore";
-import {useTranslation} from "react-i18next";
+import {oAuthRedirectController} from "../../utils/api";
+import {SignUpFirstPageSchema, type SignUpPageFormType, zodResolver} from "../../utils/validations";
 
 export default function SettingsPage() {
   const {i18n, t} = useTranslation();
@@ -43,11 +44,11 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold">{t("settingsPage.pageTitle")}</h1>
           <div className="flex items-center gap-2">
             <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-sm gap-1">
+              <label className="btn btn-sm gap-1">
                 {t(`layout.changeLanguage.${i18n.language}`)}
                 <HiOutlineChevronDown className="w-4 h-4 ml-1" />
               </label>
-              <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
+              <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
                 {TranslationPossibilities.map((lang) => (
                   <li key={lang}>
                     <button
@@ -97,7 +98,11 @@ export default function SettingsPage() {
                   connected={!!loggedUser?.googleId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
-                  onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGoogleGet({redirectBackToAfterOauth: "settings"})}
+                  onConnect={() =>
+                    oAuthRedirectController.apiV1PublicAuthOauthRedirectGoogleGet({
+                      redirectBackToAfterOauth: "settings",
+                    })
+                  }
                 />
                 <OAuthButton
                   provider="Facebook"
@@ -105,7 +110,11 @@ export default function SettingsPage() {
                   connected={!!loggedUser?.facebookId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
-                  onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectFacebookGet({redirectBackToAfterOauth: "settings"})}
+                  onConnect={() =>
+                    oAuthRedirectController.apiV1PublicAuthOauthRedirectFacebookGet({
+                      redirectBackToAfterOauth: "settings",
+                    })
+                  }
                 />
                 <OAuthButton
                   provider="Spotify"
@@ -113,7 +122,11 @@ export default function SettingsPage() {
                   connected={!!loggedUser?.spotifyId}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
-                  onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectSpotifyGet({redirectBackToAfterOauth: "settings"})}
+                  onConnect={() =>
+                    oAuthRedirectController.apiV1PublicAuthOauthRedirectSpotifyGet({
+                      redirectBackToAfterOauth: "settings",
+                    })
+                  }
                 />
                 <OAuthButton
                   provider="Github"
@@ -121,7 +134,11 @@ export default function SettingsPage() {
                   connected={!!loggedUser?.githubHandle}
                   textConnect={t("settingsPage.oauth.connect")}
                   textConnected={t("settingsPage.oauth.connected")}
-                  onConnect={() => oAuthRedirectController.apiV1PublicAuthOauthRedirectGithubGet({redirectBackToAfterOauth: "settings"})}
+                  onConnect={() =>
+                    oAuthRedirectController.apiV1PublicAuthOauthRedirectGithubGet({
+                      redirectBackToAfterOauth: "settings",
+                    })
+                  }
                 />
               </div>
             </div>
@@ -191,7 +208,12 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({provider, icon, connected, tex
 
   return (
     <button
-      onClick={() => !connected && onConnect().then((s) => (window.location.href = s.redirectUrl!))}
+      onClick={() =>
+        !connected &&
+        onConnect().then((s) => {
+          window.location.href = s.redirectUrl!;
+        })
+      }
       className={`group relative flex items-center justify-between w-full px-4 py-2 rounded-md border transition ${
         connected ? "bg-green-100 text-green-700 border-green-200 cursor-not-allowed" : "border-gray-300 hover:bg-gray-50 cursor-pointer"
       }`}

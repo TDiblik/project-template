@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import type {UseFormReturn, FieldValues} from "react-hook-form";
+import type {FieldValues, UseFormReturn} from "react-hook-form";
 import {constants} from "./constants";
 
 export function useFormLog<T extends FieldValues>(form: UseFormReturn<T>) {

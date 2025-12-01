@@ -1,26 +1,26 @@
+import {ConvertToApiError, type OauthRedirectHandlerRequest} from "@shared/api-client";
+import {AnimatePresence, type HTMLMotionProps, motion} from "motion/react";
 import {useState} from "react";
-import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
-import {FaGithub, FaFacebook, FaGoogle, FaSpotify} from "react-icons/fa";
-import {AuthController, oAuthRedirectController} from "../../utils/api";
-import {TextInput} from "../../components/TextInput";
 import {FormProvider, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {FaFacebook, FaGithub, FaGoogle, FaSpotify} from "react-icons/fa";
+import {useNavigate} from "react-router";
+import {HiddenBooleanInput} from "../../components/HiddenBooleanInput";
+import {TextInput} from "../../components/TextInput";
+import {useLoadingStore} from "../../stores/LoadingStore";
+import {useAuthTokenStore} from "../../stores/TokenStore";
+import {AuthController, oAuthRedirectController} from "../../utils/api";
+import {TranslateApiErrorMessage} from "../../utils/general";
+import {routes} from "../../utils/routes";
+import {useFormLog} from "../../utils/useFormLog";
 import {
   LoginFirstPageSchema,
-  SignUpFirstPageSchema,
-  zodResolver,
   type LoginOrSignUpPageFormType,
   type LoginPageFormType,
+  SignUpFirstPageSchema,
   type SignUpPageFormType,
+  zodResolver,
 } from "../../utils/validations";
-import {HiddenBooleanInput} from "../../components/HiddenBooleanInput";
-import {useFormLog} from "../../utils/useFormLog";
-import {useAuthTokenStore} from "../../stores/TokenStore";
-import {useNavigate} from "react-router";
-import {useLoadingStore} from "../../stores/LoadingStore";
-import {routes} from "../../utils/routes";
-import {useTranslation} from "react-i18next";
-import {ConvertToApiError, type OauthRedirectHandlerRequest} from "@shared/api-client";
-import {TranslateApiErrorMessage} from "../../utils/general";
 
 export default function Login() {
   const {t} = useTranslation();

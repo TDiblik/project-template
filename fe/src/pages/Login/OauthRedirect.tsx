@@ -1,11 +1,11 @@
+import {AnimatePresence, type HTMLMotionProps, motion} from "motion/react";
 import {useEffect, useState} from "react";
-import {useNavigate, useSearchParams} from "react-router";
-import {oAuthController} from "../../utils/api";
-import {useAuthTokenStore} from "../../stores/TokenStore";
-import {RedirectBackToAfterOauthToRouteMap, routes} from "../../utils/routes";
 import {useTranslation} from "react-i18next";
-import {AnimatePresence, motion, type HTMLMotionProps} from "motion/react";
+import {useNavigate, useSearchParams} from "react-router";
 import {useLoggedUser} from "../../stores/LoggedUserStore";
+import {useAuthTokenStore} from "../../stores/TokenStore";
+import {oAuthController} from "../../utils/api";
+import {RedirectBackToAfterOauthToRouteMap, routes} from "../../utils/routes";
 
 const delayed = (delay: number) =>
   ({

@@ -1,6 +1,6 @@
 import {zodResolver} from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {t} from "i18next";
+import * as z from "zod";
 
 export {zodResolver, z};
 

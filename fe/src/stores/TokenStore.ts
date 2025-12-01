@@ -1,6 +1,6 @@
 import {create} from "zustand";
-import {getRawJWT, type IAuthToken, parseJWT} from "../utils/token";
 import {constants} from "../utils/constants";
+import {getRawJWT, type IAuthToken, parseJWT} from "../utils/token";
 import {useLoggedUserStore} from "./LoggedUserStore";
 
 interface TokenStoreState {

@@ -1,19 +1,19 @@
 import "./index.css";
 import "./utils/i18n.ts";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {BrowserRouter, Route, Routes} from "react-router";
-import {routes} from "./utils/routes.ts";
+import {I18nProvider} from "./components/I18nProvider.tsx";
+import {LoaderProvider} from "./components/LoadingProvider.tsx";
+import {LoggedUserProvider} from "./components/LoggedUserProvider.tsx";
+import {ThemeProvider} from "./components/ThemeProvider.tsx";
 import Home from "./pages/Home/Home.tsx";
 import Login from "./pages/Login/Login.tsx";
-import Logout from "./pages/Logout/Logout.tsx";
 import OAuthRedirect from "./pages/Login/OauthRedirect.tsx";
-import {LoaderProvider} from "./components/LoadingProvider.tsx";
-import {ThemeProvider} from "./components/ThemeProvider.tsx";
+import Logout from "./pages/Logout/Logout.tsx";
 import Settings from "./pages/Settings/Settings.tsx";
-import {LoggedUserProvider} from "./components/LoggedUserProvider.tsx";
-import {I18nProvider} from "./components/I18nProvider.tsx";
+import {routes} from "./utils/routes.ts";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(

@@ -1,7 +1,7 @@
-import {useEffect} from "react";
-import {useThemeStore} from "../stores/ThemeStore";
-import {useLoggedUser} from "../stores/LoggedUserStore";
 import type {ThemePosibilitiesType} from "@shared/api-client";
+import {useEffect} from "react";
+import {useLoggedUser} from "../stores/LoggedUserStore";
+import {useThemeStore} from "../stores/ThemeStore";
 import {useAuthTokenStore} from "../stores/TokenStore";
 
 export const ThemeProvider: React.FC<React.PropsWithChildren> = ({children}) => {

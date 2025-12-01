@@ -1,7 +1,7 @@
 import {motion} from "motion/react";
+import type {AnimationEventHandler} from "react";
 import {Controller, useFormContext} from "react-hook-form";
 import type {FormFieldProps} from "../utils/form";
-import type {AnimationEventHandler} from "react";
 
 export type TextInputProps = FormFieldProps & {
   placeholder?: string;

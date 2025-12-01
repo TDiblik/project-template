@@ -1,7 +1,7 @@
-import {create} from "zustand";
-import {constants} from "../utils/constants";
 import type {ThemePosibilitiesType} from "@shared/api-client";
+import {create} from "zustand";
 import {UserController} from "../utils/api";
+import {constants} from "../utils/constants";
 import {useAuthTokenStore} from "./TokenStore";
 
 interface ThemeStoreState {
