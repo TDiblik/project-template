@@ -85,7 +85,7 @@ fe-install:
 	cd ./fe && bun install
 
 fe-build:
-	cd ./fe && bun run build
+	cd ./fe && bun run lint && bun run build
 
 fe-update:
 	cd ./fe && bun update --latest
