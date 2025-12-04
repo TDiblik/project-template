@@ -107,7 +107,7 @@ endif
 	$(MAKE) gen-types
 	@echo "Building Docker image $(DOCKER_TAG)..."
 	cp .gitignore .dockerignore
-	docker build -f Dockerfile.app --no-cache -t docker-registry.dev.tomasdiblik.cz/project-template:$(DOCKER_TAG) .
+	docker build -f Dockerfile.app -t docker-registry.dev.tomasdiblik.cz/project-template:$(DOCKER_TAG) .
 
 LOCAL_API_PROD_PORT ?= 35230
 prod-locally:

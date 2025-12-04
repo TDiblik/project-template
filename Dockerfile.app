@@ -3,23 +3,19 @@
 # ============================
 FROM oven/bun:alpine AS fe-build
 
-# Install dependencies
-RUN apk update && \
-    apk upgrade && \
-    apk add git && \
-    rm -rf /var/cache/apk/*
-
 ENV NODE_ENV=production
-WORKDIR /build
 
-# ---- Build shared API client ----
+# Install dependencies
+RUN apk add --no-cache git
+
+# Build shared API client
 WORKDIR /build/shared/fe/api-client
 COPY shared/fe/api-client/package.json shared/fe/api-client/bun.lock ./
 RUN bun install --frozen-lockfile
 COPY shared/fe/api-client/ ./
 RUN bun run build
 
-# ---- Build frontend ----
+# Build frontend
 WORKDIR /build/fe
 COPY fe/package.json fe/bun.lock ./
 RUN bun install --frozen-lockfile
