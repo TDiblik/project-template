@@ -51,10 +51,7 @@ export default function SettingsPage() {
               <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
                 {TranslationPossibilities.map((lang) => (
                   <li key={lang}>
-                    <button
-                      onClick={() => changeLanguage(lang)}
-                      className={`w-full text-left ${i18n.language === lang ? "font-semibold text-primary" : ""}`}
-                    >
+                    <button onClick={() => changeLanguage(lang)} className={`w-full text-left ${i18n.language === lang ? "font-semibold text-primary" : ""}`}>
                       {t(`layout.changeLanguage.${lang}`)}
                     </button>
                   </li>
@@ -150,18 +147,8 @@ export default function SettingsPage() {
                 <div className="p-6 rounded-xl shadow-sm bg-base-100 space-y-4">
                   <h2 className="font-semibold text-lg">{t("settingsPage.profileInfo")}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <TextInput
-                      label={t("settingsPage.firstName.label")}
-                      name="firstName"
-                      placeholder={t("settingsPage.firstName.placeholder")}
-                      hasBigText
-                    />
-                    <TextInput
-                      label={t("settingsPage.lastName.label")}
-                      name="lastName"
-                      placeholder={t("settingsPage.lastName.placeholder")}
-                      hasBigText
-                    />
+                    <TextInput label={t("settingsPage.firstName.label")} name="firstName" placeholder={t("settingsPage.firstName.placeholder")} hasBigText />
+                    <TextInput label={t("settingsPage.lastName.label")} name="lastName" placeholder={t("settingsPage.lastName.placeholder")} hasBigText />
                   </div>
                   <button className="btn btn-primary w-full mt-2">{t("settingsPage.saveChanges")}</button>
                 </div>

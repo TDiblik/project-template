@@ -87,11 +87,7 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-base-200 px-4">
-      <motion.div
-        layout
-        transition={{type: "spring", stiffness: 120, damping: 20}}
-        className="card w-full max-w-md shadow-2xl bg-base-100 p-8 rounded-2xl"
-      >
+      <motion.div layout transition={{type: "spring", stiffness: 120, damping: 20}} className="card w-full max-w-md shadow-2xl bg-base-100 p-8 rounded-2xl">
         <motion.h2
           key={isSignUp ? "sign-up" : "login"}
           initial={{opacity: 0, y: -15}}
@@ -150,11 +146,7 @@ export default function Login() {
 
         <motion.p className="text-base text-center" initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
           {isSignUp ? t("loginPage.signUpAlreadyHaveAccount") : t("loginPage.loginDontHaveAccount")}{" "}
-          <button
-            type="button"
-            onClick={toggleFormType}
-            className="text-primary font-medium underline hover:text-secondary transition-colors cursor-pointer"
-          >
+          <button type="button" onClick={toggleFormType} className="text-primary font-medium underline hover:text-secondary transition-colors cursor-pointer">
             {isSignUp ? t("loginPage.signUpLoginHere") : t("loginPage.loginSignUpHere")}
           </button>
         </motion.p>

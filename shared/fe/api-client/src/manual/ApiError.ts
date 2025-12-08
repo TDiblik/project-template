@@ -1,5 +1,5 @@
 import {
-  GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
+  type GithubComTDiblikProjectTemplateApiUtilsErrorResponseType,
   GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON,
 } from "../generated";
 
@@ -31,7 +31,10 @@ export const ConvertToApiError = async (error: any): Promise<ApiError> => {
       if (typeof error.response.json === "function") {
         try {
           const jsonData = await error.response.json();
-          result.Body = GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON(jsonData);
+          result.Body =
+            GithubComTDiblikProjectTemplateApiUtilsErrorResponseTypeFromJSON(
+              jsonData,
+            );
         } catch {
           result.Body = { message: "Failed to parse error response" } as any;
         }

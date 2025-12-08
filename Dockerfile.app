@@ -64,7 +64,7 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 # Create non-root user
-RUN addgroup -S app_perms && adduser -S -G app_perms app_perms 
+RUN addgroup -S app_perms && adduser -S -G app_perms app_perms
 RUN mkdir -p /app/images && chown -R app_perms:app_perms /app/images
 
 # Copy built artifacts

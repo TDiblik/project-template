@@ -10,10 +10,7 @@ interface ThemeStoreState {
 }
 
 export const useThemeStore = create<ThemeStoreState>()((set) => ({
-  theme:
-    (localStorage.getItem(constants.LOCAL_STORAGE_THEME_KEY) as ThemePosibilitiesType) ??
-    document.documentElement.getAttribute("data-theme") ??
-    "light",
+  theme: (localStorage.getItem(constants.LOCAL_STORAGE_THEME_KEY) as ThemePosibilitiesType) ?? document.documentElement.getAttribute("data-theme") ?? "light",
   changeTheme: (theme) => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(constants.LOCAL_STORAGE_THEME_KEY, theme);
