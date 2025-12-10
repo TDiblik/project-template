@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/TDiblik/project-template/api/database"
-	"github.com/TDiblik/project-template/api/models"
+	database_gen "github.com/TDiblik/project-template/api/database/gen"
 	"github.com/TDiblik/project-template/api/utils"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -27,7 +28,6 @@ type OauthRedirectHandlerResponse struct {
 	RedirectURL string `json:"redirect_url"`
 }
 
-// todo: add param: isMobile which returns oauth redirect for mobile phones using OAUTH_CONFIG_GITHUB_MOBILE that will be generated
 func GithubRedirectHandler(c fiber.Ctx) error {
 	redirectParam := c.Query("redirect_back_to_after_oauth", string(utils.RedirectAfterOauthIndex))
 	redirectBackTo := utils.ValidateRedirectAfterOauth(redirectParam)
@@ -110,7 +110,6 @@ func OAuthPostReturnHandler(c fiber.Ctx) error {
 	}
 
 	var userUUID uuid.UUID
-	// when adding a new oauth provider and user table fields, add new "case" here:
 	switch provider {
 	case githubProviderName:
 		if userUUID, err = githubReturn(c, query.Code); err != nil {
@@ -182,13 +181,13 @@ func githubReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		}
 	}
 
-	return CreateOrUpdateUser(c, models.UserModelDB{
+	return CreateOrUpdateUser(c, database_gen.User{
 		Email:         ghUserResponse.Email,
-		EmailVerified: true,
-		FirstName:     utils.SQLNullStringFromString(firstName),
-		LastName:      utils.SQLNullStringFromString(lastName),
-		Handle:        utils.SQLNullStringFromString(ghUserResponse.Login),
-		GithubId:      utils.SQLNullStringFromString(strconv.FormatInt(ghUserResponse.ID, 10)),
+		EmailVerified: sql.NullBool{Valid: true, Bool: true},
+		FirstName:     utils.SQLNullStringFromString(firstName).NullString,
+		LastName:      utils.SQLNullStringFromString(lastName).NullString,
+		Handle:        utils.SQLNullStringFromString(ghUserResponse.Login).NullString,
+		GithubID:      utils.SQLNullStringFromString(strconv.FormatInt(ghUserResponse.ID, 10)),
 		GithubHandle:  utils.SQLNullStringFromString(ghUserResponse.Login),
 		GithubEmail:   utils.SQLNullStringFromString(ghUserResponse.Email),
 		GithubUrl:     utils.SQLNullStringFromString(ghUserResponse.HtmlUrl),
@@ -229,12 +228,12 @@ func googleReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(c, models.UserModelDB{
+	return CreateOrUpdateUser(c, database_gen.User{
 		Email:         gUser.Email,
-		EmailVerified: gUser.VerifiedEmail,
-		FirstName:     utils.SQLNullStringFromString(gUser.GivenName),
-		LastName:      utils.SQLNullStringFromString(gUser.FamilyName),
-		GoogleId:      utils.SQLNullStringFromString(gUser.ID),
+		EmailVerified: sql.NullBool{Valid: true, Bool: gUser.VerifiedEmail},
+		FirstName:     utils.SQLNullStringFromString(gUser.GivenName).NullString,
+		LastName:      utils.SQLNullStringFromString(gUser.FamilyName).NullString,
+		GoogleID:      utils.SQLNullStringFromString(gUser.ID),
 		GoogleEmail:   utils.SQLNullStringFromString(gUser.Email),
 		AvatarUrl:     utils.SQLNullStringFromString(gUser.Picture),
 	})
@@ -247,10 +246,7 @@ type facebookUserApiResponse struct {
 	Email     string `json:"email"`
 	Picture   struct {
 		Data struct {
-			Height       int    `json:"height"`
-			IsSilhouette bool   `json:"is_silhouette"`
-			URL          string `json:"url"`
-			Width        int    `json:"width"`
+			URL string `json:"url"`
 		} `json:"data"`
 	} `json:"picture"`
 	Link string `json:"link"`
@@ -279,12 +275,12 @@ func facebookReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
-	return CreateOrUpdateUser(c, models.UserModelDB{
+	return CreateOrUpdateUser(c, database_gen.User{
 		Email:         fbUser.Email,
-		EmailVerified: true,
-		FirstName:     utils.SQLNullStringFromString(fbUser.FirstName),
-		LastName:      utils.SQLNullStringFromString(fbUser.LastName),
-		FacebookId:    utils.SQLNullStringFromString(fbUser.ID),
+		EmailVerified: sql.NullBool{Valid: true, Bool: true},
+		FirstName:     utils.SQLNullStringFromString(fbUser.FirstName).NullString,
+		LastName:      utils.SQLNullStringFromString(fbUser.LastName).NullString,
+		FacebookID:    utils.SQLNullStringFromString(fbUser.ID),
 		FacebookEmail: utils.SQLNullStringFromString(fbUser.Email),
 		FacebookUrl:   utils.SQLNullStringFromString(fbUser.Link),
 		AvatarUrl:     utils.SQLNullStringFromString(fbUser.Picture.Data.URL),
@@ -340,23 +336,22 @@ func spotifyReturn(c fiber.Ctx, authCode string) (uuid.UUID, error) {
 		avatarURL = spUser.Images[0].URL
 	}
 
-	return CreateOrUpdateUser(c, models.UserModelDB{
+	return CreateOrUpdateUser(c, database_gen.User{
 		Email:         spUser.Email,
-		EmailVerified: true,
-		FirstName:     utils.SQLNullStringFromString(firstName),
-		LastName:      utils.SQLNullStringFromString(lastName),
-		SpotifyId:     utils.SQLNullStringFromString(spUser.ID),
+		EmailVerified: sql.NullBool{Valid: true, Bool: true},
+		FirstName:     utils.SQLNullStringFromString(firstName).NullString,
+		LastName:      utils.SQLNullStringFromString(lastName).NullString,
+		SpotifyID:     utils.SQLNullStringFromString(spUser.ID),
 		SpotifyEmail:  utils.SQLNullStringFromString(spUser.Email),
 		SpotifyUrl:    utils.SQLNullStringFromString(spUser.ExternalURLs.Spotify),
 		AvatarUrl:     utils.SQLNullStringFromString(avatarURL),
 	})
 }
 
-// todo: download user profile picture, save it, and save reference to db
-func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UserModelDB) (uuid.UUID, error) {
-	db, err := database.CreateConnection()
+func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser database_gen.User) (uuid.UUID, error) {
+	queries, ctx, err := database.CreateConnection()
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("unable to create connection to db inside CreateOrUpdateUser: %w", err)
+		return uuid.Nil, fmt.Errorf("unable to create connection to db: %w", err)
 	}
 
 	possiblyUserEmail := possiblyNewUser.Email
@@ -366,166 +361,139 @@ func CreateOrUpdateUser(c fiber.Ctx, possiblyNewUser models.UserModelDB) (uuid.U
 		possiblyUserEmail = loggedInUserInfo.UserEmail
 	}
 
-	var emailExists, handleExists bool
-	err = db.QueryRow(`select `+utils.UserEmailExistsQuery()+` as email_exists, exists(select 1 from users where handle = $2) as handle_exists`,
-		possiblyUserEmail, possiblyNewUser.Handle).Scan(&emailExists, &handleExists)
+	emailExists, err := queries.CheckEmailExists(ctx, possiblyUserEmail)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("unable to query exists staments inside CreateOrUpdateUser: %w", err)
+		return uuid.Nil, fmt.Errorf("failed to check email exists: %w", err)
 	}
 
-	var existingUser models.UserModelDB
 	if !emailExists {
-		if !possiblyNewUser.Handle.Valid || handleExists {
-			newHandle, genErr := utils.GenerateUniqueUserHandle(db, possiblyNewUser.FirstName, possiblyNewUser.LastName)
-			if genErr != nil {
-				return uuid.Nil, fmt.Errorf("unable to generate unique handle: %w", genErr)
+		finalHandle := possiblyNewUser.Handle
+		if !finalHandle.Valid || finalHandle.String == "" || finalHandle.String == "user" {
+			uniqueHandle, err := getUniqueHandle(ctx, queries, possiblyNewUser.FirstName, possiblyNewUser.LastName)
+			if err != nil {
+				return uuid.Nil, fmt.Errorf("failed to generate unique handle: %w", err)
 			}
-			possiblyNewUser.Handle = utils.SQLNullStringFromString(newHandle)
+			finalHandle = utils.SQLNullStringFromString(uniqueHandle).NullString
+		} else {
+			exists, err := queries.CheckHandleExists(ctx, finalHandle)
+			if err != nil {
+				return uuid.Nil, err
+			}
+			if exists {
+				uniqueHandle, err := getUniqueHandle(ctx, queries, possiblyNewUser.FirstName, possiblyNewUser.LastName)
+				if err != nil {
+					return uuid.Nil, err
+				}
+				finalHandle = utils.SQLNullStringFromString(uniqueHandle).NullString
+			}
 		}
 
-		// when adding a new oauth provider and user table fields, add the checks here:
-		rows, err := db.NamedQuery(`
-			insert into users (
-				email, email_verified, password_hash, handle, first_name, last_name, avatar_url, github_id, github_email, github_handle, github_url, google_id, google_email, facebook_id, facebook_email, facebook_url, spotify_id, spotify_email, spotify_url
-			) 
-			values (
-				:email, :email_verified, :password_hash, :handle, :first_name, :last_name, :avatar_url, :github_id, :github_email, :github_handle, :github_url, :google_id, :google_email, :facebook_id, :facebook_email, :facebook_url, :spotify_id, :spotify_email, :spotify_url
-			)
-			returning *
-		`, possiblyNewUser)
+		createdUser, err := queries.CreateUser(ctx, database_gen.CreateUserParams{
+			Email:         possiblyNewUser.Email,
+			EmailVerified: possiblyNewUser.EmailVerified,
+			PasswordHash:  possiblyNewUser.PasswordHash,
+			Handle:        finalHandle,
+			FirstName:     possiblyNewUser.FirstName,
+			LastName:      possiblyNewUser.LastName,
+			AvatarUrl:     possiblyNewUser.AvatarUrl,
+			GithubID:      possiblyNewUser.GithubID,
+			GithubEmail:   possiblyNewUser.GithubEmail,
+			GithubHandle:  possiblyNewUser.GithubHandle,
+			GithubUrl:     possiblyNewUser.GithubUrl,
+			GoogleID:      possiblyNewUser.GoogleID,
+			GoogleEmail:   possiblyNewUser.GoogleEmail,
+			FacebookID:    possiblyNewUser.FacebookID,
+			FacebookEmail: possiblyNewUser.FacebookEmail,
+			FacebookUrl:   possiblyNewUser.FacebookUrl,
+			SpotifyID:     possiblyNewUser.SpotifyID,
+			SpotifyEmail:  possiblyNewUser.SpotifyEmail,
+			SpotifyUrl:    possiblyNewUser.SpotifyUrl,
+		})
 		if err != nil {
 			return uuid.Nil, fmt.Errorf("unable to insert new user: %w", err)
 		}
-		defer rows.Close()
-		if !rows.Next() {
-			return uuid.Nil, fmt.Errorf("no user inserted, but no error provided ? this should never occured, user object: %+v", possiblyNewUser)
-		}
-		if err := rows.StructScan(&existingUser); err != nil {
-			return uuid.Nil, fmt.Errorf("unable to scan inserted user: %w", err)
-		}
-	}
-	if emailExists {
-		if processingLoggedInUser {
-			err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyNewUser.Email)
-			if err != nil {
-				err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyUserEmail)
-				if err != nil {
-					return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
-				}
-			}
-			if loggedInUserInfo.UserId != existingUser.Id {
-				return uuid.Nil, fmt.Errorf("email is already linked to an account: %v (logged in user) VS %v (existing user)", loggedInUserInfo, existingUser)
-			}
-		} else {
-			err := db.Get(&existingUser, utils.SelectUserByEmailQuery(), possiblyUserEmail)
-			if err != nil {
-				return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
-			}
-		}
-
-		if !existingUser.PasswordHash.Valid {
-			existingUser.PasswordHash = possiblyNewUser.PasswordHash
-		}
-		if !existingUser.Handle.Valid && !handleExists {
-			existingUser.Handle = possiblyNewUser.Handle
-		}
-		if !existingUser.FirstName.Valid {
-			existingUser.FirstName = possiblyNewUser.FirstName
-		}
-		if !existingUser.LastName.Valid {
-			existingUser.LastName = possiblyNewUser.LastName
-		}
-		if !existingUser.AvatarUrl.Valid {
-			existingUser.AvatarUrl = possiblyNewUser.AvatarUrl
-		}
-		if !existingUser.EmailVerified {
-			existingUser.EmailVerified = possiblyNewUser.EmailVerified
-		}
-
-		// when adding a new oauth provider and user table fields, add the checks here:
-		if !existingUser.GithubId.Valid {
-			existingUser.GithubId = possiblyNewUser.GithubId
-		}
-		if !existingUser.GithubEmail.Valid {
-			existingUser.GithubEmail = possiblyNewUser.GithubEmail
-		}
-		if !existingUser.GithubHandle.Valid {
-			existingUser.GithubHandle = possiblyNewUser.GithubHandle
-		}
-		if !existingUser.GithubUrl.Valid {
-			existingUser.GithubUrl = possiblyNewUser.GithubUrl
-		}
-		if !existingUser.GoogleId.Valid {
-			existingUser.GoogleId = possiblyNewUser.GoogleId
-		}
-		if !existingUser.GoogleEmail.Valid {
-			existingUser.GoogleEmail = possiblyNewUser.GoogleEmail
-		}
-		if !existingUser.FacebookId.Valid {
-			existingUser.FacebookId = possiblyNewUser.FacebookId
-		}
-		if !existingUser.FacebookEmail.Valid {
-			existingUser.FacebookEmail = possiblyNewUser.FacebookEmail
-		}
-		if !existingUser.FacebookUrl.Valid {
-			existingUser.FacebookUrl = possiblyNewUser.FacebookUrl
-		}
-		if !existingUser.SpotifyId.Valid {
-			existingUser.SpotifyId = possiblyNewUser.SpotifyId
-		}
-		if !existingUser.SpotifyEmail.Valid {
-			existingUser.SpotifyEmail = possiblyNewUser.SpotifyEmail
-		}
-		if !existingUser.SpotifyUrl.Valid {
-			existingUser.SpotifyUrl = possiblyNewUser.SpotifyUrl
-		}
-
-		// when adding a new oauth provider and user table fields, change the query here:
-		if _, err := db.NamedExec(`
-			update users set
-				password_hash = :password_hash,
-				handle = :handle,
-				first_name = :first_name,
-				last_name = :last_name,
-				avatar_url = :avatar_url,
-				email_verified = :email_verified,
-				github_id = :github_id,
-				github_email = :github_email,
-				github_handle = :github_handle,
-				github_url = :github_url,
-				google_id = :google_id,
-				google_email = :google_email,
-				facebook_id = :facebook_id,
-				facebook_email = :facebook_email,
-				facebook_url = :facebook_url,
-				spotify_id = :spotify_id,
-				spotify_email = :spotify_email,
-				spotify_url = :spotify_url
-			where id = :id
-		`, existingUser); err != nil {
-			return uuid.Nil, fmt.Errorf("unable to update existing user: %w", err)
-		}
+		return createdUser.ID, nil
 	}
 
-	return existingUser.Id, nil
+	existingUser, err := queries.GetUserByEmailOrOauth(ctx, possiblyUserEmail)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("unable to select existing user: %w", err)
+	}
+
+	if processingLoggedInUser && loggedInUserInfo.UserId != existingUser.ID {
+		return uuid.Nil, fmt.Errorf("email is already linked to a different account")
+	}
+
+	updatedUser, err := queries.UpdateUserFull(ctx, database_gen.UpdateUserFullParams{
+		ID:            existingUser.ID,
+		Column2:       possiblyNewUser.PasswordHash.String,
+		Handle:        possiblyNewUser.Handle,
+		FirstName:     possiblyNewUser.FirstName,
+		LastName:      possiblyNewUser.LastName,
+		AvatarUrl:     possiblyNewUser.AvatarUrl,
+		EmailVerified: possiblyNewUser.EmailVerified,
+		GithubID:      possiblyNewUser.GithubID,
+		GithubEmail:   possiblyNewUser.GithubEmail,
+		GithubHandle:  possiblyNewUser.GithubHandle,
+		GithubUrl:     possiblyNewUser.GithubUrl,
+		GoogleID:      possiblyNewUser.GoogleID,
+		GoogleEmail:   possiblyNewUser.GoogleEmail,
+		FacebookID:    possiblyNewUser.FacebookID,
+		FacebookEmail: possiblyNewUser.FacebookEmail,
+		FacebookUrl:   possiblyNewUser.FacebookUrl,
+		SpotifyID:     possiblyNewUser.SpotifyID,
+		SpotifyEmail:  possiblyNewUser.SpotifyEmail,
+		SpotifyUrl:    possiblyNewUser.SpotifyUrl,
+	})
+
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("unable to update existing user: %w", err)
+	}
+
+	return updatedUser.ID, nil
 }
 
-// This MUST always be called ONLY IF THE USER WAS 100% AUTHENTICATED USING OAUTH OR PASSWORD
 func GetJwtPostLogin(userUUID uuid.UUID) (string, error) {
-	db, err := database.CreateConnection()
+	queries, ctx, err := database.CreateConnection()
 	if err != nil {
-		return "", fmt.Errorf("unable to create connection to db inside GetJwtPostLogin: %w", err)
+		return "", fmt.Errorf("unable to create connection to db: %w", err)
 	}
 
-	var userInfo models.UserModelDB
-	if err := db.Get(&userInfo, `update users set last_login_at = now() where id = $1 returning *`, userUUID); err != nil {
-		return "", fmt.Errorf("unable to select existing user: %w", err)
+	updatedUser, err := queries.SetLastLoginNow(ctx, userUUID)
+	if err != nil {
+		return "", fmt.Errorf("unable to set last login: %w", err)
 	}
-
-	newAuthToken, err := utils.GenerateJWT(userInfo)
+	newAuthToken, err := utils.GenerateJWT(updatedUser)
 	if err != nil {
 		return "", fmt.Errorf("unable to generate new oauth token: %w", err)
 	}
 
 	return newAuthToken, nil
+}
+
+func getUniqueHandle(ctx context.Context, q *database_gen.Queries, firstName, lastName sql.NullString) (string, error) {
+	base := "user"
+	if firstName.Valid && firstName.String != "" {
+		base = utils.NormalizeHandle(firstName.String)
+		if lastName.Valid && lastName.String != "" {
+			base = utils.NormalizeHandle(string(firstName.String[0]) + lastName.String)
+		}
+	}
+
+	handle := base
+	randomSuffixLen := 4
+	if base == "user" {
+		randomSuffixLen = 6
+	}
+
+	for {
+		exists, err := q.CheckHandleExists(ctx, utils.SQLNullStringFromString(handle).NullString)
+		if err != nil {
+			return "", err
+		}
+		if !exists {
+			return handle, nil
+		}
+		handle = fmt.Sprintf("%s-%s", base, utils.RandomString(randomSuffixLen))
+	}
 }

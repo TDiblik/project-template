@@ -1,16 +1,16 @@
 package utils
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"unicode"
 
-	"github.com/TDiblik/project-template/api/models"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/text/unicode/norm"
 )
 
-func GenerateUniqueUserHandle(db *sqlx.DB, firstName, lastName models.SQLNullString) (string, error) {
+func GenerateUniqueUserHandle(db *sqlx.DB, firstName, lastName sql.NullString) (string, error) {
 	base := ""
 	randomSuffixLen := 4
 

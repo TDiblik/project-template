@@ -26,7 +26,7 @@ func main() {
 	// utils.SetupCronJobs()
 
 	log.Println("Checking database connectivity: start")
-	db, err := database.CreateConnection()
+	db, err := database.CreateConnectionRaw()
 	if err != nil {
 		log.Fatalln("Unable to connect to a database", err)
 	}

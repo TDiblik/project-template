@@ -1,10 +1,12 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"sync"
 	"time"
 
+	database_gen "github.com/TDiblik/project-template/api/database/gen"
 	"github.com/TDiblik/project-template/api/utils"
 	_ "github.com/jackc/pgx/v5/stdlib" // Register pgx with database/sql
 	"github.com/jmoiron/sqlx"
@@ -17,7 +19,7 @@ var (
 )
 
 // CreateConnection initializes or returns the global DB pool.
-func CreateConnection() (*sqlx.DB, error) {
+func CreateConnectionRaw() (*sqlx.DB, error) {
 	once.Do(func() {
 		d, err := sqlx.Connect("pgx", utils.EnvData.DB_CONNECTION_STRING)
 		if err != nil {
@@ -35,6 +37,14 @@ func CreateConnection() (*sqlx.DB, error) {
 	})
 
 	return db, dbErr
+}
+
+func CreateConnection() (*database_gen.Queries, context.Context, error) {
+	conn, err := CreateConnectionRaw()
+	if err != nil {
+		return nil, nil, err
+	}
+	return database_gen.New(conn), context.Background(), nil
 }
 
 func ExecuteTransaction(db *sqlx.DB, fn func(*sql.Tx) error) (err error) {

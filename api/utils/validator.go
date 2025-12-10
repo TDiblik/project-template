@@ -12,7 +12,7 @@ type XValidator struct {
 	validate *validator.Validate
 }
 
-func (v XValidator) Validate(data interface{}) error {
+func (v XValidator) Validate(data any) error {
 	return v.validate.Struct(data)
 }
 

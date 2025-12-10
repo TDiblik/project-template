@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"github.com/TDiblik/project-template/api/database"
-	"github.com/TDiblik/project-template/api/models"
+	database_gen "github.com/TDiblik/project-template/api/database/gen"
 	"github.com/TDiblik/project-template/api/utils"
 	"github.com/gofiber/fiber/v3"
 )
 
 type GetUserMeHandlerResponse struct {
-	UserInfo models.UserModelDB `json:"user_info"`
+	UserInfo database_gen.User `json:"user_info"`
 }
 
 func GetUserMeHandler(c fiber.Ctx) error {
@@ -17,13 +17,13 @@ func GetUserMeHandler(c fiber.Ctx) error {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	db, err := database.CreateConnection()
+	db, db_ctx, err := database.CreateConnection()
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	var user models.UserModelDB
-	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
+	user, err := db.GetUserById(db_ctx, userJWTInfo.UserId)
+	if err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}
 
@@ -49,21 +49,21 @@ func PatchUserMeHandler(c fiber.Ctx) error {
 		return utils.InvalidRequestResponse(c, err)
 	}
 
-	db, err := database.CreateConnection()
+	db, db_ctx, err := database.CreateConnection()
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	var user models.UserModelDB
-	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
+	user, err := db.GetUserById(db_ctx, userJWTInfo.UserId)
+	if err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}
 
 	if req.FirstName != "" {
-		user.FirstName = utils.SQLNullStringFromString(req.FirstName)
+		user.FirstName = utils.SQLNullStringFromString(req.FirstName).NullString
 	}
 	if req.LastName != "" {
-		user.LastName = utils.SQLNullStringFromString(req.LastName)
+		user.LastName = utils.SQLNullStringFromString(req.LastName).NullString
 	}
 	if req.PreferedTheme != "" {
 		user.PreferedTheme = utils.SQLNullStringFromString(string(req.PreferedTheme))
@@ -72,14 +72,12 @@ func PatchUserMeHandler(c fiber.Ctx) error {
 		user.PreferedLanguage = utils.SQLNullStringFromString(string(req.PreferedLanguage))
 	}
 
-	_, err = db.NamedExec(`
-		update users set
-			first_name = :first_name,
-			last_name = :last_name,
-			prefered_theme = :prefered_theme,
-			prefered_language = :prefered_language
-		where id = :id
-	`, user)
+	_, err = db.UpdateUserPreferences(db_ctx, database_gen.UpdateUserPreferencesParams{
+		FirstName:        user.FirstName.String,
+		LastName:         user.LastName.String,
+		PreferedTheme:    user.PreferedTheme.(string),
+		PreferedLanguage: user.PreferedLanguage.(string),
+	})
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}
@@ -100,13 +98,13 @@ func PostUserMeAvatarHandler(c fiber.Ctx) error {
 		return utils.InvalidRequestResponse(c, err)
 	}
 
-	db, err := database.CreateConnection()
+	db, db_ctx, err := database.CreateConnection()
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}
 
-	var user models.UserModelDB
-	if err := db.Get(&user, utils.SelectUserById(), userJWTInfo.UserId); err != nil {
+	user, err := db.GetUserById(db_ctx, userJWTInfo.UserId)
+	if err != nil {
 		return utils.NotFoundResponse(c, "be.error.user.not_found")
 	}
 
@@ -120,7 +118,10 @@ func PostUserMeAvatarHandler(c fiber.Ctx) error {
 	}
 	user.AvatarUrl = utils.SQLNullStringFromString(newAvatarImageUrlPath)
 
-	_, err = db.NamedExec(`update users set avatar_url = :avatar_url where id = :id`, user)
+	_, err = db.UpdateUserAvatar(db_ctx, database_gen.UpdateUserAvatarParams{
+		ID:        user.ID,
+		AvatarUrl: user.AvatarUrl,
+	})
 	if err != nil {
 		return utils.InternalServerErrorResponse(c, err)
 	}

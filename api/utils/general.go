@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"math"
 	"math/rand/v2"
@@ -11,6 +12,8 @@ import (
 	"path"
 	"strings"
 	"syscall"
+
+	"github.com/TDiblik/project-template/api/models"
 )
 
 // WARNING: This fucks up the order of the array tho
@@ -78,4 +81,17 @@ func RandomString(n int) string {
 		sb.WriteByte(letters[rand.IntN(len(letters))])
 	}
 	return sb.String()
+}
+
+func SQLNullStringFromString(value string) models.SQLNullString {
+	return SQLNullStringFromStringRef(&value)
+}
+
+func SQLNullStringFromStringRef(value *string) models.SQLNullString {
+	return models.SQLNullString{
+		NullString: sql.NullString{
+			String: DerefOrEmpty(value),
+			Valid:  IsNotNil(value),
+		},
+	}
 }

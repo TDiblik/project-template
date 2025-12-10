@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/TDiblik/project-template/api/constants"
-	"github.com/TDiblik/project-template/api/models"
+	database_gen "github.com/TDiblik/project-template/api/database/gen"
 	"github.com/gofiber/fiber/v3"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -36,13 +36,13 @@ type JWTInfo struct {
 	Exp           int64
 }
 
-func GenerateJWT(user models.UserModelDB) (string, error) {
+func GenerateJWT(user database_gen.User) (string, error) {
 	token_insecure := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token_insecure.Claims.(jwt.MapClaims)
 	claims["sub"] = "project-template.inc"
 	claims["jti"] = uuid.New()
-	claims["user_id"] = user.Id.String()
+	claims["user_id"] = user.ID.String()
 	claims["user_email"] = user.Email
 	claims["user_first_name"] = user.FirstName
 	claims["user_last_name"] = user.LastName
