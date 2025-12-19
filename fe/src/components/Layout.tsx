@@ -1,7 +1,7 @@
 import {ThemePosibilities, type ThemePosibilitiesType, type TranslationPosibilitiesType, TranslationPossibilities} from "@shared/api-client";
 import {AnimatePresence, type HTMLMotionProps, motion} from "motion/react";
 import type React from "react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Link, matchPath, useLocation} from "react-router";
 import {usei18nStore} from "../stores/i18nStore";
@@ -21,15 +21,32 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
     {name: t("layout.settings"), path: routes.settings},
   ];
 
+  const [profileOpen, setProfileOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const toggleMenuClasses = "absolute left-full top-0 menu rounded-box w-48 bg-base-100 p-2 shadow";
-  const toggleMenuAnimation = {
-    initial: {opacity: 0, y: -8},
-    animate: {opacity: 1, y: 0},
-    exit: {opacity: 0, y: -8},
-    transition: {duration: 0.15, ease: "easeOut"},
-  } as HTMLMotionProps<"ul">;
+
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+        setThemeOpen(false);
+        setLanguageOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleProfileMenu = () => {
+    setProfileOpen((prev) => !prev);
+    if (profileOpen) {
+      setThemeOpen(false);
+      setLanguageOpen(false);
+    }
+  };
+
   const toggleMenu = (menu: "language" | "theme") => {
     if (menu === "language") {
       setLanguageOpen((prev) => !prev);
@@ -43,11 +60,22 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
   const changeThemeAndClose = (newTheme: ThemePosibilitiesType) => {
     changeTheme(newTheme);
     setThemeOpen(false);
+    setProfileOpen(false);
   };
+
   const changeLanguageAndClose = (lang: TranslationPosibilitiesType) => {
     changeLanguage(lang);
     setLanguageOpen(false);
+    setProfileOpen(false);
   };
+
+  const toggleMenuClasses = "absolute left-full top-0 menu rounded-box w-48 bg-base-100 p-2 shadow";
+  const toggleMenuAnimation = {
+    initial: {opacity: 0, y: -8},
+    animate: {opacity: 1, y: 0},
+    exit: {opacity: 0, y: -8},
+    transition: {duration: 0.15, ease: "easeOut"},
+  } as HTMLMotionProps<"ul">;
 
   return (
     <div className="flex h-screen bg-base-200">
@@ -66,8 +94,8 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
 
         {/* Avatar & Settings */}
         <div className="border-t border-base-300 p-4">
-          <div className="dropdown dropdown-top dropdown-end w-full cursor-pointer">
-            <div className="flex items-center w-full">
+          <div ref={profileMenuRef} className={`dropdown dropdown-top dropdown-end w-full cursor-pointer ${profileOpen ? "dropdown-open" : ""}`}>
+            <div onClick={toggleProfileMenu} role="button" className="flex items-center w-full">
               {loggedUser && (
                 <div className={`btn btn-ghost btn-circle avatar ${!loggedUser.avatarUrl ? "avatar-placeholder" : ""}`}>
                   <div className="w-12 rounded-full bg-neutral text-neutral-content">
@@ -78,9 +106,11 @@ const Layout: React.FC<React.PropsWithChildren> = ({children}) => {
               <span className="ml-2 text-base font-medium normal-case">{loggedUser?.fullName}</span>
             </div>
 
-            <ul className="dropdown-content menu rounded-box z-1 mb-2 w-52 bg-base-100 p-2 shadow">
+            <ul className="dropdown-content menu rounded-box z-50 mb-2 w-52 bg-base-100 p-2 shadow">
               <li>
-                <Link to={routes.settings}>{t("layout.settings")}</Link>
+                <Link to={routes.settings} onClick={() => setProfileOpen(false)}>
+                  {t("layout.settings")}
+                </Link>
               </li>
 
               <li className="relative">

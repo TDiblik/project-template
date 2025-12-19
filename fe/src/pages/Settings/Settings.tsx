@@ -44,14 +44,20 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold">{t("settingsPage.pageTitle")}</h1>
           <div className="flex items-center gap-2">
             <div className="dropdown dropdown-end">
-              <label className="btn btn-sm gap-1">
+              <label tabIndex={0} className="btn btn-sm gap-1">
                 {t(`layout.changeLanguage.${i18n.language}`)}
                 <HiOutlineChevronDown className="w-4 h-4 ml-1" />
               </label>
-              <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
+              <ul tabIndex={0} className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-32">
                 {TranslationPossibilities.map((lang) => (
                   <li key={lang}>
-                    <button onClick={() => changeLanguage(lang)} className={`w-full text-left ${i18n.language === lang ? "font-semibold text-primary" : ""}`}>
+                    <button
+                      onClick={() => {
+                        changeLanguage(lang);
+                        (document.activeElement as HTMLElement)?.blur();
+                      }}
+                      className={`w-full text-left ${i18n.language === lang ? "font-semibold text-primary" : ""}`}
+                    >
                       {t(`layout.changeLanguage.${lang}`)}
                     </button>
                   </li>

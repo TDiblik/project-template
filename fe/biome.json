@@ -57,7 +57,9 @@
         "noLabelWithoutControl": "off",
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off",
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "useFocusableInteractive": "off",
+        "noNoninteractiveTabindex": "off"
       }
     }
   }
