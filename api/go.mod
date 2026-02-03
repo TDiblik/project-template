@@ -3,8 +3,8 @@ module github.com/TDiblik/project-template/api
 go 1.25.0
 
 require (
-	github.com/TDiblik/gofiber-swagger v0.1.8
-	github.com/gofiber/fiber/v3 v3.0.0-rc.3
+	github.com/TDiblik/gofiber-swagger v1.0.0
+	github.com/gofiber/fiber/v3 v3.0.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
